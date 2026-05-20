@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13th Cheque Calculator South Africa — Year-End Bonus After Tax | CalcVibe</title>
+<meta name="description" content="Calculate your 13th cheque take-home pay after PAYE tax and UIF. Free South African year-end bonus calculator using 2025/2026 SARS tax brackets. No sign-up needed.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mode-btn {
+    padding: 1rem;
+    border: none;
+    background: none;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .mode-btn.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .mode-btn:first-child { border-right: 1px solid var(--border); }
+
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  select {
+    width: 100%;
+    padding: 0.85rem 2.8rem 0.85rem 1rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5a72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background-color: var(--white);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .info-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-value.deduct { color: #ff8a8a; }
+
+  .result-row.total .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.total .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p:last-child { margin-bottom: 0; }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>13th Cheque Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Tax &amp; Salary · South Africa</div>
+  <h1>13th Cheque Calculator</h1>
+  <p class="page-sub">Work out your year-end bonus and what you'll take home after PAYE tax and UIF.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnFull" onclick="setMode('full')">
+        🎁 Full Month Bonus
+      </button>
+      <button class="mode-btn" id="btnCustom" onclick="setMode('custom')">
+        ✏️ Custom Amount
+      </button>
+    </div>
+
+    <div class="calc-body">
+      <div class="info-row">
+        <span class="info-label">🇿🇦 SARS Tax Year</span>
+        <span class="info-value">2025 / 2026</span>
+      </div>
+
+      <div class="field">
+        <label>Monthly Gross Salary</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="monthlySalary" placeholder="0.00" oninput="calculate()" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="field" id="customBonusField" style="display:none">
+        <label>Bonus Amount (Gross)</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="customBonus" placeholder="0.00" oninput="calculate()" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Age Bracket</label>
+        <select id="ageBracket" onchange="calculate()">
+          <option value="under65">Under 65</option>
+          <option value="65to74">65 – 74 years</option>
+          <option value="75plus">75 years and older</option>
+        </select>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <span class="result-label">Gross Bonus</span>
+          <span class="result-value" id="grossBonus">R 0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">PAYE Tax on Bonus</span>
+          <span class="result-value deduct" id="taxOnBonus">− R 0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">UIF on Bonus (1%)</span>
+          <span class="result-value deduct" id="uifOnBonus">− R 0.00</span>
+        </div>
+        <div class="result-row total">
+          <span class="result-label">Net Take-Home</span>
+          <span class="result-value" id="netBonus">R 0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How is a 13th cheque taxed in South Africa?</h2>
+    <p>A 13th cheque (year-end bonus) is treated as part of your annual income by SARS. It is taxed at your <strong>marginal rate</strong> — the rate that applies to the top portion of your total yearly earnings.</p>
+
+    <p>This calculator works out the tax by comparing your annual PAYE with and without the bonus:</p>
+    <div class="formula-box">Tax on Bonus = <span>Tax(Annual Salary + Bonus)</span> − <span>Tax(Annual Salary alone)</span></div>
+
+    <p>UIF contributions of <strong>1%</strong> apply to the bonus up to the annual remuneration ceiling of <strong>R212,544</strong>. Once your regular salary already exceeds this ceiling, no further UIF is deducted from the bonus.</p>
+
+    <p>Tax rebates applied (2025/2026): Primary <strong>R17,235</strong> · Secondary 65+ <strong>R9,444</strong> · Tertiary 75+ <strong>R3,145</strong>. Medical tax credits and retirement fund deductions are not included — consult a tax professional for a full picture.</p>
+  </div>
+
+  <div class="related">
+    <div class="related-title">Other Calculators</div>
+    <div class="related-grid">
+      <a href="/vat-calculator.html" class="related-card">
+        🧾 VAT Calculator
+      </a>
+      <a href="/compound-interest-calculator.html" class="related-card">
+        📈 Compound Interest
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial &amp; labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. Tax rules may change — always verify with SARS or a qualified tax professional. This calculator does not account for medical tax credits, retirement fund contributions, or other personal deductions.</div>
+</footer>
+
+<script>
+  let mode = 'full';
+
+  const BRACKETS = [
+    { min: 0,        max: 237100,   base: 0,      rate: 0.18 },
+    { min: 237100,   max: 370500,   base: 42678,  rate: 0.26 },
+    { min: 370500,   max: 512800,   base: 77362,  rate: 0.31 },
+    { min: 512800,   max: 673000,   base: 121475, rate: 0.36 },
+    { min: 673000,   max: 857900,   base: 179147, rate: 0.39 },
+    { min: 857900,   max: 1817000,  base: 251258, rate: 0.41 },
+    { min: 1817000,  max: Infinity, base: 644489, rate: 0.45 },
+  ];
+
+  const REBATES = { under65: 17235, '65to74': 26679, '75plus': 29824 };
+  const UIF_ANNUAL_CEILING = 212544;
+
+  function annualTax(income, age) {
+    let tax = 0;
+    for (const b of BRACKETS) {
+      if (income <= b.min) break;
+      tax = b.base + (Math.min(income, b.max) - b.min) * b.rate;
+    }
+    return Math.max(0, tax - REBATES[age]);
+  }
+
+  function fmt(n) {
+    return 'R ' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('btnFull').classList.toggle('active', m === 'full');
+    document.getElementById('btnCustom').classList.toggle('active', m === 'custom');
+    document.getElementById('customBonusField').style.display = m === 'custom' ? 'block' : 'none';
+    calculate();
+  }
+
+  function calculate() {
+    const monthly = parseFloat(document.getElementById('monthlySalary').value) || 0;
+    const age     = document.getElementById('ageBracket').value;
+    const annual  = monthly * 12;
+    const bonus   = mode === 'full'
+      ? monthly
+      : (parseFloat(document.getElementById('customBonus').value) || 0);
+
+    const taxWithout = annualTax(annual, age);
+    const taxWith    = annualTax(annual + bonus, age);
+    const paye       = Math.max(0, taxWith - taxWithout);
+
+    let uif = 0;
+    if (annual < UIF_ANNUAL_CEILING && bonus > 0) {
+      uif = Math.min(bonus, UIF_ANNUAL_CEILING - annual) * 0.01;
+    }
+
+    const net = Math.max(0, bonus - paye - uif);
+
+    document.getElementById('grossBonus').textContent = fmt(bonus);
+    document.getElementById('taxOnBonus').textContent = '− ' + fmt(paye);
+    document.getElementById('uifOnBonus').textContent = '− ' + fmt(uif);
+    document.getElementById('netBonus').textContent   = fmt(net);
+  }
+
+  calculate();
+</script>
+</body>
+</html>
