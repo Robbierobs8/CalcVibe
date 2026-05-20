@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compound Interest Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #c8f04a;
+    --accent2: #7b61ff;
+    --text: #f0f0f5;
+    --muted: #6b6b85;
+    --gain: #4af0a0;
+    --principal: #c8f04a;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background blobs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(123,97,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -10%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(200,240,74,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 680px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.2s; }
+
+  .card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+  }
+
+  label span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text);
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    min-width: 80px;
+    text-align: right;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 0.25rem;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(200,240,74,0.15);
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(200,240,74,0.2);
+  }
+
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    padding: 0.6rem 0.85rem;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+
+  /* Results card — full width */
+  .results-card {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+
+  .results-top {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 520px) {
+    .results-top { grid-template-columns: 1fr 1fr; }
+    .results-top .stat:last-child { grid-column: 1 / -1; }
+  }
+
+  .stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-value.highlight { color: var(--accent); }
+  .stat-value.gain { color: var(--gain); }
+  .stat-value.neutral { color: var(--text); }
+
+  /* Chart */
+  .chart-wrap {
+    position: relative;
+    height: 200px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Year breakdown table */
+  .breakdown {
+    margin-top: 1.5rem;
+    max-height: 220px;
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    background: var(--surface2);
+    z-index: 1;
+  }
+
+  th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.6rem 0.85rem;
+    text-align: right;
+    font-weight: 400;
+  }
+
+  th:first-child { text-align: left; }
+
+  td {
+    padding: 0.55rem 0.85rem;
+    text-align: right;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    font-size: 0.78rem;
+  }
+
+  td:first-child {
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .td-gain { color: var(--gain); }
+  .td-total { color: var(--accent); font-weight: 500; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .chart-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+<nav style="background:#fff;border-bottom:1px solid #e2e0d8;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;font-family:Epilogue,sans-serif;">
+<a href="/index.html" style="font-family:Playfair Display,serif;font-size:1.4rem;font-weight:800;color:#1a1a2e;text-decoration:none;">CalcVibe<span style="width:8px;height:8px;background:#1a6b3c;border-radius:50%;display:inline-block;margin-bottom:2px;margin-left:2px;"></span></a>
+<div style="font-size:0.78rem;color:#5a5a72;">← <a href="/index.html" style="color:#1a6b3c;text-decoration:none;">All Calculators</a></div>
+</nav>
+<div class="container">
+  <header>
+    <div class="eyebrow">Financial Calculator</div>
+    <h1>Compound <em>Interest</em><br>Calculator</h1>
+    <p class="subtitle">See how your money grows over time with the power of compounding.</p>
+  </header>
+
+  <div class="grid">
+    <!-- Inputs card 1 -->
+    <div class="card">
+      <div class="card-title">Principal & Growth</div>
+
+      <div class="field">
+        <label>Initial Investment <span id="principalVal">$5,000</span></label>
+        <input type="range" id="principal" min="100" max="100000" step="100" value="5000">
+      </div>
+
+      <div class="field">
+        <label>Monthly Contribution <span id="monthlyVal">$200</span></label>
+        <input type="range" id="monthly" min="0" max="5000" step="50" value="200">
+      </div>
+
+      <div class="field">
+        <label>Annual Interest Rate <span id="rateVal">7.0%</span></label>
+        <input type="range" id="rate" min="0.1" max="25" step="0.1" value="7">
+      </div>
+    </div>
+
+    <!-- Inputs card 2 -->
+    <div class="card">
+      <div class="card-title">Time & Frequency</div>
+
+      <div class="field">
+        <label>Time Period <span id="yearsVal">20 yrs</span></label>
+        <input type="range" id="years" min="1" max="50" step="1" value="20">
+      </div>
+
+      <div class="field">
+        <label>Compound Frequency</label>
+        <select id="frequency">
+          <option value="1">Annually</option>
+          <option value="2">Semi-Annually</option>
+          <option value="4">Quarterly</option>
+          <option value="12" selected>Monthly</option>
+          <option value="365">Daily</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Contribution Timing</label>
+        <select id="timing">
+          <option value="end" selected>End of period</option>
+          <option value="start">Start of period</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-card">
+      <div class="results-top">
+        <div class="stat">
+          <div class="stat-label">Final Balance</div>
+          <div class="stat-value highlight" id="finalBalance">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Total Contributed</div>
+          <div class="stat-value neutral" id="totalContrib">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Interest Earned</div>
+          <div class="stat-value gain" id="interestEarned">—</div>
+        </div>
+      </div>
+
+      <div class="chart-title">Growth Over Time</div>
+      <div class="chart-wrap">
+        <canvas id="chart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gain)"></div>Interest Earned</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Amount Contributed</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="card-title">Year-by-Year Breakdown</div>
+      <div class="breakdown">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Contributed</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fmt = (n) => '$' + Math.round(n).toLocaleString('en-US');
+
+function calculate() {
+  const P = parseFloat(document.getElementById('principal').value);
+  const monthly = parseFloat(document.getElementById('monthly').value);
+  const r = parseFloat(document.getElementById('rate').value) / 100;
+  const years = parseInt(document.getElementById('years').value);
+  const n = parseInt(document.getElementById('frequency').value);
+  const timing = document.getElementById('timing').value;
+
+  // Update labels
+  document.getElementById('principalVal').textContent = fmt(P);
+  document.getElementById('monthlyVal').textContent = fmt(monthly);
+  document.getElementById('rateVal').textContent = r * 100 + '%';
+  document.getElementById('yearsVal').textContent = years + ' yrs';
+
+  // Build year-by-year data
+  const data = [];
+  let balance = P;
+  let totalContrib = P;
+
+  for (let y = 1; y <= years; y++) {
+    const periodsPerYear = n;
+    const monthlyRate = r / 12;
+    const contribPerPeriod = monthly * 12 / periodsPerYear;
+    const periodRate = r / periodsPerYear;
+
+    for (let p = 0; p < periodsPerYear; p++) {
+      if (timing === 'start') balance += contribPerPeriod;
+      balance *= (1 + periodRate);
+      if (timing === 'end') balance += contribPerPeriod;
+    }
+    totalContrib += monthly * 12;
+
+    data.push({
+      year: y,
+      balance: balance,
+      contributed: totalContrib,
+      interest: balance - totalContrib
+    });
+  }
+
+  const final = data[data.length - 1];
+
+  // Update stats
+  document.getElementById('finalBalance').textContent = fmt(final.balance);
+  document.getElementById('totalContrib').textContent = fmt(final.contributed);
+  document.getElementById('interestEarned').textContent = fmt(final.interest);
+
+  // Draw chart
+  drawChart(data, P);
+
+  // Update table
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.map(d => `
+    <tr>
+      <td>Year ${d.year}</td>
+      <td>${fmt(d.contributed)}</td>
+      <td class="td-gain">${fmt(Math.max(0, d.interest))}</td>
+      <td class="td-total">${fmt(d.balance)}</td>
+    </tr>
+  `).join('');
+}
+
+let chartInstance = null;
+
+function drawChart(data, P) {
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+
+  // Resize canvas to actual display size
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const W = canvas.offsetWidth;
+  const H = canvas.offsetHeight;
+  const pad = { top: 10, right: 10, bottom: 28, left: 55 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const maxVal = data[data.length - 1].balance;
+  const years = data.length;
+
+  const xScale = (i) => pad.left + (i / (years - 1)) * chartW;
+  const yScale = (v) => pad.top + chartH - (v / maxVal) * chartH;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i / 4) * chartH;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + chartW, y);
+    ctx.stroke();
+
+    // Y labels
+    const val = maxVal * (1 - i / 4);
+    ctx.fillStyle = 'rgba(107,107,133,0.8)';
+    ctx.font = '500 10px DM Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(val >= 1000 ? '$' + (val / 1000).toFixed(0) + 'k' : '$' + val.toFixed(0), pad.left - 6, y + 4);
+  }
+
+  // X labels
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(107,107,133,0.8)';
+  const labelStep = Math.ceil(years / 5);
+  data.forEach((d, i) => {
+    if (i % labelStep === 0 || i === years - 1) {
+      ctx.fillText('Yr ' + d.year, xScale(i), H - 6);
+    }
+  });
+
+  // Area fill — interest (green)
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = xScale(i);
+    const y = yScale(d.balance);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(xScale(years - 1), pad.top + chartH);
+  ctx.lineTo(xScale(0), pad.top + chartH);
+  ctx.closePath();
+  const gradGain = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+  gradGain.addColorStop(0, 'rgba(74,240,160,0.35)');
+  gradGain.addColorStop(1, 'rgba(74,240,160,0.03)');
+  ctx.fillStyle = gradGain;
+  ctx.fill();
+
+  // Area fill — contributed (yellow/green)
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = xScale(i);
+    const y = yScale(d.contributed);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(xScale(years - 1), pad.top + chartH);
+  ctx.lineTo(xScale(0), pad.top + chartH);
+  ctx.closePath();
+  const gradContrib = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+  gradContrib.addColorStop(0, 'rgba(200,240,74,0.4)');
+  gradContrib.addColorStop(1, 'rgba(200,240,74,0.05)');
+  ctx.fillStyle = gradContrib;
+  ctx.fill();
+
+  // Line — balance
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = xScale(i);
+    const y = yScale(d.balance);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = 'rgba(74,240,160,0.9)';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Line — contributed
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = xScale(i);
+    const y = yScale(d.contributed);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = 'rgba(200,240,74,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+// Bind all inputs
+['principal', 'monthly', 'rate', 'years', 'frequency', 'timing'].forEach(id => {
+  document.getElementById(id).addEventListener('input', calculate);
+});
+
+// Initial run
+calculate();
+
+// Redraw on resize
+window.addEventListener('resize', calculate);
+</script>
+</body>
+</html>

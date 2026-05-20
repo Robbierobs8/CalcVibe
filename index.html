@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcVibe — Free South African Calculators</title>
+<meta name="description" content="Free, accurate South African calculators for tax, VAT, UIF, bonds, salary and more. Built for South Africans.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .nav-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--white);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(26,107,60,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(232,160,32,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    max-width: 700px;
+    margin: 0 auto 1.25rem;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  h1 span {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    color: var(--ink-light);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    animation: fadeUp 0.5s ease 0.3s both;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    margin-top: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CALCULATOR GRID */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .calc-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .calc-card.live:hover { border-color: var(--accent); }
+  .calc-card.coming { opacity: 0.55; cursor: default; pointer-events: none; }
+
+  .calc-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    background: var(--accent-light);
+  }
+
+  .calc-card.coming .calc-icon { background: #f0f0f0; }
+
+  .calc-info { flex: 1; }
+
+  .calc-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  .badge-new { background: var(--accent-light); color: var(--accent); }
+  .badge-soon { background: #f0f0f0; color: #999; }
+
+  .calc-desc {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    line-height: 1.4;
+    font-weight: 300;
+  }
+
+  .calc-arrow {
+    font-size: 1.1rem;
+    color: var(--border);
+    align-self: center;
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .calc-card:hover .calc-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  /* ABOUT STRIP */
+  .about-strip {
+    background: var(--ink);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .about-strip { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  .about-item { text-align: center; }
+
+  .about-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .about-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+
+  .about-text {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-text {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    font-weight: 300;
+  }
+
+  .footer-disclaimer {
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 1rem; }
+    .hero { padding: 3rem 1rem 2.5rem; }
+    main { padding: 2rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">
+    CalcVibe<span class="logo-dot"></span>
+  </a>
+  <span class="nav-tag">🇿🇦 South Africa</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Free South African Calculators</div>
+  <h1>Smart tools for <span>South African</span> finances</h1>
+  <p class="hero-sub">Accurate, fast calculators built specifically for South African tax laws, labour rules, and financial needs.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">100%</div>
+      <div class="hero-stat-label">Free forever</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">SA</div>
+      <div class="hero-stat-label">Rates & laws</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">No</div>
+      <div class="hero-stat-label">Sign-up needed</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- Finance Calculators -->
+  <div class="section-header">
+    <div class="section-title">Finance</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="calc-grid">
+    <a href="/compound-interest-calculator.html" class="calc-card live" style="animation-delay:0.05s">
+      <div class="calc-icon">📈</div>
+      <div class="calc-info">
+        <div class="calc-name">Compound Interest <span class="badge badge-new">New</span></div>
+        <div class="calc-desc">See how your savings or investments grow over time with compounding.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </a>
+
+    <a href="/vat-calculator.html" class="calc-card live" style="animation-delay:0.1s">
+      <div class="calc-icon">🧾</div>
+      <div class="calc-info">
+        <div class="calc-name">VAT Calculator <span class="badge badge-new">New</span></div>
+        <div class="calc-desc">Add or remove 15% South African VAT instantly. For business and personal use.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </a>
+
+    <div class="calc-card coming" style="animation-delay:0.15s">
+      <div class="calc-icon">🏠</div>
+      <div class="calc-info">
+        <div class="calc-name">Bond Repayment <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Calculate monthly bond repayments at current SA home loan rates.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+
+    <div class="calc-card coming" style="animation-delay:0.2s">
+      <div class="calc-icon">🎯</div>
+      <div class="calc-info">
+        <div class="calc-name">Retirement Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Plan your retirement with SA-specific RA and pension projections.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Tax & Salary -->
+  <div class="section-header">
+    <div class="section-title">Tax & Salary</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="calc-grid">
+    <div class="calc-card coming" style="animation-delay:0.1s">
+      <div class="calc-icon">💼</div>
+      <div class="calc-info">
+        <div class="calc-name">Income Tax Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Calculate your PAYE tax based on current SARS tax brackets.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+
+    <div class="calc-card coming" style="animation-delay:0.15s">
+      <div class="calc-icon">💰</div>
+      <div class="calc-info">
+        <div class="calc-name">Salary Tax Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">See your take-home pay after tax, UIF and other deductions.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+
+    <div class="calc-card coming" style="animation-delay:0.2s">
+      <div class="calc-icon">🎁</div>
+      <div class="calc-info">
+        <div class="calc-name">13th Cheque Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Work out your year-end bonus and what you'll take home after tax.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Labour -->
+  <div class="section-header">
+    <div class="section-title">Labour & HR</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="calc-grid">
+    <div class="calc-card coming" style="animation-delay:0.05s">
+      <div class="calc-icon">🛡️</div>
+      <div class="calc-info">
+        <div class="calc-name">UIF Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Calculate UIF contributions and benefits under South African labour law.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+
+    <div class="calc-card coming" style="animation-delay:0.1s">
+      <div class="calc-icon">⏰</div>
+      <div class="calc-info">
+        <div class="calc-name">Overtime Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Calculate overtime pay based on BCEA rules and your hourly rate.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+
+    <div class="calc-card coming" style="animation-delay:0.15s">
+      <div class="calc-icon">🌴</div>
+      <div class="calc-info">
+        <div class="calc-name">Leave Payout Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Work out your leave payout value when leaving a job.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+
+    <div class="calc-card coming" style="animation-delay:0.2s">
+      <div class="calc-icon">📋</div>
+      <div class="calc-info">
+        <div class="calc-name">Retrenchment Calculator <span class="badge badge-soon">Soon</span></div>
+        <div class="calc-desc">Understand your severance package based on years of service.</div>
+      </div>
+      <div class="calc-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Trust strip -->
+  <div class="about-strip">
+    <div class="about-item">
+      <div class="about-icon">🇿🇦</div>
+      <div class="about-title">Built for South Africa</div>
+      <div class="about-text">Every calculator uses current SA tax rates, SARS rules, and BCEA labour law.</div>
+    </div>
+    <div class="about-item">
+      <div class="about-icon">⚡</div>
+      <div class="about-title">Instant Results</div>
+      <div class="about-text">No loading, no sign-ups, no ads in your way. Just fast, accurate answers.</div>
+    </div>
+    <div class="about-item">
+      <div class="about-icon">🔒</div>
+      <div class="about-title">Your Data Stays Private</div>
+      <div class="about-text">All calculations happen in your browser. Nothing is sent to any server.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial & labour calculators</div>
+  <div class="footer-disclaimer">All calculators are provided for estimation purposes only. CalcVibe does not constitute financial, tax or legal advice. Always consult a qualified professional for your specific situation.</div>
+</footer>
+
+</body>
+</html>

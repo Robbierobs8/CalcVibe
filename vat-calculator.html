@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAT Calculator South Africa — Add or Remove 15% VAT | CalcVibe</title>
+<meta name="description" content="Free South African VAT calculator. Instantly add or remove 15% VAT from any amount. Simple, accurate, no sign-up required.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* MODE TOGGLE */
+  .mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mode-btn {
+    padding: 1rem;
+    border: none;
+    background: none;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .mode-btn.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .mode-btn:first-child { border-right: 1px solid var(--border); }
+
+  /* INPUTS */
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  .vat-rate-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .vat-rate-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .vat-rate-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-row.total .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.total .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  /* RELATED */
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>VAT Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">South African VAT · 15%</div>
+  <h1>VAT Calculator</h1>
+  <p class="page-sub">Add or remove 15% VAT instantly. Free, accurate, no sign-up.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnAdd" onclick="setMode('add')">
+        ➕ Add VAT
+      </button>
+      <button class="mode-btn" id="btnRemove" onclick="setMode('remove')">
+        ➖ Remove VAT
+      </button>
+    </div>
+
+    <div class="calc-body">
+      <div class="vat-rate-row">
+        <span class="vat-rate-label">🇿🇦 South African VAT Rate</span>
+        <span class="vat-rate-value">15%</span>
+      </div>
+
+      <div class="field">
+        <label id="inputLabel">Amount (excl. VAT)</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="amount" placeholder="0.00" oninput="calculate()" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="result-row">
+          <span class="result-label" id="originalLabel">Original amount</span>
+          <span class="result-value" id="originalVal">R 0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">VAT (15%)</span>
+          <span class="result-value" id="vatVal">R 0.00</span>
+        </div>
+        <div class="result-row total">
+          <span class="result-label" id="totalLabel">Total (incl. VAT)</span>
+          <span class="result-value" id="totalVal">R 0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explainer — good for SEO -->
+  <div class="explainer">
+    <h2>How to calculate VAT in South Africa</h2>
+    <p>South Africa's standard VAT rate is <strong>15%</strong>, set by SARS (South African Revenue Service). Most goods and services are subject to VAT, with some zero-rated exceptions like basic foodstuffs and exports.</p>
+
+    <p><strong>To add VAT</strong> to an amount (price excluding VAT):</p>
+    <div class="formula-box">VAT Amount = Price × <span>0.15</span> &nbsp;|&nbsp; Total = Price × <span>1.15</span></div>
+
+    <p><strong>To remove VAT</strong> from an amount (price including VAT):</p>
+    <div class="formula-box">Original Price = Total ÷ <span>1.15</span> &nbsp;|&nbsp; VAT Amount = Total − Original Price</div>
+
+    <p>This calculator handles both directions instantly. Simply enter your amount and toggle between "Add VAT" and "Remove VAT".</p>
+  </div>
+
+  <!-- Related calculators -->
+  <div class="related">
+    <div class="related-title">Other Calculators</div>
+    <div class="related-grid">
+      <a href="/compound-interest-calculator.html" class="related-card">
+        📈 Compound Interest
+      </a>
+      <a href="/index.html" class="related-card">
+        🧮 All Calculators →
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial & labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. VAT rules may change — always verify with SARS or a tax professional.</div>
+</footer>
+
+<script>
+  let mode = 'add'; // 'add' or 'remove'
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('btnAdd').classList.toggle('active', m === 'add');
+    document.getElementById('btnRemove').classList.toggle('active', m === 'remove');
+    document.getElementById('inputLabel').textContent = m === 'add' ? 'Amount (excl. VAT)' : 'Amount (incl. VAT)';
+    document.getElementById('originalLabel').textContent = m === 'add' ? 'Original amount' : 'Amount incl. VAT';
+    document.getElementById('totalLabel').textContent = m === 'add' ? 'Total (incl. VAT)' : 'Amount excl. VAT';
+    calculate();
+  }
+
+  function fmt(n) {
+    return 'R ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function calculate() {
+    const raw = parseFloat(document.getElementById('amount').value) || 0;
+    const VAT_RATE = 0.15;
+
+    let original, vat, total;
+
+    if (mode === 'add') {
+      // User enters price excl. VAT
+      original = raw;
+      vat = raw * VAT_RATE;
+      total = raw + vat;
+    } else {
+      // User enters price incl. VAT — work backwards
+      original = raw; // the inclusive amount
+      const exclVat = raw / (1 + VAT_RATE);
+      vat = raw - exclVat;
+      total = exclVat; // the exclusive amount is the "result"
+    }
+
+    document.getElementById('originalVal').textContent = fmt(original);
+    document.getElementById('vatVal').textContent = fmt(vat);
+    document.getElementById('totalVal').textContent = fmt(total);
+  }
+
+  // Init
+  calculate();
+</script>
+</body>
+</html>
