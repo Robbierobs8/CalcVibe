@@ -161,17 +161,48 @@
     margin-bottom: 0.45rem;
   }
 
-  .field-label .field-value {
+  .field-num-wrap {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--accent-light);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 2px 8px;
+    cursor: text;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .field-num-wrap:focus-within {
+    border-color: var(--accent);
+    background: var(--white);
+  }
+
+  .field-unit {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .field-num {
+    border: none;
+    background: transparent;
     font-family: 'Playfair Display', serif;
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--accent);
-    background: var(--accent-light);
-    padding: 1px 9px;
-    border-radius: 8px;
-    min-width: 72px;
+    outline: none;
+    -moz-appearance: textfield;
+    padding: 0;
+    min-width: 0;
     text-align: right;
   }
+
+  .field-num::-webkit-outer-spin-button,
+  .field-num::-webkit-inner-spin-button { -webkit-appearance: none; }
 
   input[type="range"] {
     -webkit-appearance: none;
@@ -538,25 +569,34 @@
       <div class="field">
         <div class="field-label">
           Initial Investment
-          <span class="field-value" id="principalVal">R 10,000</span>
+          <div class="field-num-wrap">
+            <span class="field-unit">R</span>
+            <input type="number" class="field-num" id="principalNum" value="10000" min="0" step="1000" style="width:82px" oninput="onNumInput('principalNum','principal',500000)">
+          </div>
         </div>
-        <input type="range" id="principal" min="1000" max="500000" step="1000" value="10000" oninput="calculate()">
+        <input type="range" id="principal" min="100" max="500000" step="1000" value="10000" oninput="onSlider('principal','principalNum',false)">
       </div>
 
       <div class="field">
         <div class="field-label">
           Monthly Contribution
-          <span class="field-value" id="monthlyVal">R 500</span>
+          <div class="field-num-wrap">
+            <span class="field-unit">R</span>
+            <input type="number" class="field-num" id="monthlyNum" value="500" min="0" step="100" style="width:72px" oninput="onNumInput('monthlyNum','monthly',20000)">
+          </div>
         </div>
-        <input type="range" id="monthly" min="0" max="20000" step="100" value="500" oninput="calculate()">
+        <input type="range" id="monthly" min="0" max="20000" step="100" value="500" oninput="onSlider('monthly','monthlyNum',false)">
       </div>
 
       <div class="field">
         <div class="field-label">
           Annual Interest Rate
-          <span class="field-value" id="rateVal">9.0%</span>
+          <div class="field-num-wrap">
+            <input type="number" class="field-num" id="rateNum" value="9.0" min="0" max="100" step="0.5" style="width:40px" oninput="onNumInput('rateNum','rate',30)">
+            <span class="field-unit">%</span>
+          </div>
         </div>
-        <input type="range" id="rate" min="0.5" max="25" step="0.5" value="9" oninput="calculate()">
+        <input type="range" id="rate" min="0" max="30" step="0.5" value="9" oninput="onSlider('rate','rateNum',true)">
       </div>
     </div>
 
@@ -566,9 +606,12 @@
       <div class="field">
         <div class="field-label">
           Investment Period
-          <span class="field-value" id="yearsVal">20 yrs</span>
+          <div class="field-num-wrap">
+            <input type="number" class="field-num" id="yearsNum" value="20" min="1" max="1000" step="1" style="width:34px" oninput="onNumInput('yearsNum','years',50)">
+            <span class="field-unit">yrs</span>
+          </div>
         </div>
-        <input type="range" id="years" min="1" max="40" step="1" value="20" oninput="calculate()">
+        <input type="range" id="years" min="1" max="50" step="1" value="20" oninput="onSlider('years','yearsNum',false)">
       </div>
 
       <div class="field">
@@ -686,19 +729,37 @@
     return 'R ' + Math.round(n).toLocaleString('en-ZA');
   }
 
+  function onSlider(sliderId, numId, isRate) {
+    const val = parseFloat(document.getElementById(sliderId).value);
+    document.getElementById(numId).value = isRate ? val.toFixed(1) : val;
+    calculate();
+  }
+
+  function onNumInput(numId, sliderId, sliderMax) {
+    const slider = document.getElementById(sliderId);
+    const val = parseFloat(document.getElementById(numId).value);
+    if (!isNaN(val)) {
+      slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
+    }
+    calculate();
+  }
+
   function calculate() {
-    const P      = parseFloat(document.getElementById('principal').value);
-    const mo     = parseFloat(document.getElementById('monthly').value);
-    const rate   = parseFloat(document.getElementById('rate').value);
-    const years  = parseInt(document.getElementById('years').value);
+    const P      = Math.max(0, parseFloat(document.getElementById('principalNum').value) || 0);
+    const mo     = Math.max(0, parseFloat(document.getElementById('monthlyNum').value) || 0);
+    const rate   = Math.min(100, Math.max(0, parseFloat(document.getElementById('rateNum').value) || 0));
+    const years  = Math.min(1000, Math.max(1, parseInt(document.getElementById('yearsNum').value) || 1));
     const n      = parseInt(document.getElementById('frequency').value);
     const timing = document.getElementById('timing').value;
 
-    // Update slider labels
-    document.getElementById('principalVal').textContent = fmtR(P);
-    document.getElementById('monthlyVal').textContent   = fmtR(mo);
-    document.getElementById('rateVal').textContent      = rate.toFixed(1) + '%';
-    document.getElementById('yearsVal').textContent     = years + (years === 1 ? ' yr' : ' yrs');
+    if (P === 0 && mo === 0) {
+      document.getElementById('finalBalance').textContent   = '—';
+      document.getElementById('totalContrib').textContent   = '—';
+      document.getElementById('interestEarned').textContent = '—';
+      document.getElementById('tableBody').innerHTML = '';
+      drawChart([]);
+      return;
+    }
 
     const r = rate / 100;
     const contribPerPeriod = (mo * 12) / n;
@@ -739,6 +800,7 @@
   function drawChart(data) {
     const canvas = document.getElementById('chart');
     const ctx    = canvas.getContext('2d');
+    if (!data.length) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
     const dpr    = window.devicePixelRatio || 1;
 
     canvas.width  = canvas.offsetWidth  * dpr;
