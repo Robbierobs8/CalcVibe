@@ -528,6 +528,7 @@
   .table-wrap {
     max-height: 220px;
     overflow-y: auto;
+    overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
@@ -545,18 +546,20 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink-light);
-    padding: 0.6rem 1.5rem;
+    padding: 0.6rem 0.9rem;
     text-align: right;
+    white-space: nowrap;
   }
 
   th:first-child { text-align: left; }
 
   td {
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 0.9rem;
     text-align: right;
     border-top: 1px solid var(--border);
     font-size: 0.82rem;
     color: var(--ink);
+    white-space: nowrap;
   }
 
   td:first-child { text-align: left; color: var(--ink-light); font-size: 0.78rem; }
@@ -826,8 +829,10 @@
         <thead>
           <tr>
             <th>Year</th>
-            <th>Contributed</th>
-            <th>Interest Earned</th>
+            <th>Annual Contrib</th>
+            <th>Total Contributed</th>
+            <th>Annual Interest</th>
+            <th>Total Interest</th>
             <th>Balance</th>
           </tr>
         </thead>
@@ -935,14 +940,18 @@
     chartData = data;
     drawChart(data);
 
+    const annualContrib = mo * 12;
     let crossoverFound = false;
     document.getElementById('tableBody').innerHTML = data.map((d, i) => {
-      const interestThisYear = d.interest - (i > 0 ? data[i - 1].interest : 0);
-      const isCrossover = !crossoverFound && mo > 0 && interestThisYear > mo * 12;
+      const prevCumInterest = i > 0 ? data[i - 1].interest : 0;
+      const annualInterest  = Math.max(0, d.interest - prevCumInterest);
+      const isCrossover = !crossoverFound && annualContrib > 0 && annualInterest > annualContrib;
       if (isCrossover) crossoverFound = true;
       return `<tr${isCrossover ? ' class="crossover-row"' : ''}>
         <td>Year ${d.year}${isCrossover ? '<span class="crossover-msg">🎉 Your money is now making more than you put in!</span>' : ''}</td>
+        <td>${fmtR(annualContrib)}</td>
         <td>${fmtR(d.contributed)}</td>
+        <td class="td-gain">${fmtR(annualInterest)}</td>
         <td class="td-gain">${fmtR(Math.max(0, d.interest))}</td>
         <td class="td-total">${fmtR(d.balance)}</td>
       </tr>`;
