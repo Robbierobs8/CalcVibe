@@ -75,7 +75,6 @@
   .breadcrumb a { color: var(--accent); text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
 
-  /* PAGE HEADER */
   .page-header {
     background: var(--white);
     border-bottom: 1px solid var(--border);
@@ -114,14 +113,12 @@
     animation: fadeUp 0.4s ease 0.2s both;
   }
 
-  /* MAIN */
   main {
     max-width: 680px;
     margin: 0 auto;
     padding: 2.5rem 1.5rem 5rem;
   }
 
-  /* CALCULATOR CARD */
   .calc-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -131,7 +128,6 @@
     animation: fadeUp 0.5s ease 0.2s both;
   }
 
-  /* INPUTS */
   .calc-body { padding: 1.75rem; }
 
   .field { margin-bottom: 1.25rem; }
@@ -198,27 +194,11 @@
     background: var(--white);
   }
 
-  .info-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--accent-light);
-    border-radius: 8px;
-    padding: 0.65rem 1rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .info-row-label {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--accent);
-  }
-
-  .info-row-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--accent);
+  .field-hint {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    font-weight: 400;
   }
 
   .loan-amount-hint {
@@ -231,6 +211,95 @@
   .loan-amount-hint strong {
     color: var(--ink);
     font-weight: 600;
+  }
+
+  /* OPTIONAL COST TOGGLES */
+  .optional-section {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .optional-heading {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.85rem;
+  }
+
+  .option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .option-row:last-child { border-bottom: none; }
+
+  .option-info { flex: 1; min-width: 0; }
+
+  .option-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .option-note {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    margin-top: 0.1rem;
+  }
+
+  /* Toggle switch */
+  .toggle-wrap {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+
+  .toggle-wrap input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+  }
+
+  .toggle-wrap input:checked + .toggle-track {
+    background: var(--accent);
+  }
+
+  .toggle-wrap input:checked + .toggle-track::after {
+    transform: translateX(18px);
   }
 
   /* RESULTS */
@@ -278,7 +347,25 @@
     color: #6ee9a0;
   }
 
-  .result-value.deduct {
+  .result-value.deduct { color: #ff8a8a; }
+
+  .result-row.section-head .result-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .result-row.total-upfront .result-label {
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .result-row.total-upfront .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: #ff8a8a;
   }
 
@@ -307,6 +394,8 @@
     line-height: 1.7;
     margin-bottom: 0.75rem;
   }
+
+  .explainer p:last-child { margin-bottom: 0; }
 
   .formula-box {
     background: var(--bg);
@@ -392,7 +481,7 @@
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @media (max-width: 480px) {
@@ -415,17 +504,12 @@
 <div class="page-header">
   <div class="eyebrow">Home Loans · South Africa</div>
   <h1>Bond Repayment Calculator</h1>
-  <p class="page-sub">Calculate your monthly bond repayment at current South African home loan rates.</p>
+  <p class="page-sub">Calculate your monthly bond repayment and total buying costs at South African home loan rates.</p>
 </div>
 
 <main>
   <div class="calc-card">
     <div class="calc-body">
-
-      <div class="info-row">
-        <span class="info-row-label">🇿🇦 SA Prime Rate</span>
-        <span class="info-row-value">11.25%</span>
-      </div>
 
       <div class="field">
         <label for="propertyPrice">Property Price</label>
@@ -441,7 +525,7 @@
           <span class="input-prefix">R</span>
           <input type="number" id="deposit" value="150000" min="0" step="1000" oninput="calculate()">
         </div>
-        <div class="loan-amount-hint">Loan amount: <strong id="loanAmountHint">R 1,350,000</strong></div>
+        <div class="loan-amount-hint">Loan amount: <strong id="loanAmountHint">—</strong></div>
       </div>
 
       <div class="field">
@@ -450,6 +534,7 @@
           <input type="number" id="interestRate" class="no-prefix" value="11.75" min="0" max="40" step="0.25" oninput="calculate()">
           <span class="input-suffix">%</span>
         </div>
+        <div class="field-hint">SA prime rate changes — check SARB or your bank for the current rate. Most bonds are priced at prime to prime&nbsp;+&nbsp;2%.</div>
       </div>
 
       <div class="field">
@@ -460,22 +545,68 @@
         </div>
       </div>
 
+      <!-- Optional cost toggles -->
+      <div class="optional-section">
+        <div class="optional-heading">Optional: Include Buying Costs</div>
+
+        <div class="option-row">
+          <div class="option-info">
+            <span class="option-name">Bond Registration Fees</span>
+            <span class="option-note">Attorney fees, deeds levy &amp; VAT — based on loan amount (approximate)</span>
+          </div>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="toggleBondReg" onchange="calculate()">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="option-row">
+          <div class="option-info">
+            <span class="option-name">Transfer Duty</span>
+            <span class="option-note">SARS 2025/2026 rates — based on property price (0% up to R1.1m)</span>
+          </div>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="toggleTransfer" onchange="calculate()">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Results -->
       <div class="results">
         <div class="result-row">
           <span class="result-label">Loan Amount</span>
-          <span class="result-value" id="resLoanAmount">R 1,350,000</span>
+          <span class="result-value" id="resLoanAmount">—</span>
         </div>
         <div class="result-row highlight">
           <span class="result-label">Monthly Repayment</span>
-          <span class="result-value" id="resMonthly">R 0</span>
+          <span class="result-value" id="resMonthly">—</span>
         </div>
         <div class="result-row">
-          <span class="result-label">Total Repayment</span>
-          <span class="result-value" id="resTotal">R 0</span>
+          <span class="result-label">Total Repayment (over term)</span>
+          <span class="result-value" id="resTotal">—</span>
         </div>
         <div class="result-row">
           <span class="result-label">Total Interest Paid</span>
-          <span class="result-value deduct" id="resInterest">R 0</span>
+          <span class="result-value deduct" id="resInterest">—</span>
+        </div>
+
+        <!-- Upfront costs (shown when toggles are on) -->
+        <div class="result-row section-head" id="rowUpfrontHead" style="display:none">
+          <span class="result-label">Upfront Buying Costs</span>
+          <span class="result-value"></span>
+        </div>
+        <div class="result-row" id="rowBondReg" style="display:none">
+          <span class="result-label">Bond Registration</span>
+          <span class="result-value deduct" id="resBondReg">—</span>
+        </div>
+        <div class="result-row" id="rowTransferDuty" style="display:none">
+          <span class="result-label">Transfer Duty</span>
+          <span class="result-value deduct" id="resTransferDuty">—</span>
+        </div>
+        <div class="result-row total-upfront" id="rowUpfrontTotal" style="display:none">
+          <span class="result-label">Total Upfront Costs</span>
+          <span class="result-value deduct" id="resUpfrontTotal">—</span>
         </div>
       </div>
 
@@ -491,21 +622,21 @@
       Where: <span>P</span> = loan amount &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months (years × 12)
     </div>
 
-    <p>The <strong>SA Prime Rate</strong> is currently 11.25% (as of May 2025). Most major banks — Absa, FNB, Nedbank, Standard Bank and SA Home Loans — offer rates between prime and prime + 2%, depending on your credit profile and deposit size. A 10% deposit typically attracts a better rate than a 0% deposit loan.</p>
+    <p>Most SA banks price home loans between <strong>prime</strong> and <strong>prime + 2%</strong> depending on your credit profile and deposit size. The current prime rate is set by the SARB and changes with the repo rate — check sarb.co.za or your bank for the latest figure.</p>
 
-    <p>The default rate used here is <strong>prime + 0.5% (11.75%)</strong>, a common starting point for borrowers with good credit. Adjust the rate field to match your bank's offer.</p>
+    <p><strong>Bond registration fees</strong> are paid to the bond registration attorney appointed by your bank. They cover the attorney's tariff fee, Deeds Office levy, VAT, and disbursements. The figures shown are indicative estimates based on the prescribed SA tariff scale.</p>
 
-    <p>Total interest paid is shown in red to illustrate the long-term cost of the loan. A larger deposit or a shorter term significantly reduces total interest. Note that this calculator does not include bond registration costs, transfer duties or monthly bank fees.</p>
+    <p><strong>Transfer duty</strong> is a government tax on property transfers, payable to SARS. Properties up to R1,100,000 are exempt. The 2025/2026 rates range from 3% to 13% on the amount above each threshold.</p>
   </div>
 
   <div class="related">
     <div class="related-title">Related Calculators</div>
     <div class="related-grid">
-      <a href="/vat-calculator.html" class="related-card">
-        🧾 VAT Calculator
+      <a href="/compound-interest-calculator.html" class="related-card">
+        📈 Compound Interest
       </a>
-      <a href="/thirteenth-cheque-calculator.html" class="related-card">
-        🎁 13th Cheque Calculator
+      <a href="/retirement-calculator.html" class="related-card">
+        🏖️ Retirement Calculator
       </a>
     </div>
   </div>
@@ -514,19 +645,58 @@
 <footer>
   <div class="footer-logo">CalcVibe</div>
   <div class="footer-text">Free South African financial &amp; labour calculators</div>
-  <div class="footer-disclaimer">For estimation purposes only. Interest rates change — always confirm your rate with your bank or a registered mortgage originator. Bond registration costs, transfer duties and monthly fees are not included.</div>
+  <div class="footer-disclaimer">For estimation purposes only. Bond registration fees are approximate — actual costs vary by attorney. Transfer duty figures are based on SARS 2025/2026 rates. Always confirm with your bank, attorney, or a registered mortgage originator.</div>
 </footer>
 
 <script>
   function fmt(n) {
-    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function calcBondReg(bondAmt) {
+    if (bondAmt <= 0) return 0;
+    // Approximate all-in: attorney tariff fee + deeds levy + VAT + disbursements
+    if (bondAmt <=  100000) return  9000;
+    if (bondAmt <=  200000) return 11000;
+    if (bondAmt <=  300000) return 13000;
+    if (bondAmt <=  400000) return 14500;
+    if (bondAmt <=  500000) return 16000;
+    if (bondAmt <=  600000) return 17500;
+    if (bondAmt <=  750000) return 19500;
+    if (bondAmt <=  900000) return 21500;
+    if (bondAmt <= 1000000) return 23000;
+    if (bondAmt <= 1250000) return 25500;
+    if (bondAmt <= 1500000) return 28000;
+    if (bondAmt <= 2000000) return 32500;
+    if (bondAmt <= 2500000) return 37000;
+    if (bondAmt <= 3000000) return 41500;
+    if (bondAmt <= 4000000) return 49000;
+    if (bondAmt <= 5000000) return 56000;
+    if (bondAmt <= 7500000) return 68000;
+    if (bondAmt <= 10000000) return 81000;
+    return Math.round(81000 + (bondAmt - 10000000) * 0.007);
+  }
+
+  function calcTransferDuty(price) {
+    if (price <= 1100000)  return 0;
+    if (price <= 1512500)  return (price - 1100000) * 0.03;
+    if (price <= 2117500)  return 12375  + (price - 1512500) * 0.06;
+    if (price <= 2722500)  return 48675  + (price - 2117500) * 0.08;
+    if (price <= 12100000) return 97075  + (price - 2722500) * 0.11;
+    return 1128600 + (price - 12100000) * 0.13;
+  }
+
+  function show(id, visible) {
+    document.getElementById(id).style.display = visible ? 'flex' : 'none';
   }
 
   function calculate() {
-    const price    = parseFloat(document.getElementById('propertyPrice').value) || 0;
-    const deposit  = parseFloat(document.getElementById('deposit').value) || 0;
-    const annRate  = parseFloat(document.getElementById('interestRate').value) || 0;
-    const years    = parseFloat(document.getElementById('loanTerm').value) || 0;
+    const price   = parseFloat(document.getElementById('propertyPrice').value) || 0;
+    const deposit = parseFloat(document.getElementById('deposit').value) || 0;
+    const annRate = parseFloat(document.getElementById('interestRate').value) || 0;
+    const years   = parseFloat(document.getElementById('loanTerm').value) || 0;
+    const showReg = document.getElementById('toggleBondReg').checked;
+    const showTD  = document.getElementById('toggleTransfer').checked;
 
     const P = Math.max(0, price - deposit);
     const r = annRate / 100 / 12;
@@ -536,28 +706,34 @@
     document.getElementById('resLoanAmount').textContent  = fmt(P);
 
     if (P <= 0 || n <= 0) {
-      document.getElementById('resMonthly').textContent  = fmt(0);
-      document.getElementById('resTotal').textContent    = fmt(0);
-      document.getElementById('resInterest').textContent = fmt(0);
-      return;
-    }
-
-    let monthly;
-    if (r === 0) {
-      monthly = P / n;
+      ['resMonthly','resTotal','resInterest'].forEach(id => {
+        document.getElementById(id).textContent = fmt(0);
+      });
     } else {
-      monthly = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      const monthly = r === 0 ? P / n
+        : P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      const totalRepayment = monthly * n;
+      document.getElementById('resMonthly').textContent  = fmt(monthly);
+      document.getElementById('resTotal').textContent    = fmt(totalRepayment);
+      document.getElementById('resInterest').textContent = fmt(totalRepayment - P);
     }
 
-    const totalRepayment = monthly * n;
-    const totalInterest  = totalRepayment - P;
+    // Optional upfront costs
+    const anyOn = showReg || showTD;
+    show('rowUpfrontHead',  anyOn);
+    show('rowBondReg',      showReg);
+    show('rowTransferDuty', showTD);
+    show('rowUpfrontTotal', anyOn);
 
-    document.getElementById('resMonthly').textContent  = fmt(monthly);
-    document.getElementById('resTotal').textContent    = fmt(totalRepayment);
-    document.getElementById('resInterest').textContent = fmt(totalInterest);
+    if (anyOn) {
+      const bondReg = showReg ? calcBondReg(P) : 0;
+      const transfer = showTD ? calcTransferDuty(price) : 0;
+      if (showReg) document.getElementById('resBondReg').textContent      = fmt(bondReg);
+      if (showTD)  document.getElementById('resTransferDuty').textContent  = fmt(transfer);
+      document.getElementById('resUpfrontTotal').textContent = fmt(bondReg + transfer);
+    }
   }
 
-  // Init
   calculate();
 </script>
 </body>
