@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="ITemKsIPzdlNXNDdivHryQ_udybfx9siLruXTNzNjY8" />
+<title>Property Cost of Ownership Calculator South Africa — CalcVibe</title>
+<meta name="description" content="Calculate the true monthly cost of owning property in South Africa. Bond repayment, rates, levies, maintenance and more — all in one place. Free, no sign-up needed.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  .calc-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .calc-layout {
+      grid-template-columns: 1fr;
+    }
+    .results-col {
+      position: static !important;
+    }
+  }
+
+  .inputs-col { min-width: 0; }
+
+  .results-col {
+    position: sticky;
+    top: 80px;
+  }
+
+  /* ── ACCORDION CARDS ── */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background 0.15s;
+  }
+
+  .accordion-header:hover { background: var(--bg); }
+
+  .accordion.open .accordion-header {
+    border-bottom-color: var(--border);
+  }
+
+  .accordion-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .accordion-chevron {
+    width: 18px;
+    height: 18px;
+    color: var(--ink-light);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+
+  .accordion-body {
+    display: none;
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .accordion.open .accordion-body { display: block; }
+
+  /* ── FIELD STYLES ── */
+  .field { margin-bottom: 1.25rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.45rem;
+  }
+
+  .field-num-wrap {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--accent-light);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 2px 8px;
+    cursor: text;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .field-num-wrap:focus-within {
+    border-color: var(--accent);
+    background: var(--white);
+  }
+
+  .field-unit {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .field-num {
+    border: none;
+    background: transparent;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--accent);
+    outline: none;
+    -moz-appearance: textfield;
+    padding: 0;
+    min-width: 0;
+    text-align: right;
+  }
+
+  .field-num::-webkit-outer-spin-button,
+  .field-num::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    margin-top: 0.4rem;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.15);
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(26,107,60,0.2);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    cursor: pointer;
+  }
+
+  .field-hint {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    margin-top: 0.35rem;
+    font-weight: 300;
+  }
+
+  .field-hint strong { color: var(--accent); font-weight: 600; }
+
+  .maint-display {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    margin-top: 0.35rem;
+    font-weight: 300;
+  }
+
+  .maint-display strong { color: var(--accent); font-weight: 600; }
+
+  /* ── TOOLTIP STYLES ── */
+  .label-with-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tip-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .tip-icon {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--ink-light);
+    font-size: 0.6rem;
+    font-weight: 700;
+    font-style: italic;
+    font-family: Georgia, serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .tip-icon:hover, .tip-wrap.open .tip-icon {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .tip-box {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: rgba(255,255,255,0.88);
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    font-style: normal;
+    line-height: 1.55;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    width: 230px;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.25);
+  }
+
+  .tip-box::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ink);
+  }
+
+  .tip-wrap:hover .tip-box,
+  .tip-wrap.open .tip-box { opacity: 1; }
+
+  /* ── SECTION B: COST ROWS ── */
+  .cost-rows-area { margin-bottom: 1rem; }
+
+  .cost-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.15s;
+  }
+
+  .cost-row:focus-within { border-color: var(--accent); }
+
+  .cost-row-label {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--ink);
+    outline: none;
+    min-width: 0;
+  }
+
+  .cost-row-label::placeholder { color: var(--ink-light); }
+
+  .cost-row-r {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .cost-row-amount {
+    width: 80px;
+    border: none;
+    background: transparent;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    outline: none;
+    -moz-appearance: textfield;
+    text-align: right;
+  }
+
+  .cost-row-amount::-webkit-outer-spin-button,
+  .cost-row-amount::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .cost-row-remove {
+    border: none;
+    background: none;
+    color: #ccc;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .cost-row-remove:hover { color: #e55; }
+
+  .section-b-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+
+  .btn-add {
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.45rem 0.9rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .btn-add:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .municipal-group {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .municipal-group.visible { display: block; }
+
+  .municipal-warning {
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+    padding: 0.4rem 0.6rem;
+    background: #fffbe8;
+    border: 1px solid #f0d060;
+    border-radius: 6px;
+  }
+
+  /* ── RESULTS CARD (dark) ── */
+  .results-card {
+    background: var(--ink);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.5s ease 0.3s both;
+  }
+
+  .results-card-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 1.25rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .result-row-label {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .result-row-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+  }
+
+  .result-row.total {
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .result-row.total .result-row-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .result-row.total .result-row-val {
+    font-size: 1.55rem;
+    color: #6ee9a0;
+  }
+
+  .result-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 0.85rem 0;
+  }
+
+  /* ── PIE CHART CARD ── */
+  .pie-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .pie-card-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 1rem;
+  }
+
+  .pie-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  #pieCanvas {
+    display: block;
+  }
+
+  .pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-row-label { flex: 1; }
+  .legend-row-pct { font-weight: 600; color: var(--ink); }
+
+  /* ── DID YOU KNOW BOX ── */
+  .did-you-know {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.5s ease 0.4s both;
+  }
+
+  .dyk-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
+
+  .dyk-text {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ── EXPLAINER ── */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.85rem;
+  }
+
+  .explainer p {
+    font-size: 0.875rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 0.85rem;
+  }
+
+  .explainer p:last-child { margin-bottom: 0; }
+
+  .explainer strong { color: var(--ink); font-weight: 600; }
+
+  /* ── RELATED ── */
+  .related { animation: fadeUp 0.5s ease 0.5s both; }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* ── ANIMATION ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .section-b-actions { flex-direction: column; }
+    .btn-add { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>Property Cost of Ownership</span>
+  </div>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="eyebrow">Property · South Africa</div>
+  <h1>Property Cost of Ownership Calculator</h1>
+  <p class="page-sub">See your true monthly and annual cost — bond, rates, levies, maintenance and more.</p>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+  <div class="calc-layout">
+
+    <!-- ── INPUTS COLUMN ── -->
+    <div class="inputs-col">
+
+      <!-- SECTION A: Purchase & Bond -->
+      <div class="accordion open" id="accordionA">
+        <div class="accordion-header" onclick="toggleAccordion('accordionA')">
+          <span class="accordion-title">A — Purchase &amp; Bond</span>
+          <svg class="accordion-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="5 8 10 13 15 8"/>
+          </svg>
+        </div>
+        <div class="accordion-body">
+
+          <!-- Property Purchase Price -->
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Property Purchase Price
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The full purchase price of the property, not accounting for deposit.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <span class="field-unit">R</span>
+                <input type="number" class="field-num" id="priceNum" value="1900000" min="0" step="100000" style="width:90px" oninput="onNumInput('priceNum','priceSlider',20000000); updateMaintDisplay();">
+              </div>
+            </div>
+            <input type="range" id="priceSlider" min="200000" max="20000000" step="100000" value="1900000" oninput="onSlider('priceSlider','priceNum',false); updateMaintDisplay();">
+          </div>
+
+          <!-- Deposit -->
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Deposit
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The cash portion you pay upfront. A larger deposit means a smaller loan and less interest.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <span class="field-unit">R</span>
+                <input type="number" class="field-num" id="depositNum" value="180000" min="0" step="10000" style="width:80px" oninput="onNumInput('depositNum','depositSlider',5000000);">
+              </div>
+            </div>
+            <input type="range" id="depositSlider" min="0" max="5000000" step="10000" value="180000" oninput="onSlider('depositSlider','depositNum',false);">
+            <div class="field-hint">Loan amount: <strong id="loanAmountHint">R 1,720,000</strong></div>
+          </div>
+
+          <!-- Transfer & Legal Costs -->
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Transfer &amp; Legal Costs
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Transfer duty, conveyancing attorney fees, and deeds office charges. Use the Bond Calculator to estimate these.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <span class="field-unit">R</span>
+                <input type="number" class="field-num" id="transferNum" value="40500" min="0" step="1000" style="width:70px" oninput="onNumInput('transferNum','transferSlider',500000);">
+              </div>
+            </div>
+            <input type="range" id="transferSlider" min="0" max="500000" step="1000" value="40500" oninput="onSlider('transferSlider','transferNum',false);">
+          </div>
+
+          <!-- Furnishings -->
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Furnishings / Initial Setup
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Upfront costs for furniture, appliances, and setup. Not part of the monthly calculation but shown in total upfront cost.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <span class="field-unit">R</span>
+                <input type="number" class="field-num" id="furnishingsNum" value="150000" min="0" step="10000" style="width:70px" oninput="onNumInput('furnishingsNum','furnishingsSlider',2000000);">
+              </div>
+            </div>
+            <input type="range" id="furnishingsSlider" min="0" max="2000000" step="10000" value="150000" oninput="onSlider('furnishingsSlider','furnishingsNum',false);">
+          </div>
+
+          <!-- Annual Interest Rate -->
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Annual Interest Rate
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Your home loan interest rate. SA prime is typically between prime and prime+2%. Check your bank for the current rate.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <input type="number" class="field-num" id="rateNum" value="10.75" min="0" step="0.25" style="width:46px" oninput="onNumInput('rateNum','rateSlider',25);">
+                <span class="field-unit">%</span>
+              </div>
+            </div>
+            <input type="range" id="rateSlider" min="0" max="25" step="0.25" value="10.75" oninput="onSlider('rateSlider','rateNum',true);">
+          </div>
+
+          <!-- Bond Period -->
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Bond Period
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Most SA home loans run for 20 years. A shorter term means higher payments but far less total interest.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <input type="number" class="field-num" id="periodNum" value="20" min="1" step="1" style="width:36px" oninput="onNumInput('periodNum','periodSlider',30);">
+                <span class="field-unit">yrs</span>
+              </div>
+            </div>
+            <input type="range" id="periodSlider" min="1" max="30" step="1" value="20" oninput="onSlider('periodSlider','periodNum',false);">
+          </div>
+
+        </div><!-- /accordion-body -->
+      </div><!-- /accordion A -->
+
+      <!-- SECTION B: Monthly Recurring Costs -->
+      <div class="accordion open" id="accordionB">
+        <div class="accordion-header" onclick="toggleAccordion('accordionB')">
+          <span class="accordion-title">B — Monthly Recurring Costs</span>
+          <svg class="accordion-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="5 8 10 13 15 8"/>
+          </svg>
+        </div>
+        <div class="accordion-body">
+
+          <div class="cost-rows-area" id="costRowsArea">
+            <!-- rendered by JS -->
+          </div>
+
+          <!-- Municipal toggle group -->
+          <div class="municipal-group" id="municipalGroup">
+            <div class="municipal-warning">Tip: remove the default Rates and Water rows above to avoid double-counting.</div>
+            <div id="municipalRowsArea">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+
+          <div class="section-b-actions">
+            <button class="btn-add" onclick="toggleMunicipal()">+ Add Municipal Detail</button>
+            <button class="btn-add" onclick="addRow('Custom cost', 0, 'other')">+ Add Custom Cost</button>
+          </div>
+
+        </div><!-- /accordion-body -->
+      </div><!-- /accordion B -->
+
+      <!-- SECTION C: Maintenance Reserve -->
+      <div class="accordion open" id="accordionC">
+        <div class="accordion-header" onclick="toggleAccordion('accordionC')">
+          <span class="accordion-title">C — Maintenance Reserve</span>
+          <svg class="accordion-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="5 8 10 13 15 8"/>
+          </svg>
+        </div>
+        <div class="accordion-body">
+
+          <div class="field">
+            <div class="field-label">
+              <span class="label-with-tip">
+                Annual Maintenance %
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Industry guideline is 1% of property value per year. Older or larger properties may need 2–3%.</span></span>
+              </span>
+              <div class="field-num-wrap">
+                <input type="number" class="field-num" id="maintNum" value="1.0" min="0" step="0.1" style="width:40px" oninput="onNumInput('maintNum','maintSlider',5); updateMaintDisplay();">
+                <span class="field-unit">%</span>
+              </div>
+            </div>
+            <input type="range" id="maintSlider" min="0" max="5" step="0.1" value="1.0" oninput="onSlider('maintSlider','maintNum',true); updateMaintDisplay();">
+            <div class="maint-display">= <strong id="maintMonthlyDisplay">R 1,583</strong> / month based on property price</div>
+          </div>
+
+        </div><!-- /accordion-body -->
+      </div><!-- /accordion C -->
+
+    </div><!-- /inputs-col -->
+
+    <!-- ── RESULTS COLUMN ── -->
+    <div class="results-col">
+
+      <!-- Dark Results Card -->
+      <div class="results-card">
+        <div class="results-card-title">Monthly Cost Summary</div>
+
+        <div class="result-row">
+          <span class="result-row-label">Monthly Bond Repayment</span>
+          <span class="result-row-val" id="resBond">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-row-label">Monthly Running Costs</span>
+          <span class="result-row-val" id="resRunning">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-row-label">Monthly Maintenance</span>
+          <span class="result-row-val" id="resMaint">R 0</span>
+        </div>
+
+        <div class="result-row total">
+          <span class="result-row-label">Total Monthly</span>
+          <span class="result-row-val" id="resTotal">R 0</span>
+        </div>
+
+        <hr class="result-divider">
+
+        <div class="result-row">
+          <span class="result-row-label">Total Annual Cost</span>
+          <span class="result-row-val" id="resAnnual">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-row-label">Total Over Bond Period</span>
+          <span class="result-row-val" id="resOverPeriod">R 0</span>
+        </div>
+
+        <hr class="result-divider">
+
+        <div class="result-row">
+          <span class="result-row-label">Total Upfront (deposit + transfer + furnishings)</span>
+          <span class="result-row-val" id="resUpfront">R 0</span>
+        </div>
+      </div><!-- /results-card -->
+
+      <!-- Pie Chart Card -->
+      <div class="pie-card">
+        <div class="pie-card-title">Monthly Cost Breakdown</div>
+        <div class="pie-wrap">
+          <canvas id="pieCanvas" width="180" height="180"></canvas>
+        </div>
+        <div class="pie-legend" id="pieLegend"></div>
+      </div>
+
+      <!-- Did You Know -->
+      <div class="did-you-know">
+        <div class="dyk-label">Did You Know?</div>
+        <div class="dyk-text">Most South Africans budget only for the bond — the true cost of ownership is typically <strong>30–50% higher</strong> when you add levies, rates, and maintenance.</div>
+      </div>
+
+    </div><!-- /results-col -->
+  </div><!-- /calc-layout -->
+
+  <!-- ── EXPLAINER ── -->
+  <div class="explainer">
+    <h2>Understanding the True Cost of Owning Property in South Africa</h2>
+    <p>This calculator gives you a complete picture of what it actually costs to own a home in South Africa each month — not just the bond instalment, but every recurring expense that comes with the property. Many first-time buyers focus almost entirely on whether they can afford the monthly repayment, only to be surprised by rates accounts, levy statements, insurance premiums, and the inevitable maintenance bill.</p>
+
+    <p><strong>The bond repayment</strong> is calculated using the standard South African home loan formula: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan amount (purchase price minus deposit), r is the monthly interest rate (annual rate ÷ 12), and n is the total number of months. Most banks in South Africa offer 20-year home loans at variable interest rates linked to the prime lending rate, which itself is set by the South African Reserve Bank (SARB).</p>
+
+    <p><strong>Rates and taxes</strong> are levied by your local municipality and are based on the municipal valuation of your property. They typically range from R500 to R3,000+ per month depending on property value and the municipality. <strong>Levies</strong> (also called body corporate contributions) apply to sectional title properties like flats or townhouses, and cover shared building maintenance, insurance, and management. Levies can vary significantly — a modest complex might charge R1,200/month while a high-end estate could charge R4,000 or more.</p>
+
+    <p><strong>Transfer duty</strong> is a government tax paid when you purchase a property worth more than R1,100,000 (as of 2024). It is calculated on a sliding scale and can amount to several hundred thousand rand on higher-value properties. Conveyancing fees, bond registration costs, and deeds office fees add further to your upfront bill. Use the CalcVibe Bond Calculator to get a detailed estimate.</p>
+
+    <p><strong>Maintenance reserve</strong> is the amount you should set aside each month for repairs and upkeep. The widely cited rule of thumb is to budget 1% of the property's value per year — so a R2 million home would require roughly R1,667 per month in maintenance reserves. Older properties, larger stands, and properties with pools or lifts typically require more. Failing to budget for maintenance is one of the leading causes of financial stress for property owners.</p>
+
+    <p><em>Disclaimer: All figures are estimates only and should not be taken as financial, legal, or tax advice. Interest rates, municipal charges, and levies change frequently. Always verify costs with your bank, municipality, and a qualified property professional before making any purchase decisions.</em></p>
+  </div>
+
+  <!-- ── RELATED CALCULATORS ── -->
+  <div class="related">
+    <div class="related-title">Related Calculators</div>
+    <div class="related-grid">
+      <a href="/bond-repayment-calculator.html" class="related-card">
+        Bond Repayment Calculator
+      </a>
+      <a href="/rental-property-investment-calculator.html" class="related-card">
+        Rental Property Investment Calculator
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial &amp; property calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. Interest rates, municipal charges, and levies are illustrative and subject to change. This tool does not constitute financial, legal, or tax advice. Always consult a qualified financial adviser and conveyancing attorney before purchasing property.</div>
+</footer>
+
+<script>
+  /* ============================================================
+     DATA
+  ============================================================ */
+  let costRows = [
+    { id: 1, label: 'Rates & Taxes',                  amount: 1000, category: 'ratesLevies' },
+    { id: 2, label: 'Levies / Body Corporate',         amount: 1400, category: 'ratesLevies' },
+    { id: 3, label: 'Water & Electricity',             amount: 500,  category: 'utilities'   },
+    { id: 4, label: 'Insurance — building & contents', amount: 500,  category: 'insurance'   },
+    { id: 5, label: 'Internet / WiFi',                 amount: 500,  category: 'other'        },
+    { id: 6, label: 'Consumables / General',           amount: 500,  category: 'other'        }
+  ];
+
+  let municipalRows = [
+    { id: 'm1', label: 'Property Rates',    amount: 0 },
+    { id: 'm2', label: 'Water & Sewerage',  amount: 0 },
+    { id: 'm3', label: 'Electricity',       amount: 0 },
+    { id: 'm4', label: 'Refuse Removal',    amount: 0 },
+    { id: 'm5', label: 'Other Municipal',   amount: 0 }
+  ];
+
+  let nextRowId = 10;
+  let municipalVisible = false;
+
+  /* ============================================================
+     FORMATTING
+  ============================================================ */
+  function fmtR(n) {
+    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function fmtRdec(n) {
+    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  /* ============================================================
+     SLIDER / NUMBER INPUT SYNC
+  ============================================================ */
+  function onSlider(sliderId, numId, isRate) {
+    const val = parseFloat(document.getElementById(sliderId).value);
+    document.getElementById(numId).value = isRate ? val.toFixed(1) : Math.round(val);
+    calculate();
+  }
+
+  function onNumInput(numId, sliderId, sliderMax) {
+    const slider = document.getElementById(sliderId);
+    const raw = document.getElementById(numId).value;
+    const val = parseFloat(raw);
+    if (!isNaN(val)) {
+      slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
+    }
+    calculate();
+  }
+
+  /* ============================================================
+     ACCORDION
+  ============================================================ */
+  function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  /* ============================================================
+     SECTION B — COST ROWS
+  ============================================================ */
+  function renderCostRows() {
+    const area = document.getElementById('costRowsArea');
+    if (!costRows.length) {
+      area.innerHTML = '<div style="font-size:0.78rem;color:var(--ink-light);padding:0.5rem 0;">No recurring costs added yet.</div>';
+      return;
+    }
+    area.innerHTML = costRows.map(row => `
+      <div class="cost-row" id="row-${row.id}">
+        <input type="text" class="cost-row-label"
+          value="${escHtml(row.label)}"
+          placeholder="Cost label"
+          oninput="updateRowLabel(${row.id}, this.value)">
+        <span class="cost-row-r">R</span>
+        <input type="number" class="cost-row-amount"
+          value="${row.amount}"
+          min="0" step="100"
+          oninput="updateRowAmount(${row.id}, this.value)">
+        <button class="cost-row-remove" onclick="removeRow(${row.id})" title="Remove">&times;</button>
+      </div>
+    `).join('');
+  }
+
+  function renderMunicipalRows() {
+    const area = document.getElementById('municipalRowsArea');
+    area.innerHTML = municipalRows.map(row => `
+      <div class="cost-row" id="mrow-${row.id}">
+        <input type="text" class="cost-row-label"
+          value="${escHtml(row.label)}"
+          placeholder="Cost label"
+          oninput="updateMunicipalLabel('${row.id}', this.value)">
+        <span class="cost-row-r">R</span>
+        <input type="number" class="cost-row-amount"
+          value="${row.amount}"
+          min="0" step="100"
+          oninput="updateMunicipalAmount('${row.id}', this.value)">
+      </div>
+    `).join('');
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function addRow(label, amount, category) {
+    costRows.push({ id: nextRowId++, label, amount: parseFloat(amount) || 0, category });
+    renderCostRows();
+    calculate();
+  }
+
+  function removeRow(id) {
+    costRows = costRows.filter(r => r.id !== id);
+    renderCostRows();
+    calculate();
+  }
+
+  function updateRowLabel(id, val) {
+    const row = costRows.find(r => r.id === id);
+    if (row) row.label = val;
+  }
+
+  function updateRowAmount(id, val) {
+    const row = costRows.find(r => r.id === id);
+    if (row) { row.amount = parseFloat(val) || 0; }
+    calculate();
+  }
+
+  function updateMunicipalLabel(id, val) {
+    const row = municipalRows.find(r => r.id === id);
+    if (row) row.label = val;
+  }
+
+  function updateMunicipalAmount(id, val) {
+    const row = municipalRows.find(r => r.id === id);
+    if (row) { row.amount = parseFloat(val) || 0; }
+    calculate();
+  }
+
+  function toggleMunicipal() {
+    municipalVisible = !municipalVisible;
+    const grp = document.getElementById('municipalGroup');
+    if (municipalVisible) {
+      grp.classList.add('visible');
+      renderMunicipalRows();
+    } else {
+      grp.classList.remove('visible');
+    }
+    calculate();
+  }
+
+  /* ============================================================
+     MAINTENANCE DISPLAY
+  ============================================================ */
+  function updateMaintDisplay() {
+    const price = Math.max(0, parseFloat(document.getElementById('priceNum').value) || 0);
+    const pct   = Math.max(0, parseFloat(document.getElementById('maintNum').value) || 0);
+    const monthly = price * (pct / 100) / 12;
+    document.getElementById('maintMonthlyDisplay').textContent = fmtR(monthly);
+  }
+
+  /* ============================================================
+     MAIN CALCULATE
+  ============================================================ */
+  function calculate() {
+    // Inputs
+    const price      = Math.max(0, parseFloat(document.getElementById('priceNum').value)      || 0);
+    const deposit    = Math.max(0, parseFloat(document.getElementById('depositNum').value)    || 0);
+    const transfer   = Math.max(0, parseFloat(document.getElementById('transferNum').value)   || 0);
+    const furnishings= Math.max(0, parseFloat(document.getElementById('furnishingsNum').value)|| 0);
+    const annRate    = Math.max(0, parseFloat(document.getElementById('rateNum').value)       || 0);
+    const years      = Math.max(1, parseFloat(document.getElementById('periodNum').value)     || 1);
+    const maintPct   = Math.max(0, parseFloat(document.getElementById('maintNum').value)      || 0);
+
+    // Loan amount hint
+    const loan = Math.max(0, price - deposit);
+    document.getElementById('loanAmountHint').textContent = fmtR(loan);
+
+    // Bond formula
+    const r = annRate / 100 / 12;
+    const n = Math.round(years * 12);
+    let monthlyBond;
+    if (r === 0) {
+      monthlyBond = n > 0 ? loan / n : 0;
+    } else {
+      const pow = Math.pow(1 + r, n);
+      monthlyBond = loan * (r * pow) / (pow - 1);
+    }
+
+    // Running costs from costRows
+    let totalRunning = costRows.reduce((sum, row) => sum + (parseFloat(row.amount) || 0), 0);
+
+    // Add municipal if visible
+    if (municipalVisible) {
+      totalRunning += municipalRows.reduce((sum, row) => sum + (parseFloat(row.amount) || 0), 0);
+    }
+
+    // Maintenance
+    const monthlyMaint = price * (maintPct / 100) / 12;
+
+    // Totals
+    const totalMonthly   = monthlyBond + totalRunning + monthlyMaint;
+    const totalAnnual    = totalMonthly * 12;
+    const totalOverPeriod= totalMonthly * years * 12;
+    const totalUpfront   = deposit + transfer + furnishings;
+
+    // Update DOM
+    document.getElementById('resBond').textContent      = fmtR(monthlyBond);
+    document.getElementById('resRunning').textContent   = fmtR(totalRunning);
+    document.getElementById('resMaint').textContent     = fmtR(monthlyMaint);
+    document.getElementById('resTotal').textContent     = fmtR(totalMonthly);
+    document.getElementById('resAnnual').textContent    = fmtR(totalAnnual);
+    document.getElementById('resOverPeriod').textContent= fmtR(totalOverPeriod);
+    document.getElementById('resUpfront').textContent   = fmtR(totalUpfront);
+
+    // Maintenance display
+    document.getElementById('maintMonthlyDisplay').textContent = fmtR(monthlyMaint);
+
+    // Pie chart breakdown by category
+    // Aggregate running costs by category
+    const catMap = { ratesLevies: 0, utilities: 0, insurance: 0, other: 0 };
+
+    costRows.forEach(row => {
+      const amt = parseFloat(row.amount) || 0;
+      if (catMap.hasOwnProperty(row.category)) {
+        catMap[row.category] += amt;
+      } else {
+        catMap.other += amt;
+      }
+    });
+
+    if (municipalVisible) {
+      // Municipal rows are ratesLevies-like; group as ratesLevies
+      municipalRows.forEach(row => {
+        catMap.ratesLevies += parseFloat(row.amount) || 0;
+      });
+    }
+
+    const slices = [];
+    if (monthlyBond > 0) {
+      slices.push({ label: 'Bond Repayment', value: monthlyBond, color: '#1a6b3c' });
+    }
+    if (catMap.ratesLevies > 0) {
+      slices.push({ label: 'Rates & Levies', value: catMap.ratesLevies, color: '#2563EB' });
+    }
+    if (catMap.utilities > 0) {
+      slices.push({ label: 'Utilities', value: catMap.utilities, color: '#0891B2' });
+    }
+    if (catMap.insurance > 0) {
+      slices.push({ label: 'Insurance', value: catMap.insurance, color: '#7C3AED' });
+    }
+    if (monthlyMaint > 0) {
+      slices.push({ label: 'Maintenance', value: monthlyMaint, color: '#E8A020' });
+    }
+    if (catMap.other > 0) {
+      slices.push({ label: 'Other', value: catMap.other, color: '#78909C' });
+    }
+
+    drawPie(slices);
+    renderLegend(slices, totalMonthly);
+  }
+
+  /* ============================================================
+     PIE CHART
+  ============================================================ */
+  function drawPie(slices) {
+    const canvas = document.getElementById('pieCanvas');
+    const ctx    = canvas.getContext('2d');
+    const dpr    = window.devicePixelRatio || 1;
+    const size   = 180;
+
+    canvas.style.width  = size + 'px';
+    canvas.style.height = size + 'px';
+    canvas.width        = size * dpr;
+    canvas.height       = size * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, size, size);
+
+    const total = slices.reduce((s, sl) => s + sl.value, 0);
+    if (total <= 0 || !slices.length) {
+      // Draw empty ring
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, 72, 0, Math.PI * 2);
+      ctx.strokeStyle = '#e2e0d8';
+      ctx.lineWidth = 24;
+      ctx.stroke();
+      return;
+    }
+
+    const cx = size / 2;
+    const cy = size / 2;
+    const outerR = 72;
+    const innerR = 46;
+    const gap = 0.025; // radians gap between slices
+
+    let startAngle = -Math.PI / 2;
+
+    slices.forEach(sl => {
+      const sweep = (sl.value / total) * (Math.PI * 2) - gap;
+      if (sweep <= 0) return;
+
+      ctx.beginPath();
+      ctx.moveTo(cx + innerR * Math.cos(startAngle + gap / 2),
+                 cy + innerR * Math.sin(startAngle + gap / 2));
+      ctx.arc(cx, cy, outerR, startAngle + gap / 2, startAngle + gap / 2 + sweep);
+      ctx.arc(cx, cy, innerR, startAngle + gap / 2 + sweep, startAngle + gap / 2, true);
+      ctx.closePath();
+      ctx.fillStyle = sl.color;
+      ctx.fill();
+
+      startAngle += sweep + gap;
+    });
+
+    // Centre label
+    const totalMonthly = total;
+    ctx.fillStyle = '#1a1a2e';
+    ctx.font = `700 1.1rem 'Playfair Display', serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const label = totalMonthly >= 1000000
+      ? 'R ' + (totalMonthly / 1000000).toFixed(1) + 'm'
+      : totalMonthly >= 10000
+      ? 'R ' + Math.round(totalMonthly / 1000) + 'k'
+      : 'R ' + Math.round(totalMonthly).toLocaleString('en-ZA');
+
+    ctx.fillText(label, cx, cy - 6);
+    ctx.font = "300 0.62rem 'Epilogue', sans-serif";
+    ctx.fillStyle = '#5a5a72';
+    ctx.fillText('per month', cx, cy + 10);
+  }
+
+  function renderLegend(slices, total) {
+    const el = document.getElementById('pieLegend');
+    if (!slices.length || total <= 0) {
+      el.innerHTML = '';
+      return;
+    }
+    el.innerHTML = slices.map(sl => {
+      const pct = total > 0 ? ((sl.value / total) * 100).toFixed(1) : '0.0';
+      return `<div class="legend-row">
+        <div class="legend-dot" style="background:${sl.color}"></div>
+        <span class="legend-row-label">${escHtml(sl.label)}</span>
+        <span class="legend-row-pct">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  /* ============================================================
+     TOOLTIP CLICK-TOGGLE (mobile)
+  ============================================================ */
+  function initTooltips() {
+    document.querySelectorAll('.tip-icon').forEach(icon => {
+      icon.addEventListener('click', e => {
+        e.stopPropagation();
+        const wrap   = icon.closest('.tip-wrap');
+        const isOpen = wrap.classList.contains('open');
+        document.querySelectorAll('.tip-wrap.open').forEach(w => w.classList.remove('open'));
+        if (!isOpen) wrap.classList.add('open');
+      });
+    });
+  }
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.tip-wrap.open').forEach(w => w.classList.remove('open'));
+  });
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+  renderCostRows();
+  initTooltips();
+  updateMaintDisplay();
+  calculate();
+
+  window.addEventListener('resize', calculate);
+</script>
+</body>
+</html>
