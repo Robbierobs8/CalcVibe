@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overtime Calculator South Africa — BCEA Overtime Pay | CalcVibe</title>
+<meta name="description" content="Calculate overtime pay based on South African BCEA rules. Weekday 1.5×, Sunday and public holiday 2×. Free, accurate, no sign-up required.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* INPUTS */
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  input.no-prefix {
+    padding-left: 1rem;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.85rem 2.5rem 0.85rem 1rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a5a72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background-color: var(--white);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-row-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .info-row-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-row.highlight .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.highlight .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer ul {
+    padding-left: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer ul li {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.3rem;
+  }
+
+  .bcea-strip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    margin: 0.75rem 0;
+  }
+
+  .bcea-strip-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .bcea-strip ul {
+    padding-left: 1rem;
+    margin-bottom: 0;
+  }
+
+  .bcea-strip ul li {
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.15rem;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  /* RELATED */
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>Overtime Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Labour · BCEA</div>
+  <h1>Overtime Calculator</h1>
+  <p class="page-sub">Calculate your overtime pay based on South African BCEA rules.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="calc-body">
+
+      <div class="info-row">
+        <span class="info-row-label">🇿🇦 BCEA Standard Hours</span>
+        <span class="info-row-value">45 hrs / week</span>
+      </div>
+
+      <div class="field">
+        <label for="monthlySalary">Monthly Gross Salary (R)</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="monthlySalary" value="20000" min="0" step="100" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="normalHours">Normal Working Hours Per Week</label>
+        <div class="input-wrap">
+          <input type="number" id="normalHours" value="45" min="1" max="45" step="1" class="no-prefix" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="overtimeHours">Overtime Hours This Week</label>
+        <div class="input-wrap">
+          <input type="number" id="overtimeHours" value="5" min="0" max="15" step="0.5" class="no-prefix" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="overtimeType">Overtime Type</label>
+        <select id="overtimeType" onchange="calculate()">
+          <option value="weekday">Weekday (Mon–Sat) — 1.5×</option>
+          <option value="sunday">Sunday — 2×</option>
+          <option value="holiday">Public Holiday — 2×</option>
+        </select>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <span class="result-label">Normal Hourly Rate</span>
+          <span class="result-value" id="rHourlyRate">R 103.45</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Overtime Multiplier</span>
+          <span class="result-value" id="rMultiplier">1.5×</span>
+        </div>
+        <div class="result-row highlight">
+          <span class="result-label">Overtime Rate Per Hour</span>
+          <span class="result-value" id="rOvertimeRate">R 155.17</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Total Overtime Pay</span>
+          <span class="result-value" id="rTotalOT">R 775.86</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Estimated Monthly Gross (with OT)</span>
+          <span class="result-value" id="rMonthlyWithOT">R 20,775.86</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Explainer -->
+  <div class="explainer">
+    <h2>BCEA Overtime Rules (Section 10)</h2>
+    <p>The Basic Conditions of Employment Act (BCEA) governs overtime in South Africa. Section 10 sets out the rules for overtime work and pay for employees earning below the earnings threshold.</p>
+
+    <div class="bcea-strip">
+      <div class="bcea-strip-title">Key BCEA Overtime Provisions</div>
+      <ul>
+        <li>Overtime is limited to <strong>10 hours per week</strong> and a maximum of <strong>3 hours per day</strong>.</li>
+        <li>Overtime must be by <strong>agreement</strong> between employer and employee.</li>
+        <li>Weekday and Saturday overtime is paid at <strong>1.5× the normal rate</strong>.</li>
+        <li>Sundays and public holidays are paid at <strong>2× the normal rate</strong>.</li>
+        <li>Maximum working hours including overtime must not exceed <strong>12 hours per day</strong>.</li>
+        <li>Compressed working week agreements may differ — consult your employment contract.</li>
+      </ul>
+    </div>
+
+    <p>The normal hourly rate is derived from your monthly salary divided by the average monthly hours (weekly hours × 52 ÷ 12). This gives a consistent hourly base regardless of month length.</p>
+
+    <div class="formula-box">
+      Overtime Pay = (<span>Monthly Salary ÷ (Weekly Hours × 52/12)</span>) × <span>Multiplier</span> × OT Hours
+    </div>
+
+    <p>Note: The BCEA earnings threshold is reviewed periodically. Employees earning above the threshold are not automatically entitled to BCEA overtime provisions, though many employment contracts extend these benefits.</p>
+  </div>
+
+  <!-- Related calculators -->
+  <div class="related">
+    <div class="related-title">Related Calculators</div>
+    <div class="related-grid">
+      <a href="/uif-calculator.html" class="related-card">
+        🛡️ UIF Calculator
+      </a>
+      <a href="/leave-payout-calculator.html" class="related-card">
+        🌴 Leave Payout Calculator
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial & labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. BCEA provisions and earnings thresholds change — always verify with the Department of Employment and Labour or a qualified HR professional.</div>
+</footer>
+
+<script>
+  function fmt(n) {
+    return 'R ' + n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calculate() {
+    const monthlySalary  = parseFloat(document.getElementById('monthlySalary').value)  || 0;
+    const normalHours    = parseFloat(document.getElementById('normalHours').value)    || 45;
+    const overtimeHours  = parseFloat(document.getElementById('overtimeHours').value)  || 0;
+    const overtimeType   = document.getElementById('overtimeType').value;
+
+    // Monthly hours based on 52-week year
+    const monthlyHours = normalHours * 52 / 12;
+    const hourlyRate   = monthlySalary / monthlyHours;
+
+    const multiplier   = (overtimeType === 'weekday') ? 1.5 : 2.0;
+    const overtimeRate = hourlyRate * multiplier;
+    const totalOT      = overtimeRate * overtimeHours;
+    const monthlyWithOT = monthlySalary + totalOT;
+
+    document.getElementById('rHourlyRate').textContent    = fmt(hourlyRate);
+    document.getElementById('rMultiplier').textContent    = multiplier.toFixed(1) + '×';
+    document.getElementById('rOvertimeRate').textContent  = fmt(overtimeRate);
+    document.getElementById('rTotalOT').textContent       = fmt(totalOT);
+    document.getElementById('rMonthlyWithOT').textContent = fmt(monthlyWithOT);
+  }
+
+  // Init
+  calculate();
+</script>
+</body>
+</html>

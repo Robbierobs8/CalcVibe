@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UIF Calculator South Africa — Contributions & Benefits | CalcVibe</title>
+<meta name="description" content="Calculate your UIF contributions and estimate your unemployment benefit. Free South African UIF calculator covering contributions and the income replacement rate.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* MODE TOGGLE */
+  .mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mode-btn {
+    padding: 1rem;
+    border: none;
+    background: none;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .mode-btn.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .mode-btn:first-child { border-right: 1px solid var(--border); }
+
+  /* INPUTS */
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-row-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .info-row-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .field-note {
+    font-size: 0.73rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    margin-top: 0.4rem;
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-row.highlight .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.highlight .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer ul {
+    padding-left: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer ul li {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.3rem;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  /* RELATED */
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>UIF Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Labour · South Africa</div>
+  <h1>UIF Calculator</h1>
+  <p class="page-sub">Calculate your UIF contributions and estimate your benefit if you become unemployed.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnContributions" onclick="setMode('contributions')">
+        💼 Contributions
+      </button>
+      <button class="mode-btn" id="btnBenefits" onclick="setMode('benefits')">
+        🛡️ Benefits
+      </button>
+    </div>
+
+    <div class="calc-body">
+
+      <!-- CONTRIBUTIONS MODE -->
+      <div id="panelContributions">
+        <div class="info-row">
+          <span class="info-row-label">🇿🇦 UIF Remuneration Ceiling</span>
+          <span class="info-row-value">R17,712 / month</span>
+        </div>
+
+        <div class="field">
+          <label for="contribSalary">Monthly Gross Salary (R)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">R</span>
+            <input type="number" id="contribSalary" value="15000" min="0" step="100" oninput="calculate()">
+          </div>
+        </div>
+
+        <div class="results" id="contribResults">
+          <div class="result-row">
+            <span class="result-label">Monthly Salary (capped)</span>
+            <span class="result-value" id="rCappedSalary">R 15,000</span>
+          </div>
+          <div class="result-row highlight">
+            <span class="result-label">Employee Contribution (1%) — you pay</span>
+            <span class="result-value" id="rEmployeeContrib">R 150.00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Employer Contribution (1%) — employer pays</span>
+            <span class="result-value" id="rEmployerContrib">R 150.00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total UIF Contribution</span>
+            <span class="result-value" id="rTotalContrib">R 300.00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Annual Employee Contribution</span>
+            <span class="result-value" id="rAnnualEmployee">R 1,800.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENEFITS MODE -->
+      <div id="panelBenefits" style="display:none">
+        <div class="field">
+          <label for="benefitSalary">Monthly Salary (R)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">R</span>
+            <input type="number" id="benefitSalary" value="15000" min="0" step="100" oninput="calculate()">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="yearsEmployed">Years Employed</label>
+          <div class="input-wrap">
+            <span class="input-prefix" style="left:14px; font-size:0.85rem; color:var(--ink-light);">yrs</span>
+            <input type="number" id="yearsEmployed" value="3" min="0.25" step="0.25" style="padding-left:3rem;" oninput="calculate()">
+          </div>
+          <div class="field-note">Min 13 weeks contributions required to claim</div>
+        </div>
+
+        <div class="results" id="benefitResults">
+          <div class="result-row">
+            <span class="result-label">Daily Earnings</span>
+            <span class="result-value" id="rDailyEarnings">R 500.00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Income Replacement Rate</span>
+            <span class="result-value" id="rIRR">—</span>
+          </div>
+          <div class="result-row highlight">
+            <span class="result-label">Daily UIF Benefit</span>
+            <span class="result-value" id="rDailyBenefit">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Maximum Benefit Period</span>
+            <span class="result-value" id="rBenefitDays">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Estimated Total Benefit</span>
+            <span class="result-value" id="rTotalBenefit">—</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Explainer -->
+  <div class="explainer">
+    <h2>How UIF works in South Africa</h2>
+    <p>The Unemployment Insurance Fund (UIF) is administered by the Department of Employment and Labour. It provides short-term relief to workers who become unemployed, or who are unable to work due to illness, maternity, or adoption leave.</p>
+    <ul>
+      <li>Both the employee and employer each contribute <strong>1% of remuneration</strong> every month.</li>
+      <li>Contributions are capped at a monthly remuneration ceiling — currently <strong>R17,712 per month</strong>.</li>
+      <li>Benefits are paid as a percentage of daily earnings, ranging from <strong>38% to 58%</strong> depending on salary (Income Replacement Rate).</li>
+      <li>The maximum benefit period is <strong>238 days</strong> (approximately 8 months).</li>
+      <li>To qualify, you must have contributed for at least <strong>13 weeks</strong> in the 36 months before claiming.</li>
+      <li>You earn 1 day of benefit credit for every 4 days worked (employment period).</li>
+    </ul>
+    <div class="formula-box">
+      Contribution = <span>min(Salary, R17,712)</span> × 1% &nbsp;|&nbsp;
+      Benefit Days = <span>min(YearsEmployed × 365 ÷ 4, 238)</span>
+    </div>
+    <p>The Income Replacement Rate (IRR) is calculated using the Department of Labour formula: IRR = 29.2 + (7,173.92 ÷ (DailyEarnings + 204)), capped at 58%.</p>
+  </div>
+
+  <!-- Related calculators -->
+  <div class="related">
+    <div class="related-title">Related Calculators</div>
+    <div class="related-grid">
+      <a href="/salary-calculator.html" class="related-card">
+        💰 Salary Calculator
+      </a>
+      <a href="/overtime-calculator.html" class="related-card">
+        ⏱️ Overtime Calculator
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial & labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. UIF rules and ceilings change — always verify with the Department of Employment and Labour or a qualified HR professional.</div>
+</footer>
+
+<script>
+  const UIF_CEILING = 17712;
+  let mode = 'contributions';
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('btnContributions').classList.toggle('active', m === 'contributions');
+    document.getElementById('btnBenefits').classList.toggle('active', m === 'benefits');
+    document.getElementById('panelContributions').style.display = m === 'contributions' ? '' : 'none';
+    document.getElementById('panelBenefits').style.display = m === 'benefits' ? '' : 'none';
+    calculate();
+  }
+
+  function fmt(n) {
+    return 'R ' + n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calculateContributions() {
+    const salary = parseFloat(document.getElementById('contribSalary').value) || 0;
+    const cappedSalary = Math.min(salary, UIF_CEILING);
+    const employeeContrib = cappedSalary * 0.01;
+    const employerContrib = cappedSalary * 0.01;
+    const totalContrib = employeeContrib + employerContrib;
+    const annualEmployee = employeeContrib * 12;
+
+    document.getElementById('rCappedSalary').textContent = fmt(cappedSalary);
+    document.getElementById('rEmployeeContrib').textContent = fmt(employeeContrib);
+    document.getElementById('rEmployerContrib').textContent = fmt(employerContrib);
+    document.getElementById('rTotalContrib').textContent = fmt(totalContrib);
+    document.getElementById('rAnnualEmployee').textContent = fmt(annualEmployee);
+  }
+
+  function calculateBenefits() {
+    const salary = parseFloat(document.getElementById('benefitSalary').value) || 0;
+    const yearsEmployed = parseFloat(document.getElementById('yearsEmployed').value) || 0;
+
+    const dailyEarnings = salary / 30;
+    const IRR = Math.min(0.58, Math.max(0.38, (29.2 + (7173.92 / (dailyEarnings + 204))) / 100));
+    const dailyBenefit = dailyEarnings * IRR;
+    const benefitDays = Math.min(Math.floor(yearsEmployed * 365 / 4), 238);
+    const totalBenefit = dailyBenefit * benefitDays;
+
+    document.getElementById('rDailyEarnings').textContent = fmt(dailyEarnings);
+    document.getElementById('rIRR').textContent = (IRR * 100).toFixed(1) + '%';
+    document.getElementById('rDailyBenefit').textContent = fmt(dailyBenefit);
+    document.getElementById('rBenefitDays').textContent = benefitDays + ' days';
+    document.getElementById('rTotalBenefit').textContent = fmt(totalBenefit);
+  }
+
+  function calculate() {
+    if (mode === 'contributions') {
+      calculateContributions();
+    } else {
+      calculateBenefits();
+    }
+  }
+
+  // Init
+  calculate();
+</script>
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Tax Calculator South Africa — Take-Home Pay | CalcVibe</title>
+<meta name="description" content="Calculate your monthly take-home pay after PAYE, UIF, and medical aid credits. Free South African salary calculator using SARS 2025/2026 tax tables.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* INPUTS */
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .label-note {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  input.has-suffix {
+    padding-right: 2.4rem;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5a72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background-color: var(--white);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-row-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .info-row-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-value.deduct { color: #ff8a8a; }
+  .result-value.credit { color: #6ee9a0; }
+
+  .result-row.total .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.total .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  .result-row.hidden { display: none; }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p:last-child { margin-bottom: 0; }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  /* RELATED */
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>Salary Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Take-Home Pay · South Africa</div>
+  <h1>Salary Calculator</h1>
+  <p class="page-sub">See your monthly take-home pay after PAYE, UIF, and medical aid credits.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="calc-body">
+      <div class="info-row">
+        <span class="info-row-label">🇿🇦 SARS Tax Year</span>
+        <span class="info-row-value">2025 / 2026</span>
+      </div>
+
+      <div class="field">
+        <label>Monthly Gross Salary</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="monthlyGross" placeholder="0" value="25000" oninput="calculate()" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Age Bracket</label>
+        <select id="ageBracket" onchange="calculate()">
+          <option value="under65">Under 65</option>
+          <option value="65to74">65 – 74</option>
+          <option value="75plus">75+</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Medical Aid Members</label>
+        <select id="medMembers" onchange="calculate()">
+          <option value="0">None</option>
+          <option value="1">1 member (you only)</option>
+          <option value="2">2 members (you + 1 dependant)</option>
+          <option value="3">3 members</option>
+          <option value="4">4 members</option>
+          <option value="5">5+ members</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="label-row">
+          <label style="margin-bottom:0">Retirement Fund Contribution</label>
+          <span class="label-note">Reduces taxable income</span>
+        </div>
+        <div class="input-wrap" style="margin-top:0.5rem">
+          <span class="input-prefix" style="left:14px;font-size:1rem">%</span>
+          <input type="number" id="retirementPct" placeholder="0" value="0" oninput="calculate()" min="0" max="27.5" step="0.5" style="padding-left:2.2rem">
+        </div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="result-row">
+          <span class="result-label">Gross Monthly Salary</span>
+          <span class="result-value" id="resGross">R 0</span>
+        </div>
+        <div class="result-row" id="rowRetirement">
+          <span class="result-label">Retirement Deduction</span>
+          <span class="result-value deduct" id="resRetirement">− R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Taxable Monthly Income</span>
+          <span class="result-value" id="resTaxableMonthly">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Monthly PAYE</span>
+          <span class="result-value deduct" id="resPAYE">− R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">UIF (1%, capped at R177.12)</span>
+          <span class="result-value deduct" id="resUIF">− R 0</span>
+        </div>
+        <div class="result-row" id="rowMedCredit">
+          <span class="result-label">Medical Aid Tax Credit</span>
+          <span class="result-value credit" id="resMedCredit">+ R 0</span>
+        </div>
+        <div class="result-row total">
+          <span class="result-label">Net Take-Home Pay</span>
+          <span class="result-value" id="resNetPay">R 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explainer -->
+  <div class="explainer">
+    <h2>How your take-home pay is calculated</h2>
+    <p><strong>PAYE (Pay As You Earn)</strong> is income tax withheld by your employer each month. It is calculated by annualising your taxable monthly income, applying the SARS 2025/2026 sliding-scale brackets, subtracting applicable rebates and medical credits, then dividing by 12.</p>
+
+    <div class="formula-box">Net Pay = Gross − PAYE (after credits) − UIF</div>
+
+    <p><strong>UIF (Unemployment Insurance Fund)</strong> is 1% of your gross monthly salary, capped at <span style="font-weight:500;color:var(--ink)">R177.12 per month</span> (i.e., the cap applies once your gross exceeds R17,712/month). Your employer contributes a further 1% — that does not come off your pay.</p>
+
+    <p><strong>Retirement fund contributions</strong> (pension, provident, or retirement annuity) reduce your taxable income by the contribution amount, up to a SARS maximum of 27.5% of the greater of remuneration or taxable income. Entering a percentage here lowers your PAYE accordingly.</p>
+
+    <p><strong>Medical Aid Tax Credits</strong> are applied against your monthly PAYE. They are non-refundable — your PAYE is reduced to zero at most; the credit cannot produce a cash refund.</p>
+
+    <p>SDL (Skills Development Levy) is paid entirely by the employer and is not deducted from your salary. This calculator provides an estimate — your actual payslip may differ due to company-specific policies, benefits, or additional deductions.</p>
+  </div>
+
+  <!-- Related calculators -->
+  <div class="related">
+    <div class="related-title">Related Calculators</div>
+    <div class="related-grid">
+      <a href="/income-tax-calculator.html" class="related-card">
+        🧾 Income Tax Calculator
+      </a>
+      <a href="/thirteenth-cheque-calculator.html" class="related-card">
+        🎁 13th Cheque Calculator
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial &amp; labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. Tax legislation may change — always verify with SARS or a registered tax practitioner.</div>
+</footer>
+
+<script>
+  const BRACKETS = [
+    { min: 0,       max: 237100,   base: 0,      rate: 0.18 },
+    { min: 237100,  max: 370500,   base: 42678,  rate: 0.26 },
+    { min: 370500,  max: 512800,   base: 77362,  rate: 0.31 },
+    { min: 512800,  max: 673000,   base: 121475, rate: 0.36 },
+    { min: 673000,  max: 857900,   base: 179147, rate: 0.39 },
+    { min: 857900,  max: 1817000,  base: 251258, rate: 0.41 },
+    { min: 1817000, max: Infinity, base: 644489, rate: 0.45 }
+  ];
+
+  const REBATES = {
+    under65: 17235,
+    '65to74': 17235 + 9444,
+    '75plus': 17235 + 9444 + 3145
+  };
+
+  function calcTaxBeforeRebates(annualIncome) {
+    for (let i = BRACKETS.length - 1; i >= 0; i--) {
+      const b = BRACKETS[i];
+      if (annualIncome > b.min) {
+        return b.base + (annualIncome - b.min) * b.rate;
+      }
+    }
+    return 0;
+  }
+
+  function calcMonthlyMedCredit(members) {
+    const m = parseInt(members, 10);
+    if (m === 0) return 0;
+    if (m === 1) return 364;
+    if (m === 2) return 364 * 2;
+    return 364 * 2 + 246 * (m - 2);
+  }
+
+  function fmt(n) {
+    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function fmtDeduct(n) {
+    return '− R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function fmtCredit(n) {
+    return '+ R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function calculate() {
+    const monthlyGross = parseFloat(document.getElementById('monthlyGross').value) || 0;
+    const age = document.getElementById('ageBracket').value;
+    const members = document.getElementById('medMembers').value;
+    const retirementPct = Math.min(27.5, Math.max(0, parseFloat(document.getElementById('retirementPct').value) || 0));
+
+    // Retirement deduction
+    const retirementDeduction = monthlyGross * (retirementPct / 100);
+    const taxableMonthly = monthlyGross - retirementDeduction;
+
+    // Annual PAYE
+    const annualTaxable = taxableMonthly * 12;
+    const taxBeforeRebates = Math.max(0, calcTaxBeforeRebates(annualTaxable));
+    const rebate = REBATES[age];
+    const annualPAYE = Math.max(0, taxBeforeRebates - rebate);
+    let monthlyPAYE = annualPAYE / 12;
+
+    // Medical credit applied against PAYE (non-refundable)
+    const monthlyMedCredit = calcMonthlyMedCredit(members);
+    const monthlyPAYE_afterCredit = Math.max(0, monthlyPAYE - monthlyMedCredit);
+
+    // UIF: 1% of gross, capped at R177.12
+    const uif = Math.min(monthlyGross * 0.01, 177.12);
+
+    // Net take-home
+    const netPay = monthlyGross - monthlyPAYE_afterCredit - uif;
+
+    // Update DOM
+    document.getElementById('resGross').textContent = fmt(monthlyGross);
+    document.getElementById('resRetirement').textContent = fmtDeduct(retirementDeduction);
+    document.getElementById('resTaxableMonthly').textContent = fmt(taxableMonthly);
+    document.getElementById('resPAYE').textContent = fmtDeduct(monthlyPAYE_afterCredit);
+    document.getElementById('resUIF').textContent = fmtDeduct(uif);
+    document.getElementById('resMedCredit').textContent = fmtCredit(monthlyMedCredit);
+    document.getElementById('resNetPay').textContent = fmt(Math.max(0, netPay));
+
+    // Show/hide retirement row
+    document.getElementById('rowRetirement').classList.toggle('hidden', retirementDeduction === 0);
+
+    // Show/hide medical credit row
+    document.getElementById('rowMedCredit').classList.toggle('hidden', monthlyMedCredit === 0);
+  }
+
+  // Init
+  calculate();
+</script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bond Repayment Calculator South Africa | CalcVibe</title>
+<meta name="description" content="Calculate your monthly bond repayment in South Africa. Enter property price, deposit, interest rate and term to see your monthly payment instantly.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* INPUTS */
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"].no-prefix {
+    padding-left: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-row-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .info-row-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .loan-amount-hint {
+    margin-top: 0.45rem;
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    font-weight: 400;
+  }
+
+  .loan-amount-hint strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-row.highlight .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.highlight .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  .result-value.deduct {
+    color: #ff8a8a;
+  }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+    line-height: 1.8;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  /* RELATED */
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>Bond Repayment Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Home Loans · South Africa</div>
+  <h1>Bond Repayment Calculator</h1>
+  <p class="page-sub">Calculate your monthly bond repayment at current South African home loan rates.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="calc-body">
+
+      <div class="info-row">
+        <span class="info-row-label">🇿🇦 SA Prime Rate</span>
+        <span class="info-row-value">11.25%</span>
+      </div>
+
+      <div class="field">
+        <label for="propertyPrice">Property Price</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="propertyPrice" value="1500000" min="0" step="1000" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="deposit">Deposit</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="deposit" value="150000" min="0" step="1000" oninput="calculate()">
+        </div>
+        <div class="loan-amount-hint">Loan amount: <strong id="loanAmountHint">R 1,350,000</strong></div>
+      </div>
+
+      <div class="field">
+        <label for="interestRate">Annual Interest Rate</label>
+        <div class="input-wrap">
+          <input type="number" id="interestRate" class="no-prefix" value="11.75" min="0" max="40" step="0.25" oninput="calculate()">
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="loanTerm">Loan Term (years)</label>
+        <div class="input-wrap">
+          <input type="number" id="loanTerm" class="no-prefix" value="20" min="1" max="30" step="1" oninput="calculate()">
+          <span class="input-suffix">yrs</span>
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <span class="result-label">Loan Amount</span>
+          <span class="result-value" id="resLoanAmount">R 1,350,000</span>
+        </div>
+        <div class="result-row highlight">
+          <span class="result-label">Monthly Repayment</span>
+          <span class="result-value" id="resMonthly">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Total Repayment</span>
+          <span class="result-value" id="resTotal">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Total Interest Paid</span>
+          <span class="result-value deduct" id="resInterest">R 0</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How bond repayments are calculated</h2>
+    <p>A South African home loan (bond) uses a standard amortisation formula. Each monthly payment covers both interest and a portion of the outstanding principal, so the balance reduces to zero over the loan term.</p>
+
+    <div class="formula-box">
+      M = <span>P × [r(1+r)^n]</span> / <span>[(1+r)^n − 1]</span><br>
+      Where: <span>P</span> = loan amount &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months (years × 12)
+    </div>
+
+    <p>The <strong>SA Prime Rate</strong> is currently 11.25% (as of May 2025). Most major banks — Absa, FNB, Nedbank, Standard Bank and SA Home Loans — offer rates between prime and prime + 2%, depending on your credit profile and deposit size. A 10% deposit typically attracts a better rate than a 0% deposit loan.</p>
+
+    <p>The default rate used here is <strong>prime + 0.5% (11.75%)</strong>, a common starting point for borrowers with good credit. Adjust the rate field to match your bank's offer.</p>
+
+    <p>Total interest paid is shown in red to illustrate the long-term cost of the loan. A larger deposit or a shorter term significantly reduces total interest. Note that this calculator does not include bond registration costs, transfer duties or monthly bank fees.</p>
+  </div>
+
+  <div class="related">
+    <div class="related-title">Related Calculators</div>
+    <div class="related-grid">
+      <a href="/vat-calculator.html" class="related-card">
+        🧾 VAT Calculator
+      </a>
+      <a href="/thirteenth-cheque-calculator.html" class="related-card">
+        🎁 13th Cheque Calculator
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial &amp; labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. Interest rates change — always confirm your rate with your bank or a registered mortgage originator. Bond registration costs, transfer duties and monthly fees are not included.</div>
+</footer>
+
+<script>
+  function fmt(n) {
+    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function calculate() {
+    const price    = parseFloat(document.getElementById('propertyPrice').value) || 0;
+    const deposit  = parseFloat(document.getElementById('deposit').value) || 0;
+    const annRate  = parseFloat(document.getElementById('interestRate').value) || 0;
+    const years    = parseFloat(document.getElementById('loanTerm').value) || 0;
+
+    const P = Math.max(0, price - deposit);
+    const r = annRate / 100 / 12;
+    const n = years * 12;
+
+    document.getElementById('loanAmountHint').textContent = fmt(P);
+    document.getElementById('resLoanAmount').textContent  = fmt(P);
+
+    if (P <= 0 || n <= 0) {
+      document.getElementById('resMonthly').textContent  = fmt(0);
+      document.getElementById('resTotal').textContent    = fmt(0);
+      document.getElementById('resInterest').textContent = fmt(0);
+      return;
+    }
+
+    let monthly;
+    if (r === 0) {
+      monthly = P / n;
+    } else {
+      monthly = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    }
+
+    const totalRepayment = monthly * n;
+    const totalInterest  = totalRepayment - P;
+
+    document.getElementById('resMonthly').textContent  = fmt(monthly);
+    document.getElementById('resTotal').textContent    = fmt(totalRepayment);
+    document.getElementById('resInterest').textContent = fmt(totalInterest);
+  }
+
+  // Init
+  calculate();
+</script>
+</body>
+</html>

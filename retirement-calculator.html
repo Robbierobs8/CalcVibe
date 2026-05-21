@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retirement Calculator South Africa | CalcVibe</title>
+<meta name="description" content="Project your South African retirement savings. Calculate your RA fund value, real purchasing power and sustainable monthly income using SA pension rules.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* INPUTS */
+  .calc-body { padding: 1.75rem; }
+
+  .field { margin-bottom: 1.25rem; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .field-row .field { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.2rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"].no-prefix {
+    padding-left: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  input[type="number"].age-input {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: center;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-row-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .info-row-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .result-row + .result-row {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .result-value {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-row.highlight .result-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .result-row.highlight .result-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6ee9a0;
+  }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .explainer h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .explainer p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0.75rem 0;
+    line-height: 1.8;
+  }
+
+  .formula-box span { color: var(--accent); font-weight: 600; }
+
+  /* RELATED */
+  .related {
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.45s both;
+  }
+
+  .related-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .related-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>Retirement Calculator</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Retirement Planning · South Africa</div>
+  <h1>Retirement Calculator</h1>
+  <p class="page-sub">Project your retirement savings using South African RA and pension rules.</p>
+</div>
+
+<main>
+  <div class="calc-card">
+    <div class="calc-body">
+
+      <div class="info-row">
+        <span class="info-row-label">🇿🇦 RA Tax Deduction Limit</span>
+        <span class="info-row-value">27.5% of income (max R350,000/yr)</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="currentAge">Current Age</label>
+          <div class="input-wrap">
+            <input type="number" id="currentAge" class="age-input" value="30" min="18" max="70" step="1" oninput="calculate()">
+          </div>
+        </div>
+        <div class="field">
+          <label for="retirementAge">Retirement Age</label>
+          <div class="input-wrap">
+            <input type="number" id="retirementAge" class="age-input" value="65" min="50" max="75" step="1" oninput="calculate()">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="currentSavings">Current Savings</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="currentSavings" value="0" min="0" step="1000" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="monthlyContrib">Monthly Contribution</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R</span>
+          <input type="number" id="monthlyContrib" value="3000" min="0" step="100" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="annualReturn">Expected Annual Return</label>
+          <div class="input-wrap">
+            <input type="number" id="annualReturn" class="no-prefix" value="10.0" min="0" max="30" step="0.5" oninput="calculate()">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="inflation">Expected Inflation</label>
+          <div class="input-wrap">
+            <input type="number" id="inflation" class="no-prefix" value="6.0" min="0" max="20" step="0.5" oninput="calculate()">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-row highlight">
+          <span class="result-label">Projected Fund Value (nominal)</span>
+          <span class="result-value" id="resNominal">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Real Value (inflation-adjusted)</span>
+          <span class="result-value" id="resReal">R 0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Years to Retirement</span>
+          <span class="result-value" id="resYears">0 years</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Est. Monthly Income (4% drawdown)</span>
+          <span class="result-value" id="resIncome">R 0</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How South African retirement savings are projected</h2>
+    <p>This calculator uses the standard future-value formula for a present lump sum combined with regular monthly contributions, compounded at your expected annual return:</p>
+
+    <div class="formula-box">
+      FV = <span>PV × (1 + r)^n</span> + <span>PMT × [((1 + r)^n − 1) / r]</span><br>
+      Where: <span>PV</span> = current savings &nbsp;|&nbsp; <span>PMT</span> = monthly contribution &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months to retirement
+    </div>
+
+    <p>The <strong>real (inflation-adjusted) value</strong> is calculated by discounting the nominal fund value at your expected inflation rate over the same period: Real Value = Nominal ÷ (1 + inflation)^years. This tells you what your fund will be worth in today's money.</p>
+
+    <p>The <strong>4% drawdown rule</strong> is a widely used guideline suggesting you can withdraw 4% of your portfolio per year in retirement without depleting the fund over a 30-year horizon. The estimated monthly income shown is: Real Value × 4% ÷ 12.</p>
+
+    <p><strong>South African RA tax rules (as of 2025/26):</strong></p>
+    <p>Contributions to a Retirement Annuity (RA) or pension fund are tax-deductible up to <strong>27.5% of your taxable income</strong>, capped at <strong>R350,000 per year</strong>. Any unused deductions are carried forward and can offset tax at retirement.</p>
+
+    <p>At retirement you may take up to one-third of your fund as a lump sum. The <strong>first R550,000 is tax-free</strong> (lifetime limit). The remainder must be used to purchase an annuity, which provides your monthly pension income.</p>
+
+    <p>This calculator provides a projection only — it assumes a constant return and contribution and does not account for tax on withdrawals, fund fees, or changes in legislation. Speak to a registered financial adviser for personalised retirement planning.</p>
+  </div>
+
+  <div class="related">
+    <div class="related-title">Related Calculators</div>
+    <div class="related-grid">
+      <a href="/compound-interest-calculator.html" class="related-card">
+        📈 Compound Interest
+      </a>
+      <a href="/thirteenth-cheque-calculator.html" class="related-card">
+        🎁 13th Cheque Calculator
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial &amp; labour calculators</div>
+  <div class="footer-disclaimer">For estimation purposes only. This is not financial advice. Returns are not guaranteed. Consult a registered financial adviser before making retirement planning decisions. Tax rules are subject to change — verify with SARS or a tax professional.</div>
+</footer>
+
+<script>
+  function fmt(n) {
+    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  }
+
+  function calculate() {
+    const currentAge    = parseFloat(document.getElementById('currentAge').value)    || 0;
+    const retirementAge = parseFloat(document.getElementById('retirementAge').value) || 0;
+    const PV            = parseFloat(document.getElementById('currentSavings').value) || 0;
+    const PMT           = parseFloat(document.getElementById('monthlyContrib').value) || 0;
+    const annReturn     = parseFloat(document.getElementById('annualReturn').value)   || 0;
+    const annInflation  = parseFloat(document.getElementById('inflation').value)      || 0;
+
+    const years = Math.max(0, retirementAge - currentAge);
+    const n     = years * 12;           // months
+    const r     = annReturn / 100 / 12; // monthly nominal rate
+
+    document.getElementById('resYears').textContent = years + (years === 1 ? ' year' : ' years');
+
+    if (years <= 0) {
+      document.getElementById('resNominal').textContent = fmt(0);
+      document.getElementById('resReal').textContent    = fmt(0);
+      document.getElementById('resIncome').textContent  = fmt(0);
+      return;
+    }
+
+    let nominalFV;
+    if (r === 0) {
+      // Zero return edge case: simple sum
+      nominalFV = PV + PMT * n;
+    } else {
+      const growth = Math.pow(1 + r, n);
+      nominalFV = PV * growth + PMT * ((growth - 1) / r);
+    }
+
+    const realFV        = nominalFV / Math.pow(1 + annInflation / 100, years);
+    const monthlyIncome = realFV * 0.04 / 12;
+
+    document.getElementById('resNominal').textContent = fmt(nominalFV);
+    document.getElementById('resReal').textContent    = fmt(realFV);
+    document.getElementById('resIncome').textContent  = fmt(monthlyIncome);
+  }
+
+  // Init
+  calculate();
+</script>
+</body>
+</html>
