@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -802,7 +802,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="number" class="field-num" id="priceNum" value="1900000" min="0" step="100000" style="width:90px" oninput="onNumInput('priceNum','priceSlider',20000000); updateMaintDisplay();">
+                <input type="text" inputmode="numeric" class="field-num" id="priceNum" value="1 900 000" style="width:102px" oninput="onNumInput('priceNum','priceSlider',20000000); updateMaintDisplay();" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="priceSlider" min="200000" max="20000000" step="100000" value="1900000" oninput="onSlider('priceSlider','priceNum',false); updateMaintDisplay();">
@@ -817,7 +817,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="number" class="field-num" id="depositNum" value="180000" min="0" step="10000" style="width:80px" oninput="onNumInput('depositNum','depositSlider',5000000);">
+                <input type="text" inputmode="numeric" class="field-num" id="depositNum" value="180 000" style="width:90px" oninput="onNumInput('depositNum','depositSlider',5000000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="depositSlider" min="0" max="5000000" step="10000" value="180000" oninput="onSlider('depositSlider','depositNum',false);">
@@ -833,7 +833,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="number" class="field-num" id="transferNum" value="40500" min="0" step="1000" style="width:70px" oninput="onNumInput('transferNum','transferSlider',500000);">
+                <input type="text" inputmode="numeric" class="field-num" id="transferNum" value="40 500" style="width:80px" oninput="onNumInput('transferNum','transferSlider',500000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="transferSlider" min="0" max="500000" step="1000" value="40500" oninput="onSlider('transferSlider','transferNum',false);">
@@ -848,7 +848,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="number" class="field-num" id="furnishingsNum" value="150000" min="0" step="10000" style="width:70px" oninput="onNumInput('furnishingsNum','furnishingsSlider',2000000);">
+                <input type="text" inputmode="numeric" class="field-num" id="furnishingsNum" value="150 000" style="width:80px" oninput="onNumInput('furnishingsNum','furnishingsSlider',2000000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="furnishingsSlider" min="0" max="2000000" step="10000" value="150000" oninput="onSlider('furnishingsSlider','furnishingsNum',false);">
@@ -1074,6 +1074,14 @@
   /* ============================================================
      FORMATTING
   ============================================================ */
+  function fmtVal(n) {
+    const num = Math.round(parseFloat(n) || 0);
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function parseVal(s) {
+    return parseFloat(String(s || '').replace(/[ \s,]/g, '')) || 0;
+  }
+
   function fmtR(n) {
     return 'R ' + Math.round(n).toLocaleString('en-ZA');
   }
@@ -1086,15 +1094,16 @@
      SLIDER / NUMBER INPUT SYNC
   ============================================================ */
   function onSlider(sliderId, numId, isRate) {
-    const val = parseFloat(document.getElementById(sliderId).value);
-    document.getElementById(numId).value = isRate ? val.toFixed(1) : Math.round(val);
+    const val   = parseFloat(document.getElementById(sliderId).value);
+    const input = document.getElementById(numId);
+    input.value = isRate ? val.toFixed(1) : (input.type === 'text' ? fmtVal(val) : Math.round(val));
     calculate();
   }
 
   function onNumInput(numId, sliderId, sliderMax) {
     const slider = document.getElementById(sliderId);
-    const raw = document.getElementById(numId).value;
-    const val = parseFloat(raw);
+    const input  = document.getElementById(numId);
+    const val    = input.type === 'text' ? parseVal(input.value) : parseFloat(input.value);
     if (!isNaN(val)) {
       slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
     }
@@ -1125,9 +1134,8 @@
           placeholder="Cost label"
           oninput="updateRowLabel(${row.id}, this.value)">
         <span class="cost-row-r">R</span>
-        <input type="number" class="cost-row-amount"
-          value="${row.amount}"
-          min="0" step="100"
+        <input type="text" inputmode="numeric" class="cost-row-amount"
+          value="${fmtVal(row.amount)}"
           oninput="updateRowAmount(${row.id}, this.value)">
         <button class="cost-row-remove" onclick="removeRow(${row.id})" title="Remove">&times;</button>
       </div>
@@ -1143,9 +1151,8 @@
           placeholder="Cost label"
           oninput="updateMunicipalLabel('${row.id}', this.value)">
         <span class="cost-row-r">R</span>
-        <input type="number" class="cost-row-amount"
-          value="${row.amount}"
-          min="0" step="100"
+        <input type="text" inputmode="numeric" class="cost-row-amount"
+          value="${fmtVal(row.amount)}"
           oninput="updateMunicipalAmount('${row.id}', this.value)">
       </div>
     `).join('');
@@ -1178,7 +1185,7 @@
 
   function updateRowAmount(id, val) {
     const row = costRows.find(r => r.id === id);
-    if (row) { row.amount = parseFloat(val) || 0; }
+    if (row) { row.amount = parseVal(val); }
     calculate();
   }
 
@@ -1189,7 +1196,7 @@
 
   function updateMunicipalAmount(id, val) {
     const row = municipalRows.find(r => r.id === id);
-    if (row) { row.amount = parseFloat(val) || 0; }
+    if (row) { row.amount = parseVal(val); }
     calculate();
   }
 
@@ -1209,7 +1216,7 @@
      MAINTENANCE DISPLAY
   ============================================================ */
   function updateMaintDisplay() {
-    const price = Math.max(0, parseFloat(document.getElementById('priceNum').value) || 0);
+    const price = Math.max(0, parseVal(document.getElementById('priceNum').value));
     const pct   = Math.max(0, parseFloat(document.getElementById('maintNum').value) || 0);
     const monthly = price * (pct / 100) / 12;
     document.getElementById('maintMonthlyDisplay').textContent = fmtR(monthly);
@@ -1220,10 +1227,10 @@
   ============================================================ */
   function calculate() {
     // Inputs
-    const price      = Math.max(0, parseFloat(document.getElementById('priceNum').value)      || 0);
-    const deposit    = Math.max(0, parseFloat(document.getElementById('depositNum').value)    || 0);
-    const transfer   = Math.max(0, parseFloat(document.getElementById('transferNum').value)   || 0);
-    const furnishings= Math.max(0, parseFloat(document.getElementById('furnishingsNum').value)|| 0);
+    const price      = Math.max(0, parseVal(document.getElementById('priceNum').value));
+    const deposit    = Math.max(0, parseVal(document.getElementById('depositNum').value));
+    const transfer   = Math.max(0, parseVal(document.getElementById('transferNum').value));
+    const furnishings= Math.max(0, parseVal(document.getElementById('furnishingsNum').value));
     const annRate    = Math.max(0, parseFloat(document.getElementById('rateNum').value)       || 0);
     const years      = Math.max(1, parseFloat(document.getElementById('periodNum').value)     || 1);
     const maintPct   = Math.max(0, parseFloat(document.getElementById('maintNum').value)      || 0);
@@ -1425,6 +1432,18 @@
   /* ============================================================
      INIT
   ============================================================ */
+  document.addEventListener('focus', function(e) {
+    if (e.target.classList.contains('cost-row-amount')) {
+      e.target.value = String(parseVal(e.target.value) || '');
+    }
+  }, true);
+  document.addEventListener('blur', function(e) {
+    if (e.target.classList.contains('cost-row-amount')) {
+      e.target.value = fmtVal(parseVal(e.target.value));
+      calculate();
+    }
+  }, true);
+
   renderCostRows();
   initTooltips();
   updateMaintDisplay();

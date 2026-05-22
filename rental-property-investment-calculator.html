@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1022,7 +1022,7 @@ footer {
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="number" class="field-num" id="priceNum" value="1500000" style="width:90px" oninput="onNumInput('priceNum','priceSlider',20000000)">
+                <input type="text" inputmode="numeric" class="field-num" id="priceNum" value="1 500 000" style="width:102px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('priceNum','priceSlider',20000000)">
               </div>
             </div>
             <input type="range" id="priceSlider" min="200000" max="20000000" step="100000" value="1500000" oninput="onSlider('priceSlider','priceNum',false)">
@@ -1037,7 +1037,7 @@ footer {
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="number" class="field-num" id="depositNum" value="150000" style="width:80px" oninput="onNumInput('depositNum','depositSlider',5000000)">
+                <input type="text" inputmode="numeric" class="field-num" id="depositNum" value="150 000" style="width:90px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('depositNum','depositSlider',5000000)">
               </div>
             </div>
             <input type="range" id="depositSlider" min="0" max="5000000" step="10000" value="150000" oninput="onSlider('depositSlider','depositNum',false)">
@@ -1164,7 +1164,7 @@ footer {
                 </span>
                 <div class="field-num-wrap">
                   <span class="field-unit">R</span>
-                  <input type="number" class="field-num" id="nightRateNum" value="1700" style="width:56px" oninput="onNumInput('nightRateNum','nightRateSlider',10000)">
+                  <input type="text" inputmode="numeric" class="field-num" id="nightRateNum" value="1 700" style="width:72px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('nightRateNum','nightRateSlider',10000)">
                 </div>
               </div>
               <input type="range" id="nightRateSlider" min="100" max="10000" step="50" value="1700" oninput="onSlider('nightRateSlider','nightRateNum',false)">
@@ -1225,7 +1225,7 @@ footer {
                 </span>
                 <div class="field-num-wrap">
                   <span class="field-unit">R</span>
-                  <input type="number" class="field-num" id="rentNum" value="12000" style="width:66px" oninput="onNumInput('rentNum','rentSlider',100000)">
+                  <input type="text" inputmode="numeric" class="field-num" id="rentNum" value="12 000" style="width:78px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('rentNum','rentSlider',100000)">
                 </div>
               </div>
               <input type="range" id="rentSlider" min="1000" max="100000" step="500" value="12000" oninput="onSlider('rentSlider','rentNum',false)">
@@ -1508,14 +1508,24 @@ const MUNICIPAL_DEFAULTS = [
 // =============================================
 // HELPERS
 // =============================================
+function fmtVal(n) {
+  const num = Math.round(parseFloat(n) || 0);
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+function parseVal(s) {
+  return parseFloat(String(s || '').replace(/[ \s,]/g, '')) || 0;
+}
+
 function fmtR(n, decimals) {
   if (isNaN(n) || !isFinite(n)) return '—';
   const abs = Math.abs(n);
   const sign = n < 0 ? '-' : '';
   if (decimals !== undefined) {
-    return sign + 'R ' + abs.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const parts = abs.toFixed(decimals).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return sign + 'R ' + parts.join('.');
   }
-  return sign + 'R ' + Math.round(abs).toLocaleString('en-ZA');
+  return sign + 'R ' + Math.round(abs).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
 function fmtPct(n, dec) {
@@ -1523,21 +1533,26 @@ function fmtPct(n, dec) {
   return (n).toFixed(dec !== undefined ? dec : 1) + '%';
 }
 
-function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function v(id) {
+  const inp = document.getElementById(id);
+  return inp ? (inp.type === 'text' ? parseVal(inp.value) : parseFloat(inp.value) || 0) : 0;
+}
 function el(id) { return document.getElementById(id); }
 
 // =============================================
 // DUAL-MODE SLIDER/NUM SYNC
 // =============================================
 function onSlider(sliderId, numId, isRate) {
-  const val = parseFloat(el(sliderId).value);
-  el(numId).value = isRate ? val.toFixed(1) : val;
+  const val   = parseFloat(el(sliderId).value);
+  const input = el(numId);
+  input.value = isRate ? val.toFixed(1) : (input.type === 'text' ? fmtVal(val) : val);
   calculate();
 }
 
 function onNumInput(numId, sliderId, sliderMax) {
   const slider = el(sliderId);
-  const val = parseFloat(el(numId).value);
+  const input  = el(numId);
+  const val    = input.type === 'text' ? parseVal(input.value) : parseFloat(input.value);
   if (!isNaN(val)) {
     slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
   }
@@ -1601,7 +1616,7 @@ function renderCostRows() {
         oninput="updateRowLabel(${row.id}, this.value)">
       <div class="cost-row-amount-wrap">
         <span class="cost-row-unit">R</span>
-        <input type="number" class="cost-row-amount" value="${row.amount}"
+        <input type="text" inputmode="numeric" class="cost-row-amount" value="${fmtVal(row.amount)}"
           oninput="updateRowAmount(${row.id}, this.value)">
       </div>
       <button class="cost-row-remove" onclick="removeRow(${row.id})" title="Remove">×</button>
@@ -1620,7 +1635,7 @@ function renderMunicipalRows() {
       <span style="flex:1;font-size:0.8rem;color:var(--ink);font-weight:500">${escHtml(row.label)}</span>
       <div class="cost-row-amount-wrap">
         <span class="cost-row-unit">R</span>
-        <input type="number" class="cost-row-amount" id="${row.id}" value="${row.amount}"
+        <input type="text" inputmode="numeric" class="cost-row-amount" id="${row.id}" value="${fmtVal(row.amount)}"
           oninput="calculate()">
       </div>
     `;
@@ -1647,7 +1662,7 @@ function updateRowLabel(id, label) {
 
 function updateRowAmount(id, val) {
   const row = costRows.find(r => r.id === id);
-  if (row) { row.amount = parseFloat(val) || 0; calculate(); }
+  if (row) { row.amount = parseVal(val); calculate(); }
 }
 
 function checkDoubleCount() {
@@ -1670,7 +1685,7 @@ function getMunicipalTotal() {
   if (!municipalVisible) return 0;
   return MUNICIPAL_DEFAULTS.reduce((sum, row) => {
     const inp = el(row.id);
-    return sum + (inp ? parseFloat(inp.value) || 0 : 0);
+    return sum + (inp ? parseVal(inp.value) : 0);
   }, 0);
 }
 
@@ -1932,6 +1947,17 @@ function initTooltips() {
 // =============================================
 // INIT
 // =============================================
+document.addEventListener('focus', function(e) {
+  if (e.target.classList.contains('cost-row-amount')) {
+    e.target.value = String(parseVal(e.target.value) || '');
+  }
+}, true);
+document.addEventListener('blur', function(e) {
+  if (e.target.classList.contains('cost-row-amount')) {
+    e.target.value = fmtVal(parseVal(e.target.value));
+    calculate();
+  }
+}, true);
 initCostRows();
 initTooltips();
 setMode('short'); // sets up display + initial calc

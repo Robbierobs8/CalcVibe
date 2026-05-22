@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -718,7 +718,10 @@
           <span class="label-with-tip">Initial Investment <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The lump sum you're starting with — this could be savings you already have.</span></span></span>
           <div class="field-num-wrap">
             <span class="field-unit">R</span>
-            <input type="number" class="field-num" id="principalNum" value="10000" min="0" step="1000" style="width:82px" oninput="onNumInput('principalNum','principal',500000)">
+            <input type="text" inputmode="numeric" class="field-num" id="principalNum" value="10 000" style="width:96px"
+              oninput="onNumInput('principalNum','principal',500000)"
+              onfocus="this.value=String(parseVal(this.value)||'')"
+              onblur="this.value=fmtVal(parseVal(this.value));calculate()">
           </div>
         </div>
         <input type="range" id="principal" min="100" max="500000" step="1000" value="10000" oninput="onSlider('principal','principalNum',false)">
@@ -729,7 +732,10 @@
           <span class="label-with-tip">Monthly Contribution <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The amount you add every month going forward. Even small amounts make a big difference over time.</span></span></span>
           <div class="field-num-wrap">
             <span class="field-unit">R</span>
-            <input type="number" class="field-num" id="monthlyNum" value="500" min="0" step="100" style="width:72px" oninput="onNumInput('monthlyNum','monthly',20000)">
+            <input type="text" inputmode="numeric" class="field-num" id="monthlyNum" value="500" style="width:80px"
+              oninput="onNumInput('monthlyNum','monthly',20000)"
+              onfocus="this.value=String(parseVal(this.value)||'')"
+              onblur="this.value=fmtVal(parseVal(this.value));calculate()">
           </div>
         </div>
         <input type="range" id="monthly" min="0" max="20000" step="100" value="500" oninput="onSlider('monthly','monthlyNum',false)">
@@ -877,19 +883,29 @@
 <script>
   let chartData = [];
 
+  function fmtVal(n) {
+    const num = Math.round(parseFloat(n) || 0);
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function parseVal(s) {
+    return parseFloat(String(s || '').replace(/[ \s,]/g, '')) || 0;
+  }
+
   function fmtR(n) {
     return 'R ' + Math.round(n).toLocaleString('en-ZA');
   }
 
   function onSlider(sliderId, numId, isRate) {
-    const val = parseFloat(document.getElementById(sliderId).value);
-    document.getElementById(numId).value = isRate ? val.toFixed(1) : val;
+    const val   = parseFloat(document.getElementById(sliderId).value);
+    const input = document.getElementById(numId);
+    input.value = isRate ? val.toFixed(1) : (input.type === 'text' ? fmtVal(val) : val);
     calculate();
   }
 
   function onNumInput(numId, sliderId, sliderMax) {
     const slider = document.getElementById(sliderId);
-    const val = parseFloat(document.getElementById(numId).value);
+    const input  = document.getElementById(numId);
+    const val    = input.type === 'text' ? parseVal(input.value) : parseFloat(input.value);
     if (!isNaN(val)) {
       slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
     }
@@ -897,8 +913,8 @@
   }
 
   function calculate() {
-    const P      = Math.max(0, parseFloat(document.getElementById('principalNum').value) || 0);
-    const mo     = Math.max(0, parseFloat(document.getElementById('monthlyNum').value) || 0);
+    const P      = Math.max(0, parseVal(document.getElementById('principalNum').value));
+    const mo     = Math.max(0, parseVal(document.getElementById('monthlyNum').value));
     const rate   = Math.min(100, Math.max(0, parseFloat(document.getElementById('rateNum').value) || 0));
     const years  = Math.min(1000, Math.max(1, parseInt(document.getElementById('yearsNum').value) || 1));
     const n      = parseInt(document.getElementById('frequency').value);

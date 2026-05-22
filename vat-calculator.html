@@ -191,7 +191,7 @@
     pointer-events: none;
   }
 
-  input[type="number"] {
+  input[type="number"], input[type="text"] {
     width: 100%;
     padding: 0.85rem 1rem 0.85rem 2.2rem;
     font-family: 'Epilogue', sans-serif;
@@ -209,7 +209,7 @@
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-  input[type="number"]:focus {
+  input[type="number"]:focus, input[type="text"]:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
     background: var(--white);
@@ -439,7 +439,10 @@
         <label id="inputLabel">Amount (excl. VAT)</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="number" id="amount" placeholder="0.00" oninput="calculate()" min="0" step="0.01">
+          <input type="text" inputmode="numeric" id="amount" placeholder="0"
+            onfocus="this.value=String(parseVal(this.value)||'')"
+            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
+            oninput="calculate()">
         </div>
       </div>
 
@@ -507,12 +510,22 @@
     calculate();
   }
 
+  function fmtVal(n) {
+    const num = Math.round(parseFloat(n) || 0);
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function parseVal(s) {
+    return parseFloat(String(s || '').replace(/[ \s,]/g, '')) || 0;
+  }
+
   function fmt(n) {
-    return 'R ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const parts = Math.abs(n).toFixed(2).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return 'R ' + parts.join('.');
   }
 
   function calculate() {
-    const raw = parseFloat(document.getElementById('amount').value) || 0;
+    const raw = parseVal(document.getElementById('amount').value);
     const VAT_RATE = 0.15;
 
     let original, vat, total;

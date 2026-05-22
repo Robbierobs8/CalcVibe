@@ -165,7 +165,7 @@
     pointer-events: none;
   }
 
-  input[type="number"] {
+  input[type="number"], input[type="text"] {
     width: 100%;
     padding: 0.85rem 1rem 0.85rem 2.2rem;
     font-family: 'Epilogue', sans-serif;
@@ -188,7 +188,7 @@
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-  input[type="number"]:focus {
+  input[type="number"]:focus, input[type="text"]:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
     background: var(--white);
@@ -515,7 +515,10 @@
         <label for="propertyPrice">Property Price</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="number" id="propertyPrice" value="1500000" min="0" step="1000" oninput="calculate()">
+          <input type="text" inputmode="numeric" id="propertyPrice" value="1 500 000"
+            onfocus="this.value=String(parseVal(this.value)||'')"
+            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
+            oninput="calculate()">
         </div>
       </div>
 
@@ -523,7 +526,10 @@
         <label for="deposit">Deposit</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="number" id="deposit" value="150000" min="0" step="1000" oninput="calculate()">
+          <input type="text" inputmode="numeric" id="deposit" value="150 000"
+            onfocus="this.value=String(parseVal(this.value)||'')"
+            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
+            oninput="calculate()">
         </div>
         <div class="loan-amount-hint">Loan amount: <strong id="loanAmountHint">—</strong></div>
       </div>
@@ -649,8 +655,16 @@
 </footer>
 
 <script>
+  function fmtVal(n) {
+    const num = Math.round(parseFloat(n) || 0);
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function parseVal(s) {
+    return parseFloat(String(s || '').replace(/[ \s,]/g, '')) || 0;
+  }
+
   function fmt(n) {
-    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+    return 'R ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 
   function calcBondReg(bondAmt) {
@@ -691,8 +705,8 @@
   }
 
   function calculate() {
-    const price   = parseFloat(document.getElementById('propertyPrice').value) || 0;
-    const deposit = parseFloat(document.getElementById('deposit').value) || 0;
+    const price   = parseVal(document.getElementById('propertyPrice').value);
+    const deposit = parseVal(document.getElementById('deposit').value);
     const annRate = parseFloat(document.getElementById('interestRate').value) || 0;
     const years   = parseFloat(document.getElementById('loanTerm').value) || 0;
     const showReg = document.getElementById('toggleBondReg').checked;
