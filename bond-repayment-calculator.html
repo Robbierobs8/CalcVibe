@@ -676,19 +676,20 @@
     return 'R ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 
+  // Deeds Office 2025/2026 tariff scale + 15% VAT
   function calcBondReg(bondAmt) {
-    // Deeds Office 2025/2026 tariff scale + 15% VAT
     if (bondAmt <= 0) return 0;
     let fee;
     if      (bondAmt <=    90000) fee = 0;
-    else if (bondAmt <=   600000) fee = 600  + (bondAmt -    90000) * 0.004;
-    else if (bondAmt <=  1200000) fee = 2640 + (bondAmt -   600000) * 0.003;
-    else if (bondAmt <=  2400000) fee = 4440 + (bondAmt -  1200000) * 0.002;
-    else if (bondAmt <=  4800000) fee = 6840 + (bondAmt -  2400000) * 0.0015;
-    else                          fee = 10440 + (bondAmt - 4800000) * 0.001;
+    else if (bondAmt <=   600000) fee = 1197  + (bondAmt -    90000) * 0.005756;
+    else if (bondAmt <=  1200000) fee = 4132  + (bondAmt -   600000) * 0.004562;
+    else if (bondAmt <=  2400000) fee = 6869  + (bondAmt -  1200000) * 0.003369;
+    else if (bondAmt <=  4800000) fee = 10911 + (bondAmt -  2400000) * 0.002252;
+    else                          fee = 16316 + (bondAmt -  4800000) * 0.001333;
     return Math.round(fee * 1.15);
   }
 
+  // SARS 2025/2026 transfer duty
   function calcTransferDuty(price) {
     if (price <= 1100000)  return 0;
     if (price <= 1512500)  return (price - 1100000) * 0.03;
@@ -697,6 +698,10 @@
     if (price <= 12100000) return 97075  + (price - 2722500) * 0.11;
     return 1128600 + (price - 12100000) * 0.13;
   }
+
+  // Temporary verification — remove before go-live
+  console.log('Transfer duty test:', calcTransferDuty(2500000));
+  console.log('Bond reg test:', calcBondReg(2350000));
 
   function show(id, visible) {
     document.getElementById(id).style.display = visible ? 'flex' : 'none';
