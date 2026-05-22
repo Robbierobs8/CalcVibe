@@ -968,6 +968,14 @@ footer {
   margin-right: auto;
 }
 
+.last-updated {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  font-family: 'Epilogue', sans-serif;
+  padding: 0.75rem 2rem 0;
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1049,14 +1057,14 @@ footer {
             <div class="field-label">
               <span class="label-with-tip">
                 Annual Interest Rate
-                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Your home loan rate. SA investment properties are often priced at prime+1 to prime+2%.</span></span>
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA prime rate is currently 10.25% (May 2026). Most home loans are priced at prime or prime + 0.5% to 2% depending on your credit profile. Check SARB or your bank for the latest rate.</span></span>
               </span>
               <div class="field-num-wrap">
-                <input type="number" class="field-num" id="rateNum" value="10.75" style="width:46px" oninput="onNumInput('rateNum','rateSlider',25)">
+                <input type="number" class="field-num" id="rateNum" value="10.25" style="width:46px" oninput="onNumInput('rateNum','rateSlider',25)">
                 <span class="field-unit">%</span>
               </div>
             </div>
-            <input type="range" id="rateSlider" min="0" max="25" step="0.25" value="10.75" oninput="onSlider('rateSlider','rateNum',true)">
+            <input type="range" id="rateSlider" min="0" max="25" step="0.25" value="10.25" oninput="onSlider('rateSlider','rateNum',true)">
           </div>
 
           <!-- Bond Period -->
@@ -1471,6 +1479,7 @@ footer {
 
 </main>
 
+<div class="last-updated">Rates &amp; figures last updated: May 2026 | Based on SARS 2025/2026 transfer duty rates and Deeds Office tariffs</div>
 <footer>
   <div class="footer-logo">CalcVibe</div>
   <div class="footer-text">Free South African financial &amp; property calculators</div>
@@ -1531,6 +1540,28 @@ function fmtR(n, decimals) {
 function fmtPct(n, dec) {
   if (isNaN(n) || !isFinite(n)) return '—';
   return (n).toFixed(dec !== undefined ? dec : 1) + '%';
+}
+
+function calcTransferDuty(price) {
+  if (price <= 1100000)  return 0;
+  if (price <= 1512500)  return (price - 1100000) * 0.03;
+  if (price <= 2117500)  return 12375  + (price - 1512500) * 0.06;
+  if (price <= 2722500)  return 48675  + (price - 2117500) * 0.08;
+  if (price <= 12100000) return 97075  + (price - 2722500) * 0.11;
+  return 1128600 + (price - 12100000) * 0.13;
+}
+
+function calcBondReg(bondAmt) {
+  // Deeds Office 2025/2026 tariff scale + 15% VAT
+  if (bondAmt <= 0) return 0;
+  let fee;
+  if      (bondAmt <=    90000) fee = 0;
+  else if (bondAmt <=   600000) fee = 600  + (bondAmt -    90000) * 0.004;
+  else if (bondAmt <=  1200000) fee = 2640 + (bondAmt -   600000) * 0.003;
+  else if (bondAmt <=  2400000) fee = 4440 + (bondAmt -  1200000) * 0.002;
+  else if (bondAmt <=  4800000) fee = 6840 + (bondAmt -  2400000) * 0.0015;
+  else                          fee = 10440 + (bondAmt - 4800000) * 0.001;
+  return Math.round(fee * 1.15);
 }
 
 function v(id) {

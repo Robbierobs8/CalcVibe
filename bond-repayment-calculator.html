@@ -479,6 +479,14 @@
     margin-right: auto;
   }
 
+  .last-updated {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    font-family: 'Epilogue', sans-serif;
+    padding: 0.75rem 2rem 0;
+  }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -537,10 +545,10 @@
       <div class="field">
         <label for="interestRate">Annual Interest Rate</label>
         <div class="input-wrap">
-          <input type="number" id="interestRate" class="no-prefix" value="11.75" min="0" max="40" step="0.25" oninput="calculate()">
+          <input type="number" id="interestRate" class="no-prefix" value="10.25" min="0" max="40" step="0.25" oninput="calculate()">
           <span class="input-suffix">%</span>
         </div>
-        <div class="field-hint">SA prime rate changes — check SARB or your bank for the current rate. Most bonds are priced at prime to prime&nbsp;+&nbsp;2%.</div>
+        <div class="field-hint">SA prime rate is currently 10.25% (May 2026). Most home loans are priced at prime or prime&nbsp;+&nbsp;0.5% to 2% depending on your credit profile. Check SARB or your bank for the latest rate.</div>
       </div>
 
       <div class="field">
@@ -558,7 +566,7 @@
         <div class="option-row">
           <div class="option-info">
             <span class="option-name">Bond Registration Fees</span>
-            <span class="option-note">Attorney fees, deeds levy &amp; VAT — based on loan amount (approximate)</span>
+            <span class="option-note">Based on Deeds Office 2025/2026 tariff scale + 15% VAT (approximate)</span>
           </div>
           <label class="toggle-wrap">
             <input type="checkbox" id="toggleBondReg" onchange="calculate()">
@@ -628,9 +636,9 @@
       Where: <span>P</span> = loan amount &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months (years × 12)
     </div>
 
-    <p>Most SA banks price home loans between <strong>prime</strong> and <strong>prime + 2%</strong> depending on your credit profile and deposit size. The current prime rate is set by the SARB and changes with the repo rate — check sarb.co.za or your bank for the latest figure.</p>
+    <p>Most SA banks price home loans between <strong>prime</strong> and <strong>prime + 2%</strong> depending on your credit profile and deposit size. The SA prime rate is currently <strong>10.25%</strong> (May 2026) — check sarb.co.za or your bank for the latest figure.</p>
 
-    <p><strong>Bond registration fees</strong> are paid to the bond registration attorney appointed by your bank. They cover the attorney's tariff fee, Deeds Office levy, VAT, and disbursements. The figures shown are indicative estimates based on the prescribed SA tariff scale.</p>
+    <p><strong>Bond registration fees</strong> are paid to the bond registration attorney appointed by your bank. They cover the attorney's tariff fee, Deeds Office levy, VAT, and disbursements. Figures are calculated using the official Deeds Office 2025/2026 tariff scale plus 15% VAT and are approximate.</p>
 
     <p><strong>Transfer duty</strong> is a government tax on property transfers, payable to SARS. Properties up to R1,100,000 are exempt. The 2025/2026 rates range from 3% to 13% on the amount above each threshold.</p>
   </div>
@@ -648,6 +656,7 @@
   </div>
 </main>
 
+<div class="last-updated">Rates &amp; figures last updated: May 2026 | Based on SARS 2025/2026 transfer duty rates and Deeds Office tariffs</div>
 <footer>
   <div class="footer-logo">CalcVibe</div>
   <div class="footer-text">Free South African financial &amp; labour calculators</div>
@@ -668,27 +677,16 @@
   }
 
   function calcBondReg(bondAmt) {
+    // Deeds Office 2025/2026 tariff scale + 15% VAT
     if (bondAmt <= 0) return 0;
-    // Approximate all-in: attorney tariff fee + deeds levy + VAT + disbursements
-    if (bondAmt <=  100000) return  9000;
-    if (bondAmt <=  200000) return 11000;
-    if (bondAmt <=  300000) return 13000;
-    if (bondAmt <=  400000) return 14500;
-    if (bondAmt <=  500000) return 16000;
-    if (bondAmt <=  600000) return 17500;
-    if (bondAmt <=  750000) return 19500;
-    if (bondAmt <=  900000) return 21500;
-    if (bondAmt <= 1000000) return 23000;
-    if (bondAmt <= 1250000) return 25500;
-    if (bondAmt <= 1500000) return 28000;
-    if (bondAmt <= 2000000) return 32500;
-    if (bondAmt <= 2500000) return 37000;
-    if (bondAmt <= 3000000) return 41500;
-    if (bondAmt <= 4000000) return 49000;
-    if (bondAmt <= 5000000) return 56000;
-    if (bondAmt <= 7500000) return 68000;
-    if (bondAmt <= 10000000) return 81000;
-    return Math.round(81000 + (bondAmt - 10000000) * 0.007);
+    let fee;
+    if      (bondAmt <=    90000) fee = 0;
+    else if (bondAmt <=   600000) fee = 600  + (bondAmt -    90000) * 0.004;
+    else if (bondAmt <=  1200000) fee = 2640 + (bondAmt -   600000) * 0.003;
+    else if (bondAmt <=  2400000) fee = 4440 + (bondAmt -  1200000) * 0.002;
+    else if (bondAmt <=  4800000) fee = 6840 + (bondAmt -  2400000) * 0.0015;
+    else                          fee = 10440 + (bondAmt - 4800000) * 0.001;
+    return Math.round(fee * 1.15);
   }
 
   function calcTransferDuty(price) {
