@@ -369,6 +369,23 @@
     color: #ff8a8a;
   }
 
+  .result-row.sub-head .result-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.28);
+  }
+
+  .result-row.sub-item .result-label {
+    padding-left: 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  .result-row.sub-item .result-value {
+    font-size: 0.85rem;
+  }
+
   /* EXPLAINER */
   .explainer {
     background: var(--white);
@@ -565,8 +582,8 @@
 
         <div class="option-row">
           <div class="option-info">
-            <span class="option-name">Bond Registration Fees</span>
-            <span class="option-note">Based on Deeds Office 2025/2026 tariff scale + 15% VAT (approximate)</span>
+            <span class="option-name">Bond Registration Costs</span>
+            <span class="option-note">Deeds Office levy + bond attorney fees (Law Society tariff + 15% VAT)</span>
           </div>
           <label class="toggle-wrap">
             <input type="checkbox" id="toggleBondReg" onchange="calculate()">
@@ -576,8 +593,8 @@
 
         <div class="option-row">
           <div class="option-info">
-            <span class="option-name">Transfer Duty</span>
-            <span class="option-note">SARS 2025/2026 rates — based on property price (0% up to R1.1m)</span>
+            <span class="option-name">Transfer &amp; Conveyancing</span>
+            <span class="option-note">SARS transfer duty + transfer attorney fees (Law Society tariff + 15% VAT)</span>
           </div>
           <label class="toggle-wrap">
             <input type="checkbox" id="toggleTransfer" onchange="calculate()">
@@ -610,14 +627,35 @@
           <span class="result-label">Upfront Buying Costs</span>
           <span class="result-value"></span>
         </div>
-        <div class="result-row" id="rowBondReg" style="display:none">
+
+        <!-- Bond registration breakdown -->
+        <div class="result-row sub-head" id="rowBondRegHead" style="display:none">
           <span class="result-label">Bond Registration</span>
-          <span class="result-value deduct" id="resBondReg">—</span>
+          <span class="result-value"></span>
         </div>
-        <div class="result-row" id="rowTransferDuty" style="display:none">
-          <span class="result-label">Transfer Duty</span>
-          <span class="result-value deduct" id="resTransferDuty">—</span>
+        <div class="result-row sub-item" id="rowDeedsLevy" style="display:none">
+          <span class="result-label">Deeds Office Levy</span>
+          <span class="result-value deduct" id="resDeedsLevy">—</span>
         </div>
+        <div class="result-row sub-item" id="rowBondAtty" style="display:none">
+          <span class="result-label">Bond Attorney Fees (incl. VAT)</span>
+          <span class="result-value deduct" id="resBondAtty">—</span>
+        </div>
+
+        <!-- Transfer breakdown -->
+        <div class="result-row sub-head" id="rowTransferHead" style="display:none">
+          <span class="result-label">Transfer &amp; Conveyancing</span>
+          <span class="result-value"></span>
+        </div>
+        <div class="result-row sub-item" id="rowTransferSARS" style="display:none">
+          <span class="result-label">Transfer Duty (SARS)</span>
+          <span class="result-value deduct" id="resTransferSARS">—</span>
+        </div>
+        <div class="result-row sub-item" id="rowTransferAtty" style="display:none">
+          <span class="result-label">Transfer Attorney Fees (incl. VAT)</span>
+          <span class="result-value deduct" id="resTransferAtty">—</span>
+        </div>
+
         <div class="result-row total-upfront" id="rowUpfrontTotal" style="display:none">
           <span class="result-label">Total Upfront Costs</span>
           <span class="result-value deduct" id="resUpfrontTotal">—</span>
@@ -638,9 +676,9 @@
 
     <p>Most SA banks price home loans between <strong>prime</strong> and <strong>prime + 2%</strong> depending on your credit profile and deposit size. The SA prime rate is currently <strong>10.25%</strong> (May 2026) — check sarb.co.za or your bank for the latest figure.</p>
 
-    <p><strong>Bond registration fees</strong> are paid to the bond registration attorney appointed by your bank. They cover the attorney's tariff fee, Deeds Office levy, VAT, and disbursements. Figures are calculated using the official Deeds Office 2025/2026 tariff scale plus 15% VAT and are approximate.</p>
+    <p><strong>Bond registration costs</strong> are split into two components. The <em>Deeds Office Levy</em> is the official government registration charge calculated on the Deeds Office 2025/2026 tariff scale. The <em>Bond Attorney Fees</em> are the conveyancing attorney's prescribed tariff fee (Law Society scale), plus 15% VAT. Both are applied to the loan amount.</p>
 
-    <p><strong>Transfer duty</strong> is a government tax on property transfers, payable to SARS. Properties up to R1,100,000 are exempt. The 2025/2026 rates range from 3% to 13% on the amount above each threshold.</p>
+    <p><strong>Transfer and conveyancing costs</strong> are also two components. <em>Transfer Duty</em> is the SARS government tax on the property purchase price — properties up to R1,100,000 are exempt and rates from 3% to 13% apply above that. <em>Transfer Attorney Fees</em> are the conveyancing attorney's prescribed fee for registering the transfer (Law Society scale), plus 15% VAT.</p>
   </div>
 
   <div class="related">
@@ -676,7 +714,7 @@
     return 'R ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 
-  // Deeds Office 2025/2026 tariff scale + 15% VAT
+  // Deeds Office 2025/2026 registration levy (small government charge)
   function calcBondReg(bondAmt) {
     if (bondAmt <= 0) return 0;
     let fee;
@@ -689,7 +727,7 @@
     return Math.round(fee * 1.15);
   }
 
-  // SARS 2025/2026 transfer duty
+  // SARS 2025/2026 transfer duty (government tax)
   function calcTransferDuty(price) {
     if (price <= 1100000)  return 0;
     if (price <= 1512500)  return (price - 1100000) * 0.03;
@@ -699,9 +737,18 @@
     return 1128600 + (price - 12100000) * 0.13;
   }
 
-  // Temporary verification — remove before go-live
-  console.log('Transfer duty test:', calcTransferDuty(2500000));
-  console.log('Bond reg test:', calcBondReg(2350000));
+  // Law Society prescribed attorney fee scale + 15% VAT
+  // Used for both transfer conveyancing and bond attorney fees
+  function calcAttorneyFee(value) {
+    if (value <= 0) return 0;
+    let fee;
+    if      (value <=   100000) fee = 4887;
+    else if (value <=   500000) fee = 4887  + (value -   100000) * 0.013;
+    else if (value <=  1000000) fee = 10087 + (value -   500000) * 0.009;
+    else if (value <=  5000000) fee = 14587 + (value -  1000000) * 0.006;
+    else                         fee = 38587 + (value -  5000000) * 0.003;
+    return Math.round(fee * 1.15);
+  }
 
   function show(id, visible) {
     document.getElementById(id).style.display = visible ? 'flex' : 'none';
@@ -738,16 +785,31 @@
     // Optional upfront costs
     const anyOn = showReg || showTD;
     show('rowUpfrontHead',  anyOn);
-    show('rowBondReg',      showReg);
-    show('rowTransferDuty', showTD);
+    show('rowBondRegHead',  showReg);
+    show('rowDeedsLevy',    showReg);
+    show('rowBondAtty',     showReg);
+    show('rowTransferHead', showTD);
+    show('rowTransferSARS', showTD);
+    show('rowTransferAtty', showTD);
     show('rowUpfrontTotal', anyOn);
 
+    let totalUpfront = 0;
+    if (showReg) {
+      const deedsLevy = calcBondReg(P);
+      const bondAtty  = calcAttorneyFee(P);
+      document.getElementById('resDeedsLevy').textContent = fmt(deedsLevy);
+      document.getElementById('resBondAtty').textContent  = fmt(bondAtty);
+      totalUpfront += deedsLevy + bondAtty;
+    }
+    if (showTD) {
+      const transferDuty = calcTransferDuty(price);
+      const transferAtty = calcAttorneyFee(price);
+      document.getElementById('resTransferSARS').textContent = fmt(transferDuty);
+      document.getElementById('resTransferAtty').textContent = fmt(transferAtty);
+      totalUpfront += transferDuty + transferAtty;
+    }
     if (anyOn) {
-      const bondReg = showReg ? calcBondReg(P) : 0;
-      const transfer = showTD ? calcTransferDuty(price) : 0;
-      if (showReg) document.getElementById('resBondReg').textContent      = fmt(bondReg);
-      if (showTD)  document.getElementById('resTransferDuty').textContent  = fmt(transfer);
-      document.getElementById('resUpfrontTotal').textContent = fmt(bondReg + transfer);
+      document.getElementById('resUpfrontTotal').textContent = fmt(totalUpfront);
     }
   }
 
