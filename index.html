@@ -292,28 +292,35 @@
     .about-strip { grid-template-columns: 1fr; gap: 1.5rem; }
   }
 
-  .about-item { text-align: center; }
+  .about-item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   .about-icon {
-    font-size: 2rem;
-    margin-bottom: 0.6rem;
+    font-size: 2.4rem;
+    line-height: 1;
+    margin-bottom: 0.75rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 36px;
+    height: 36px;
   }
 
-  @keyframes saFlagWave {
-    0%, 100% { transform: skewY(0deg); }
-    30%       { transform: skewY(-3deg); }
-    70%       { transform: skewY(3deg); }
+  @keyframes flagWave {
+    0%, 100% { transform: skewY(-1deg) scale(1); }
+    50%       { transform: skewY(1deg) scale(1.01); }
   }
   .sa-flag {
+    width: 48px;
+    height: auto;
     display: block;
-    animation: saFlagWave 3s ease-in-out infinite;
-    transform-origin: left center;
-    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.45));
-    border-radius: 1px;
+    margin: 0 auto;
+    animation: flagWave 3s ease-in-out infinite;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
 
   .about-title {
@@ -549,13 +556,23 @@
   <div class="about-strip">
     <div class="about-item">
       <div class="about-icon">
-        <svg class="sa-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 120" width="48" height="32" role="img" aria-label="South African flag">
-          <rect width="180" height="60" fill="#DE3831"/>
-          <rect y="60" width="180" height="60" fill="#002395"/>
-          <polygon points="0,0 60,26 180,26 180,94 60,94 0,120" fill="#FFFFFF"/>
-          <polygon points="0,0 60,32 180,32 180,88 60,88 0,120" fill="#FFB612"/>
-          <polygon points="0,0 60,40 180,40 180,80 60,80 0,120" fill="#007749"/>
-          <polygon points="0,0 0,120 60,60" fill="#000000"/>
+        <svg class="sa-flag" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="South African flag">
+          <!-- Red top band -->
+          <rect width="900" height="600" fill="#DE3831"/>
+          <!-- Blue bottom band -->
+          <rect y="300" width="900" height="300" fill="#002395"/>
+          <!-- White left triangle (outer border of chevron) -->
+          <path d="M0,0 L450,300 L0,600 Z" fill="#FFFFFF"/>
+          <!-- Green left triangle (inner body) -->
+          <path d="M0,60 L390,300 L0,540 Z" fill="#007749"/>
+          <!-- Black triangle (hoist) -->
+          <path d="M0,150 L300,300 L0,450 Z" fill="#000000"/>
+          <!-- White right stripes (top + bottom of horizontal band) -->
+          <path d="M450,300 L900,0 L900,60 L510,300 L900,540 L900,600 Z" fill="#FFFFFF"/>
+          <!-- Gold/yellow horizontal band -->
+          <path d="M510,300 L900,90 L900,510 Z" fill="#FFB612"/>
+          <!-- Green horizontal band -->
+          <path d="M510,300 L900,150 L900,450 Z" fill="#007749"/>
         </svg>
       </div>
       <div class="about-title">Built for South Africa</div>
