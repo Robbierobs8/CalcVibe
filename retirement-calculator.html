@@ -389,6 +389,21 @@
     margin-right: auto;
   }
 
+  .field-hint {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    font-weight: 400;
+  }
+
+  .last-updated {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    font-family: 'Epilogue', sans-serif;
+    padding: 0.75rem 2rem 0;
+  }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to { opacity: 1; transform: translateY(0); }
@@ -469,9 +484,10 @@
         <div class="field">
           <label for="inflation">Expected Inflation</label>
           <div class="input-wrap">
-            <input type="number" id="inflation" class="no-prefix" value="6.0" min="0" max="20" step="0.5" oninput="calculate()">
+            <input type="number" id="inflation" class="no-prefix" value="5.0" min="0" max="20" step="0.5" oninput="calculate()">
             <span class="input-suffix">%</span>
           </div>
+          <div class="field-hint">SA 10-year average CPI: ~5.0% (2015–2024, Stats SA). Adjust if you expect inflation to differ.</div>
         </div>
       </div>
 
@@ -531,6 +547,7 @@
   </div>
 </main>
 
+<div class="last-updated">Rates &amp; figures last updated: May 2026 | Default inflation based on SA 10-year average CPI 2015–2024 (Stats SA)</div>
 <footer>
   <div class="footer-logo">CalcVibe</div>
   <div class="footer-text">Free South African financial &amp; labour calculators</div>
