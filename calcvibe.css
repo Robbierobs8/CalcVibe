@@ -1,0 +1,70 @@
+/* CalcVibe shared styles — new shared components + global accessibility fixes.
+   Loaded after each page's inline <style> so these rules win on equal specificity.
+   Uses the --accent / --ink-light / --accent-light variables each page defines. */
+
+/* ---- Skip link (keyboard users jump past the nav to the calculator) ---- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1000;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 0 0 8px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus { left: 0; }
+
+/* ---- Visible focus for keyboard navigation ---- */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+.mode-btn:focus-visible,
+.accordion-header:focus-visible {
+  outline: 3px solid rgba(26, 107, 60, 0.45);
+  outline-offset: 2px;
+}
+
+/* ---- Persistent helper text under inputs (RULES.md: tooltips on every field) ---- */
+.input-help {
+  display: block;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--ink-light);
+  margin-top: 0.4rem;
+}
+
+/* ---- Copy / share actions below results ---- */
+.result-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+.btn-action {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1.5px solid transparent;
+  border-radius: 9px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn-action:hover { border-color: var(--accent); }
+.btn-action.is-copied { background: var(--accent); color: #fff; }
+
+/* ---- Contrast fixes (previously failed WCAG AA) ---- */
+.footer-disclaimer { color: #6b6b7a; }
+.result-label { color: rgba(255, 255, 255, 0.72); }
+.about-text { color: rgba(255, 255, 255, 0.7); }

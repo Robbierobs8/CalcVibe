@@ -430,8 +430,11 @@
     nav { padding: 0 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -448,35 +451,33 @@
   <p class="page-sub">Add or remove 15% VAT instantly. Free, accurate, no sign-up.</p>
 </div>
 
-<main>
+<main id="main">
   <div class="calc-card">
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btnAdd" onclick="setMode('add')">
-        ➕ Add VAT
+    <div class="mode-toggle" role="group" aria-label="VAT mode">
+      <button type="button" class="mode-btn active" id="btnAdd" aria-pressed="true" onclick="setMode('add')">
+        <span aria-hidden="true">➕</span> Add VAT
       </button>
-      <button class="mode-btn" id="btnRemove" onclick="setMode('remove')">
-        ➖ Remove VAT
+      <button type="button" class="mode-btn" id="btnRemove" aria-pressed="false" onclick="setMode('remove')">
+        <span aria-hidden="true">➖</span> Remove VAT
       </button>
     </div>
 
     <div class="calc-body">
       <div class="vat-rate-row">
-        <span class="vat-rate-label">🇿🇦 South African VAT Rate</span>
+        <span class="vat-rate-label"><span aria-hidden="true">🇿🇦</span> South African VAT Rate</span>
         <span class="vat-rate-value">15%</span>
       </div>
 
       <div class="field">
-        <label id="inputLabel">Amount (excl. VAT)</label>
+        <label id="inputLabel" for="amount">Amount (excl. VAT)</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="text" inputmode="numeric" id="amount" placeholder="0"
-            onfocus="this.value=String(parseVal(this.value)||'')"
-            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
-            oninput="calculate()">
+          <input type="text" class="js-money" id="amount" placeholder="0" data-share aria-describedby="amount-help">
         </div>
+        <span class="input-help" id="amount-help">Enter the Rand amount, then use the toggle above to add or remove 15% VAT.</span>
       </div>
 
-      <div class="results" id="results">
+      <div class="results" id="results" aria-live="polite" aria-atomic="true">
         <div class="result-row">
           <span class="result-label" id="originalLabel">Original amount</span>
           <span class="result-value" id="originalVal">R 0.00</span>
@@ -489,6 +490,11 @@
           <span class="result-label" id="totalLabel">Total (incl. VAT)</span>
           <span class="result-value" id="totalVal">R 0.00</span>
         </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn-action" onclick="CalcVibe.copyResult('totalVal', this)">Copy result</button>
+        <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
       </div>
     </div>
   </div>
@@ -536,13 +542,17 @@
   <div class="footer-disclaimer">For estimation purposes only. VAT rules may change — always verify with SARS or a tax professional.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   let mode = 'add'; // 'add' or 'remove'
 
   function setMode(m) {
     mode = m;
-    document.getElementById('btnAdd').classList.toggle('active', m === 'add');
-    document.getElementById('btnRemove').classList.toggle('active', m === 'remove');
+    const isAdd = m === 'add';
+    document.getElementById('btnAdd').classList.toggle('active', isAdd);
+    document.getElementById('btnRemove').classList.toggle('active', !isAdd);
+    document.getElementById('btnAdd').setAttribute('aria-pressed', isAdd ? 'true' : 'false');
+    document.getElementById('btnRemove').setAttribute('aria-pressed', isAdd ? 'false' : 'true');
     document.getElementById('inputLabel').textContent = m === 'add' ? 'Amount (excl. VAT)' : 'Amount (incl. VAT)';
     document.getElementById('originalLabel').textContent = m === 'add' ? 'Original amount' : 'Amount incl. VAT';
     document.getElementById('totalLabel').textContent = m === 'add' ? 'Total (incl. VAT)' : 'Amount excl. VAT';
@@ -589,10 +599,6 @@
 
   // Init
   calculate();
-
-  function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
 </script>
 </body>
 </html>
