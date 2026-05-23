@@ -26,6 +26,14 @@ All calculators must use:
 - Background: #f7f6f2
 - Match the style of vat-calculator.html
 
+## Content Standard
+All explainer text on CalcVibe must be:
+- Purely educational and informational
+- Free of recommendations, opinions, or implied advice
+- Free of references to specific commentators, studies, or third parties
+- Accurate to current SA legislation
+- Accompanied by a disclaimer noting that CalcVibe does not provide financial advice
+
 ## New Calculator Checklist
 Before pushing any new calculator:
 - [ ] Accurate formulas verified against official SA source

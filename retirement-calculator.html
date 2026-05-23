@@ -321,6 +321,109 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+    gap: 0.75rem;
+  }
+
+  .accordion-header:hover { background: var(--bg); }
+
+  .accordion-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .accordion-chevron {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: transform 0.25s;
+    color: var(--ink-light);
+  }
+
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+
+  .accordion-body {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s ease, padding 0.25s ease;
+  }
+
+  .accordion.open .accordion-body {
+    padding: 0 1.5rem 1.5rem;
+    max-height: 9000px;
+  }
+
+  /* Suppress card styles when explainer is inside accordion body */
+  .accordion-body .explainer {
+    border: none;
+    padding: 0;
+    margin-top: 0;
+    background: transparent;
+    border-radius: 0;
+    animation: none;
+  }
+
+  /* Section headings and spacing within explainer content */
+  .explainer h2 + * { margin-top: 0; }
+
+  .explainer h2:not(:first-child) { margin-top: 1.5rem; }
+
+  .explainer ul, .explainer ol {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.7;
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+  }
+
+  .explainer li { margin-bottom: 0.3rem; }
+
+  .explainer table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin: 0.75rem 0;
+  }
+
+  .explainer th {
+    text-align: left;
+    font-weight: 600;
+    background: var(--bg);
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--border);
+    color: var(--ink);
+  }
+
+  .explainer td {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    color: var(--ink-light);
+    font-weight: 300;
+    vertical-align: top;
+  }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -513,25 +616,108 @@
     </div>
   </div>
 
-  <div class="explainer">
-    <h2>How South African retirement savings are projected</h2>
-    <p>This calculator uses the standard future-value formula for a present lump sum combined with regular monthly contributions, compounded at your expected annual return:</p>
-
-    <div class="formula-box">
-      FV = <span>PV × (1 + r)^n</span> + <span>PMT × [((1 + r)^n − 1) / r]</span><br>
-      Where: <span>PV</span> = current savings &nbsp;|&nbsp; <span>PMT</span> = monthly contribution &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months to retirement
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">Learn How South African Retirement Savings Are Projected</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div class="accordion-body">
+      <div class="explainer">
 
-    <p>The <strong>real (inflation-adjusted) value</strong> is calculated by discounting the nominal fund value at your expected inflation rate over the same period: Real Value = Nominal ÷ (1 + inflation)^years. This tells you what your fund will be worth in today's money.</p>
+        <h2>How this calculator works</h2>
+        <p>This calculator uses the standard future-value formula for a present lump sum combined with regular monthly contributions, compounded at your expected annual return:</p>
+        <div class="formula-box">
+          FV = <span>PV × (1 + r)^n</span> + <span>PMT × [((1 + r)^n − 1) / r]</span><br>
+          Where: <span>PV</span> = current savings &nbsp;|&nbsp; <span>PMT</span> = monthly contribution &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months until retirement
+        </div>
+        <p>The real (inflation-adjusted) value is calculated by discounting the projected fund value at your expected inflation rate — this shows what your savings will be worth in today's money.</p>
 
-    <p>The <strong>4% drawdown rule</strong> is a widely used guideline suggesting you can withdraw 4% of your portfolio per year in retirement without depleting the fund over a 30-year horizon. The estimated monthly income shown is: Real Value × 4% ÷ 12.</p>
+        <h2>Understanding the 4% drawdown rule</h2>
+        <p>The 4% drawdown rule is a commonly referenced guideline suggesting you can withdraw 4% of your portfolio per year in retirement without depleting it over a 30-year horizon.</p>
+        <p>This is a guideline based on historical market data and does not account for individual circumstances such as fund fees, market conditions, inflation, or lifespan. South African inflation, currency volatility, and investment fees may mean a lower drawdown rate is more sustainable in practice.</p>
 
-    <p><strong>South African RA tax rules (as of 2025/26):</strong></p>
-    <p>Contributions to a Retirement Annuity (RA) or pension fund are tax-deductible up to <strong>27.5% of your taxable income</strong>, capped at <strong>R350,000 per year</strong>. Any unused deductions are carried forward and can offset tax at retirement.</p>
+        <h2>Retirement Annuities, Pension Funds, Provident Funds and TFSAs</h2>
+        <p>This calculator is designed for <strong>Retirement Annuities (RAs), Pension Funds, and Provident Funds</strong> — three retirement vehicles regulated under the Pension Funds Act and Income Tax Act.</p>
+        <p>They are fundamentally different from <strong>Tax-Free Savings Accounts (TFSAs)</strong>, which are a separate investment product:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>RA / Pension / Provident</th>
+              <th>Tax-Free Savings Account (TFSA)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Contributions tax-deductible?</td><td>Yes (capped at 27.5% of income / R350,000 per year)</td><td>No</td></tr>
+            <tr><td>Growth taxed?</td><td>No</td><td>No</td></tr>
+            <tr><td>Withdrawals taxed?</td><td>Yes (per SARS retirement tables or marginal rate)</td><td>No — completely tax-free</td></tr>
+            <tr><td>Annual contribution limit</td><td>27.5% of taxable income or R350,000 (whichever is lower)</td><td>R36,000</td></tr>
+            <tr><td>Lifetime contribution limit</td><td>None</td><td>R500,000</td></tr>
+            <tr><td>Access before retirement</td><td>Limited (Two-Pot savings component only)</td><td>Anytime, any amount</td></tr>
+            <tr><td>Compulsory annuity at retirement</td><td>Generally yes (see below)</td><td>No</td></tr>
+          </tbody>
+        </table>
 
-    <p>At retirement you may take up to one-third of your fund as a lump sum. The <strong>first R550,000 is tax-free</strong> (lifetime limit). The remainder must be used to purchase an annuity, which provides your monthly pension income.</p>
+        <h2>South African retirement tax rules (2025/2026 tax year)</h2>
+        <p><strong>Section 11F contribution deduction</strong></p>
+        <p>Contributions to RAs, pension and provident funds are tax-deductible up to <strong>27.5% of the greater of your remuneration or taxable income</strong>, capped at <strong>R350,000 per tax year</strong>.</p>
+        <p>Contributions above this cap are not tax-deductible in the current year, but unused deductions carry forward and may reduce tax on your eventual retirement lump sum or annuity income.</p>
 
-    <p>This calculator provides a projection only — it assumes a constant return and contribution and does not account for tax on withdrawals, fund fees, or changes in legislation. Speak to a registered financial adviser for personalised retirement planning.</p>
+        <h2>The Two-Pot Retirement System</h2>
+        <p>Effective 1 September 2024, new retirement fund contributions are split into two components:</p>
+        <ul>
+          <li><strong>Savings Component (1/3 of new contributions)</strong> — accessible once per tax year before retirement. Withdrawals are taxed at your marginal income tax rate (which can range up to 45%). The minimum withdrawal amount is R2,000.</li>
+          <li><strong>Retirement Component (2/3 of new contributions)</strong> — preserved until retirement age (55+). No early access permitted.</li>
+          <li><strong>Vested Component</strong> — savings accumulated before 1 September 2024, plus growth on that portion, continues under the previous rules.</li>
+        </ul>
+        <p>Withdrawals from the savings component are treated as additional income in the tax year they are taken, which may push you into a higher tax bracket.</p>
+
+        <h2>Lump sum at retirement</h2>
+        <p>At retirement (age 55+), the following rules apply:</p>
+        <ul>
+          <li><strong>Retirement Annuities and Pension Funds:</strong> up to one-third may be taken as a lump sum. The remaining two-thirds must be used to purchase an annuity.</li>
+          <li><strong>Provident Funds:</strong> contributions made before 1 March 2021 (plus growth on those contributions) may be taken in full as a lump sum. Contributions made after that date follow the one-third / two-thirds rule.</li>
+        </ul>
+
+        <h2>SARS retirement lump sum tax table (2025/2026)</h2>
+        <p>The tax-free portion of your retirement lump sum is a <strong>cumulative lifetime threshold</strong>. It aggregates all previous retirement lump sums, severance benefits, and pre-retirement withdrawals from the Two-Pot savings component.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Lump sum amount</th>
+              <th>Tax</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>R0 – R550,000</td><td>0% (tax-free)</td></tr>
+            <tr><td>R550,001 – R770,000</td><td>18% on amount above R550,000</td></tr>
+            <tr><td>R770,001 – R1,155,000</td><td>R39,600 + 27% on amount above R770,000</td></tr>
+            <tr><td>Above R1,155,000</td><td>R143,550 + 36% on amount above R1,155,000</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Living annuity vs Guaranteed annuity</h2>
+        <p>The two-thirds compulsory annuity portion at retirement is used to purchase one of the following:</p>
+        <ul>
+          <li><strong>Living Annuity</strong> — you select the underlying investments and a drawdown rate between 2.5% and 17.5% per year. Investment performance and longevity risk sit with you.</li>
+          <li><strong>Guaranteed (Life) Annuity</strong> — an insurance-based product that pays a fixed income for life. The income is guaranteed but the capital does not pass to heirs.</li>
+        </ul>
+        <p>A combination of both is also possible.</p>
+
+        <h2>What this calculator does not account for</h2>
+        <ul>
+          <li>Fund management fees (a typical Total Expense Ratio of 1–2% per year reduces final values significantly)</li>
+          <li>Variable returns year-on-year</li>
+          <li>Tax on lump sums and annuity income</li>
+          <li>Changes in legislation</li>
+          <li>Personal tax bracket and other deductions</li>
+        </ul>
+
+        <h2>Disclaimer</h2>
+        <p>This calculator is an educational tool. The figures shown are illustrative projections based on the inputs provided. CalcVibe does not provide financial, tax, or investment advice. For decisions relating to your retirement savings, consult an FSCA-registered financial adviser or your fund administrator.</p>
+
+      </div>
+    </div>
   </div>
 
   <div class="related">
@@ -547,7 +733,7 @@
   </div>
 </main>
 
-<div class="last-updated">Rates &amp; figures last updated: May 2026 | Default inflation based on SA 10-year average CPI 2015–2024 (Stats SA)</div>
+<div class="last-updated">Rates &amp; figures last updated: May 2026 | Based on SARS 2025/2026 retirement tax tables, Section 11F of the Income Tax Act, and the Two-Pot Retirement System</div>
 <footer>
   <div class="footer-logo">CalcVibe</div>
   <div class="footer-text">Free South African financial &amp; labour calculators</div>
@@ -595,6 +781,10 @@
     document.getElementById('resNominal').textContent = fmt(nominalFV);
     document.getElementById('resReal').textContent    = fmt(realFV);
     document.getElementById('resIncome').textContent  = fmt(monthlyIncome);
+  }
+
+  function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
   }
 
   // Init
