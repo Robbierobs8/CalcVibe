@@ -431,8 +431,11 @@
     nav { padding: 0 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -449,43 +452,45 @@
   <p class="page-sub">Calculate your annual PAYE tax using current SARS 2025/2026 brackets.</p>
 </div>
 
-<main>
+<main id="main">
   <div class="calc-card">
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btnAnnual" onclick="setMode('annual')">
-        📅 Annual Income
+    <div class="mode-toggle" role="group" aria-label="Income period">
+      <button type="button" class="mode-btn active" id="btnAnnual" aria-pressed="true" onclick="setMode('annual')">
+        <span aria-hidden="true">📅</span> Annual Income
       </button>
-      <button class="mode-btn" id="btnMonthly" onclick="setMode('monthly')">
-        🗓️ Monthly Income
+      <button type="button" class="mode-btn" id="btnMonthly" aria-pressed="false" onclick="setMode('monthly')">
+        <span aria-hidden="true">🗓️</span> Monthly Income
       </button>
     </div>
 
     <div class="calc-body">
       <div class="info-row">
-        <span class="info-row-label">🇿🇦 SARS Tax Year</span>
+        <span class="info-row-label"><span aria-hidden="true">🇿🇦</span> SARS Tax Year</span>
         <span class="info-row-value">2025 / 2026</span>
       </div>
 
       <div class="field">
-        <label id="incomeLabel">Annual Gross Income</label>
+        <label id="incomeLabel" for="grossIncome">Annual Gross Income</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="number" id="grossIncome" placeholder="0" oninput="calculate()" min="0" step="1">
+          <input type="text" class="js-money" id="grossIncome" placeholder="0" data-share aria-describedby="grossIncome-help">
         </div>
+        <span class="input-help" id="grossIncome-help">Your total income before tax. Use the toggle above for an annual or monthly figure.</span>
       </div>
 
       <div class="field">
-        <label>Age Bracket</label>
-        <select id="ageBracket" onchange="calculate()">
+        <label for="ageBracket">Age Bracket</label>
+        <select id="ageBracket" data-share onchange="calculate()" aria-describedby="ageBracket-help">
           <option value="under65">Under 65</option>
           <option value="65to74">65 – 74</option>
           <option value="75plus">75+</option>
         </select>
+        <span class="input-help" id="ageBracket-help">SARS grants a larger tax rebate from age 65, and again from 75.</span>
       </div>
 
       <div class="field">
-        <label>Medical Aid Members</label>
-        <select id="medMembers" onchange="calculate()">
+        <label for="medMembers">Medical Aid Members</label>
+        <select id="medMembers" data-share onchange="calculate()" aria-describedby="medMembers-help">
           <option value="0">None</option>
           <option value="1">1 member (you only)</option>
           <option value="2">2 members (you + 1 dependant)</option>
@@ -493,9 +498,10 @@
           <option value="4">4 members</option>
           <option value="5">5+ members</option>
         </select>
+        <span class="input-help" id="medMembers-help">Everyone on your medical aid (you plus dependants). Each adds a monthly tax credit.</span>
       </div>
 
-      <div class="results" id="results">
+      <div class="results" id="results" aria-live="polite" aria-atomic="true">
         <div class="result-row">
           <span class="result-label">Annual Gross Income</span>
           <span class="result-value" id="resGross">R 0</span>
@@ -528,6 +534,11 @@
           <span class="result-label">Monthly Tax (PAYE)</span>
           <span class="result-value" id="resMonthlyTax">R 0</span>
         </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn-action" onclick="CalcVibe.copyResult('resAnnualTax', this)">Copy tax payable</button>
+        <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
       </div>
     </div>
   </div>
@@ -566,6 +577,7 @@
   <div class="footer-disclaimer">For estimation purposes only. Tax legislation may change — always verify with SARS or a registered tax practitioner.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   let mode = 'annual';
 
@@ -593,9 +605,12 @@
 
   function setMode(m) {
     mode = m;
-    document.getElementById('btnAnnual').classList.toggle('active', m === 'annual');
-    document.getElementById('btnMonthly').classList.toggle('active', m === 'monthly');
-    document.getElementById('incomeLabel').textContent = m === 'annual' ? 'Annual Gross Income' : 'Monthly Gross Income';
+    const isAnnual = m === 'annual';
+    document.getElementById('btnAnnual').classList.toggle('active', isAnnual);
+    document.getElementById('btnMonthly').classList.toggle('active', !isAnnual);
+    document.getElementById('btnAnnual').setAttribute('aria-pressed', isAnnual ? 'true' : 'false');
+    document.getElementById('btnMonthly').setAttribute('aria-pressed', isAnnual ? 'false' : 'true');
+    document.getElementById('incomeLabel').textContent = isAnnual ? 'Annual Gross Income' : 'Monthly Gross Income';
     calculate();
   }
 
@@ -626,7 +641,7 @@
   }
 
   function calculate() {
-    const raw = parseFloat(document.getElementById('grossIncome').value) || 0;
+    const raw = CalcVibe.parseVal(document.getElementById('grossIncome').value);
     const age = document.getElementById('ageBracket').value;
     const members = document.getElementById('medMembers').value;
 
@@ -651,6 +666,10 @@
     document.getElementById('resEffectiveRate').textContent = effectiveRate.toFixed(1) + '%';
     document.getElementById('resMonthlyTax').textContent = fmt(monthlyPAYE);
   }
+
+  // Route money formatting through the shared SA formatter (2 decimals, space groups)
+  fmt = function (n) { return CalcVibe.fmtR(n); };
+  fmtDeduct = function (n) { return CalcVibe.fmtRdeduct(n); };
 
   // Init
   calculate();
