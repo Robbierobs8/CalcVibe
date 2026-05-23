@@ -295,8 +295,25 @@
   .about-item { text-align: center; }
 
   .about-icon {
-    font-size: 1.6rem;
+    font-size: 2rem;
     margin-bottom: 0.6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 36px;
+  }
+
+  @keyframes saFlagWave {
+    0%, 100% { transform: skewY(0deg); }
+    30%       { transform: skewY(-3deg); }
+    70%       { transform: skewY(3deg); }
+  }
+  .sa-flag {
+    display: block;
+    animation: saFlagWave 3s ease-in-out infinite;
+    transform-origin: left center;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.45));
+    border-radius: 1px;
   }
 
   .about-title {
@@ -531,7 +548,16 @@
   <!-- Trust strip -->
   <div class="about-strip">
     <div class="about-item">
-      <div class="about-icon">🇿🇦</div>
+      <div class="about-icon">
+        <svg class="sa-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 120" width="48" height="32" role="img" aria-label="South African flag">
+          <rect width="180" height="60" fill="#DE3831"/>
+          <rect y="60" width="180" height="60" fill="#002395"/>
+          <polygon points="0,0 60,26 180,26 180,94 60,94 0,120" fill="#FFFFFF"/>
+          <polygon points="0,0 60,32 180,32 180,88 60,88 0,120" fill="#FFB612"/>
+          <polygon points="0,0 60,40 180,40 180,80 60,80 0,120" fill="#007749"/>
+          <polygon points="0,0 0,120 60,60" fill="#000000"/>
+        </svg>
+      </div>
       <div class="about-title">Built for South Africa</div>
       <div class="about-text">Every calculator uses current SA tax rates, SARS rules, and BCEA labour law.</div>
     </div>
