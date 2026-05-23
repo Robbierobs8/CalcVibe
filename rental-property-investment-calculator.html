@@ -988,8 +988,11 @@ footer {
   .pill-toggle { flex-wrap: wrap; }
 }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -1006,7 +1009,8 @@ footer {
   <p class="page-sub">Compare short-term Airbnb vs long-term rental yields, monthly cashflow, and projected capital growth.</p>
 </div>
 
-<main>
+<main id="main">
+  <input type="hidden" id="shareMode" value="short" data-share>
   <div class="main-grid">
 
     <!-- ======== INPUTS COLUMN ======== -->
@@ -1143,9 +1147,9 @@ footer {
         <div class="accordion-body">
 
           <!-- Mode toggle -->
-          <div class="pill-toggle" id="modeToggle">
-            <button class="pill-btn active" id="btnShortTerm" onclick="setMode('short')">Short-term (Airbnb)</button>
-            <button class="pill-btn" id="btnLongTerm" onclick="setMode('long')">Long-term (Rental)</button>
+          <div class="pill-toggle" id="modeToggle" role="group" aria-label="Rental strategy">
+            <button type="button" class="pill-btn active" id="btnShortTerm" aria-pressed="true" onclick="setMode('short')">Short-term (Airbnb)</button>
+            <button type="button" class="pill-btn" id="btnLongTerm" aria-pressed="false" onclick="setMode('long')">Long-term (Rental)</button>
           </div>
 
           <!-- Short-term fields -->
@@ -1280,7 +1284,7 @@ footer {
             <span class="accordion-title">D — Capital Growth (Optional)</span>
           </div>
           <label class="section-toggle-check" id="growthToggleLabel" onclick="event.stopPropagation()">
-            <input type="checkbox" id="growthEnabled" onchange="onGrowthToggle()">
+            <input type="checkbox" id="growthEnabled" data-share onchange="onGrowthToggle()">
             <span id="growthToggleText">Enable</span>
           </label>
           <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1328,7 +1332,7 @@ footer {
     <div class="results-col">
 
       <!-- Main results card -->
-      <div class="results-card">
+      <div class="results-card" aria-live="polite" aria-atomic="true">
         <div class="results-top">
 
           <div class="res-row">
@@ -1473,6 +1477,11 @@ footer {
     </div>
   </div>
 
+  <div class="result-actions" style="max-width:1180px;margin:0 auto 1.5rem;padding:0 1.5rem">
+    <button type="button" class="btn-action" onclick="CalcVibe.copyResult('resCashflow', this)">Copy monthly cashflow</button>
+    <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
+  </div>
+
   <!-- RELATED -->
   <div class="related">
     <div class="related-title">Related Calculators</div>
@@ -1495,6 +1504,7 @@ footer {
   <div class="footer-disclaimer">For estimation purposes only. Rental yields, occupancy rates, and capital growth figures are illustrative. Actual returns depend on location, property condition, market conditions, and many other factors. Always consult a qualified financial adviser and registered property practitioner.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
 // =============================================
 // STATE
@@ -1602,10 +1612,6 @@ function onNumInput(numId, sliderId, sliderMax) {
 // =============================================
 // ACCORDION
 // =============================================
-function toggleAccordion(id) {
-  el(id).classList.toggle('open');
-}
-
 // =============================================
 // RENTAL MODE TOGGLE
 // =============================================
@@ -1613,6 +1619,9 @@ function setMode(mode) {
   rentalMode = mode;
   el('btnShortTerm').classList.toggle('active', mode === 'short');
   el('btnLongTerm').classList.toggle('active', mode === 'long');
+  el('btnShortTerm').setAttribute('aria-pressed', mode === 'short' ? 'true' : 'false');
+  el('btnLongTerm').setAttribute('aria-pressed', mode === 'long' ? 'true' : 'false');
+  var sm = el('shareMode'); if (sm) sm.value = mode;
   el('shortTermFields').style.display = mode === 'short' ? '' : 'none';
   el('longTermFields').style.display  = mode === 'long'  ? '' : 'none';
 
@@ -2000,7 +2009,10 @@ document.addEventListener('blur', function(e) {
 }, true);
 initCostRows();
 initTooltips();
-setMode('short'); // sets up display + initial calc
+// Make every numeric field shareable via the URL
+document.querySelectorAll('.field-num').forEach(function (e) { e.setAttribute('data-share', ''); });
+// Restore mode from a shared link, otherwise default to short-term
+setMode(new URLSearchParams(location.search).get('shareMode') === 'long' ? 'long' : 'short');
 calculate();
 window.addEventListener('resize', calculate);
 </script>
