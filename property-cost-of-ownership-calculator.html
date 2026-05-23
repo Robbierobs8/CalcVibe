@@ -765,8 +765,11 @@
     .btn-add { text-align: center; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <!-- ── NAV ── -->
 <nav>
@@ -786,7 +789,7 @@
 </div>
 
 <!-- ── MAIN ── -->
-<main>
+<main id="main">
   <div class="calc-layout">
 
     <!-- ── INPUTS COLUMN ── -->
@@ -811,7 +814,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="text" inputmode="numeric" class="field-num" id="priceNum" value="1 900 000" style="width:102px" oninput="onNumInput('priceNum','priceSlider',20000000); updateMaintDisplay();" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));autoFillTransfer();calculate()">
+                <input type="text" inputmode="numeric" class="field-num" id="priceNum" value="1 900 000" data-share style="width:102px" oninput="onNumInput('priceNum','priceSlider',20000000); updateMaintDisplay();" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));autoFillTransfer();calculate()">
               </div>
             </div>
             <input type="range" id="priceSlider" min="200000" max="20000000" step="100000" value="1900000" oninput="onSlider('priceSlider','priceNum',false); updateMaintDisplay(); autoFillTransfer();">
@@ -826,7 +829,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="text" inputmode="numeric" class="field-num" id="depositNum" value="180 000" style="width:90px" oninput="onNumInput('depositNum','depositSlider',5000000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
+                <input type="text" inputmode="numeric" class="field-num" id="depositNum" value="180 000" data-share style="width:90px" oninput="onNumInput('depositNum','depositSlider',5000000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="depositSlider" min="0" max="5000000" step="10000" value="180000" oninput="onSlider('depositSlider','depositNum',false);">
@@ -842,7 +845,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="text" inputmode="numeric" class="field-num" id="transferNum" value="35 625" style="width:80px" oninput="onNumInput('transferNum','transferSlider',500000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
+                <input type="text" inputmode="numeric" class="field-num" id="transferNum" value="35 625" data-share style="width:80px" oninput="onNumInput('transferNum','transferSlider',500000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="transferSlider" min="0" max="500000" step="1000" value="35625" oninput="onSlider('transferSlider','transferNum',false);">
@@ -857,7 +860,7 @@
               </span>
               <div class="field-num-wrap">
                 <span class="field-unit">R</span>
-                <input type="text" inputmode="numeric" class="field-num" id="furnishingsNum" value="150 000" style="width:80px" oninput="onNumInput('furnishingsNum','furnishingsSlider',2000000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
+                <input type="text" inputmode="numeric" class="field-num" id="furnishingsNum" value="150 000" data-share style="width:80px" oninput="onNumInput('furnishingsNum','furnishingsSlider',2000000)" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()">
               </div>
             </div>
             <input type="range" id="furnishingsSlider" min="0" max="2000000" step="10000" value="150000" oninput="onSlider('furnishingsSlider','furnishingsNum',false);">
@@ -871,7 +874,7 @@
                 <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA prime rate is currently 10.25% (May 2026). Most home loans are priced at prime or prime + 0.5% to 2% depending on your credit profile. Check SARB or your bank for the latest rate.</span></span>
               </span>
               <div class="field-num-wrap">
-                <input type="number" class="field-num" id="rateNum" value="10.25" min="0" step="0.25" style="width:46px" oninput="onNumInput('rateNum','rateSlider',25);">
+                <input type="number" class="field-num" id="rateNum" value="10.25" min="0" step="0.25" style="width:46px" data-share oninput="onNumInput('rateNum','rateSlider',25);">
                 <span class="field-unit">%</span>
               </div>
             </div>
@@ -886,7 +889,7 @@
                 <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Most SA home loans run for 20 years. A shorter term means higher payments but far less total interest.</span></span>
               </span>
               <div class="field-num-wrap">
-                <input type="number" class="field-num" id="periodNum" value="20" min="1" step="1" style="width:36px" oninput="onNumInput('periodNum','periodSlider',30);">
+                <input type="number" class="field-num" id="periodNum" value="20" min="1" step="1" style="width:36px" data-share oninput="onNumInput('periodNum','periodSlider',30);">
                 <span class="field-unit">yrs</span>
               </div>
             </div>
@@ -943,7 +946,7 @@
                 <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Industry guideline is 1% of property value per year. Older or larger properties may need 2–3%.</span></span>
               </span>
               <div class="field-num-wrap">
-                <input type="number" class="field-num" id="maintNum" value="1.0" min="0" step="0.1" style="width:40px" oninput="onNumInput('maintNum','maintSlider',5); updateMaintDisplay();">
+                <input type="number" class="field-num" id="maintNum" value="1.0" min="0" step="0.1" style="width:40px" data-share oninput="onNumInput('maintNum','maintSlider',5); updateMaintDisplay();">
                 <span class="field-unit">%</span>
               </div>
             </div>
@@ -960,7 +963,7 @@
     <div class="results-col">
 
       <!-- Dark Results Card -->
-      <div class="results-card">
+      <div class="results-card" aria-live="polite" aria-atomic="true">
         <div class="results-card-title">Monthly Cost Summary</div>
 
         <div class="result-row">
@@ -999,6 +1002,11 @@
           <span class="result-row-val" id="resUpfront">R 0</span>
         </div>
       </div><!-- /results-card -->
+
+      <div class="result-actions">
+        <button type="button" class="btn-action" onclick="CalcVibe.copyResult('resTotal', this)">Copy total monthly</button>
+        <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
+      </div>
 
       <!-- Pie Chart Card -->
       <div class="pie-card">
@@ -1065,6 +1073,7 @@
   <div class="footer-disclaimer">For estimation purposes only. Interest rates, municipal charges, and levies are illustrative and subject to change. This tool does not constitute financial, legal, or tax advice. Always consult a qualified financial adviser and conveyancing attorney before purchasing property.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   /* ============================================================
      DATA
@@ -1158,14 +1167,6 @@
       slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
     }
     calculate();
-  }
-
-  /* ============================================================
-     ACCORDION
-  ============================================================ */
-  function toggleAccordion(id) {
-    const el = document.getElementById(id);
-    el.classList.toggle('open');
   }
 
   /* ============================================================
