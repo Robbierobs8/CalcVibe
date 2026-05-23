@@ -428,6 +428,28 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 1.5rem; cursor: pointer; user-select: none;
+    transition: background 0.15s; gap: 0.75rem;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -665,20 +687,28 @@
     </div>
   </div>
 
-  <div class="explainer">
-    <h2>How bond repayments are calculated</h2>
-    <p>A South African home loan (bond) uses a standard amortisation formula. Each monthly payment covers both interest and a portion of the outstanding principal, so the balance reduces to zero over the loan term.</p>
-
-    <div class="formula-box">
-      M = <span>P × [r(1+r)^n]</span> / <span>[(1+r)^n − 1]</span><br>
-      Where: <span>P</span> = loan amount &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months (years × 12)
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How Bond Repayments and Buying Costs Are Calculated</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How bond repayments are calculated</h2>
+        <p>A South African home loan (bond) uses a standard amortisation formula. Each monthly payment covers both interest and a portion of the outstanding principal, so the balance reduces to zero over the loan term.</p>
 
-    <p>Most SA banks price home loans between <strong>prime</strong> and <strong>prime + 2%</strong> depending on your credit profile and deposit size. The SA prime rate is currently <strong>10.25%</strong> (May 2026) — check sarb.co.za or your bank for the latest figure.</p>
+        <div class="formula-box">
+          M = <span>P × [r(1+r)^n]</span> / <span>[(1+r)^n − 1]</span><br>
+          Where: <span>P</span> = loan amount &nbsp;|&nbsp; <span>r</span> = monthly rate (annual ÷ 12) &nbsp;|&nbsp; <span>n</span> = months (years × 12)
+        </div>
 
-    <p><strong>Bond registration costs</strong> are split into two components. The <em>Deeds Office Levy</em> is the official government registration charge calculated on the Deeds Office 2025/2026 tariff scale. The <em>Bond Attorney Fees</em> are the conveyancing attorney's prescribed tariff fee (Law Society scale), plus 15% VAT. Both are applied to the loan amount.</p>
+        <p>Most SA banks price home loans between <strong>prime</strong> and <strong>prime + 2%</strong> depending on your credit profile and deposit size. The SA prime rate is currently <strong>10.25%</strong> (May 2026) — check sarb.co.za or your bank for the latest figure.</p>
 
-    <p><strong>Transfer and conveyancing costs</strong> are also two components. <em>Transfer Duty</em> is the SARS government tax on the property purchase price — properties up to R1,100,000 are exempt and rates from 3% to 13% apply above that. <em>Transfer Attorney Fees</em> are the conveyancing attorney's prescribed fee for registering the transfer (Law Society scale), plus 15% VAT.</p>
+        <p><strong>Bond registration costs</strong> are split into two components. The <em>Deeds Office Levy</em> is the official government registration charge calculated on the Deeds Office 2025/2026 tariff scale. The <em>Bond Attorney Fees</em> are the conveyancing attorney's prescribed tariff fee (Law Society scale), plus 15% VAT. Both are applied to the loan amount.</p>
+
+        <p><strong>Transfer and conveyancing costs</strong> are also two components. <em>Transfer Duty</em> is the SARS government tax on the property purchase price — properties up to R1,100,000 are exempt and rates from 3% to 13% apply above that. <em>Transfer Attorney Fees</em> are the conveyancing attorney's prescribed fee for registering the transfer (Law Society scale), plus 15% VAT.</p>
+      </div>
+    </div>
   </div>
 
   <div class="related">
@@ -814,6 +844,10 @@
   }
 
   calculate();
+
+  function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
 </script>
 </body>
 </html>

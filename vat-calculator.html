@@ -322,6 +322,28 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 1.5rem; cursor: pointer; user-select: none;
+    transition: background 0.15s; gap: 0.75rem;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -472,17 +494,25 @@
   </div>
 
   <!-- Explainer — good for SEO -->
-  <div class="explainer">
-    <h2>How to calculate VAT in South Africa</h2>
-    <p>South Africa's standard VAT rate is <strong>15%</strong>, set by SARS (South African Revenue Service). Most goods and services are subject to VAT, with some zero-rated exceptions like basic foodstuffs and exports.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How VAT Is Calculated in South Africa</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How to calculate VAT in South Africa</h2>
+        <p>South Africa's standard VAT rate is <strong>15%</strong>, set by SARS (South African Revenue Service). Most goods and services are subject to VAT, with some zero-rated exceptions like basic foodstuffs and exports.</p>
 
-    <p><strong>To add VAT</strong> to an amount (price excluding VAT):</p>
-    <div class="formula-box">VAT Amount = Price × <span>0.15</span> &nbsp;|&nbsp; Total = Price × <span>1.15</span></div>
+        <p><strong>To add VAT</strong> to an amount (price excluding VAT):</p>
+        <div class="formula-box">VAT Amount = Price × <span>0.15</span> &nbsp;|&nbsp; Total = Price × <span>1.15</span></div>
 
-    <p><strong>To remove VAT</strong> from an amount (price including VAT):</p>
-    <div class="formula-box">Original Price = Total ÷ <span>1.15</span> &nbsp;|&nbsp; VAT Amount = Total − Original Price</div>
+        <p><strong>To remove VAT</strong> from an amount (price including VAT):</p>
+        <div class="formula-box">Original Price = Total ÷ <span>1.15</span> &nbsp;|&nbsp; VAT Amount = Total − Original Price</div>
 
-    <p>This calculator handles both directions instantly. Simply enter your amount and toggle between "Add VAT" and "Remove VAT".</p>
+        <p>This calculator handles both directions instantly. Simply enter your amount and toggle between "Add VAT" and "Remove VAT".</p>
+      </div>
+    </div>
   </div>
 
   <!-- Related calculators -->
@@ -559,6 +589,10 @@
 
   // Init
   calculate();
+
+  function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
 </script>
 </body>
 </html>

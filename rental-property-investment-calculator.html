@@ -202,6 +202,7 @@ main {
   padding: 0 1.25rem 1.25rem;
   max-height: 3000px;
 }
+.accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
 
 /* FIELDS */
 .field { margin-bottom: 1.1rem; }
@@ -1447,21 +1448,29 @@ footer {
   </div><!-- /main-grid -->
 
   <!-- EXPLAINER -->
-  <div class="explainer">
-    <h2>How to use the Rental Property Investment Calculator</h2>
-    <p>This calculator helps South African property investors analyse whether a specific property will generate positive cashflow, and how to compare short-term (Airbnb/holiday) letting against traditional long-term rental income. Enter your purchase details, financing assumptions, expected costs, and income parameters to get an instant picture of your monthly cashflow and rental yield.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How to Analyse a Rental Property Investment</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How to use the Rental Property Investment Calculator</h2>
+        <p>This calculator helps South African property investors analyse whether a specific property will generate positive cashflow, and how to compare short-term (Airbnb/holiday) letting against traditional long-term rental income. Enter your purchase details, financing assumptions, expected costs, and income parameters to get an instant picture of your monthly cashflow and rental yield.</p>
 
-    <h3>Gross vs. Net Rental Yield</h3>
-    <p><strong>Gross rental yield</strong> is the simplest measure: annual gross rental income divided by property price, expressed as a percentage. Most SA property analysts consider 8–12% gross yield attractive for a long-term rental. <strong>Net rental yield</strong> is more realistic — it deducts all operating costs (bond excluded) from income before dividing by property price. A positive net yield above your cost of capital means the property is covering its own way.</p>
+        <h3>Gross vs. Net Rental Yield</h3>
+        <p><strong>Gross rental yield</strong> is the simplest measure: annual gross rental income divided by property price, expressed as a percentage. Most SA property analysts consider 8–12% gross yield attractive for a long-term rental. <strong>Net rental yield</strong> is more realistic — it deducts all operating costs (bond excluded) from income before dividing by property price. A positive net yield above your cost of capital means the property is covering its own way.</p>
 
-    <h3>Short-term (Airbnb) vs. Long-term Rental in South Africa</h3>
-    <p>Short-term letting in high-demand SA locations — coastal towns like Hermanus, Knysna, and Ballito, or urban nodes like the Cape Town City Bowl and Sandton — can generate 2–3× the gross income of a long-term rental. However, the costs are also substantially higher: platform fees (14–18%), property management fees (18–25% for hands-off owners), much higher turnover cleaning and maintenance costs, and significant seasonal income variation.</p>
-    <p>Long-term rentals offer stability and lower management overhead. A reliable tenant, locked in at market rent with a Rental Housing Act-compliant lease, produces predictable cashflow. The trade-off is less upside: rent increases are typically CPI-linked, and vacancy periods (usually 1–2 months between tenants) must be budgeted for.</p>
+        <h3>Short-term (Airbnb) vs. Long-term Rental in South Africa</h3>
+        <p>Short-term letting in high-demand SA locations — coastal towns like Hermanus, Knysna, and Ballito, or urban nodes like the Cape Town City Bowl and Sandton — can generate 2–3× the gross income of a long-term rental. However, the costs are also substantially higher: platform fees (14–18%), property management fees (18–25% for hands-off owners), much higher turnover cleaning and maintenance costs, and significant seasonal income variation.</p>
+        <p>Long-term rentals offer stability and lower management overhead. A reliable tenant, locked in at market rent with a Rental Housing Act-compliant lease, produces predictable cashflow. The trade-off is less upside: rent increases are typically CPI-linked, and vacancy periods (usually 1–2 months between tenants) must be budgeted for.</p>
 
-    <h3>The SA property investment landscape</h3>
-    <p>South African residential property has historically delivered nominal capital growth of approximately 4–7% per annum, with real (inflation-adjusted) growth closer to 0–2%. As a result, cashflow-positive properties that also appreciate in value represent the strongest investment case. In a high interest-rate environment (prime at 11.25% as of early 2025), many investment properties are cashflow-negative — making capital growth and long-term equity building the primary thesis for purchase.</p>
+        <h3>The SA property investment landscape</h3>
+        <p>South African residential property has historically delivered nominal capital growth of approximately 4–7% per annum, with real (inflation-adjusted) growth closer to 0–2%. As a result, cashflow-positive properties that also appreciate in value represent the strongest investment case. In a high interest-rate environment (prime at 10.25% as of May 2026), many investment properties are cashflow-negative — making capital growth and long-term equity building the primary thesis for purchase.</p>
 
-    <p><em>Disclaimer: This calculator provides estimates for planning purposes only. Actual rental income, vacancy rates, management fees, and capital growth will vary. Always conduct thorough due diligence and consult a qualified financial adviser or registered property practitioner before making an investment decision.</em></p>
+        <p><em>Disclaimer: This calculator provides estimates for planning purposes only. Actual rental income, vacancy rates, management fees, and capital growth will vary. Always conduct thorough due diligence and consult a qualified financial adviser or registered property practitioner before making an investment decision.</em></p>
+      </div>
+    </div>
   </div>
 
   <!-- RELATED -->

@@ -610,6 +610,28 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 1.5rem; cursor: pointer; user-select: none;
+    transition: background 0.15s; gap: 0.75rem;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related { animation: fadeUp 0.5s ease 0.45s both; }
 
@@ -856,15 +878,23 @@
   </div>
 
   <!-- Explainer -->
-  <div class="explainer">
-    <h2>How does compound interest work?</h2>
-    <p>Compound interest means you earn interest not just on your initial deposit, but also on all the interest you've already accumulated. Over time this creates exponential growth — the longer you stay invested, the more powerful the effect.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How Compound Interest Works</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How does compound interest work?</h2>
+        <p>Compound interest means you earn interest not just on your initial deposit, but also on all the interest you've already accumulated. Over time this creates exponential growth — the longer you stay invested, the more powerful the effect.</p>
 
-    <div class="formula-box">A = <span>P(1 + r/n)^(nt)</span> + contributions compounded over each period</div>
+        <div class="formula-box">A = <span>P(1 + r/n)^(nt)</span> + contributions compounded over each period</div>
 
-    <p>Where <strong>P</strong> is your initial principal, <strong>r</strong> is the annual interest rate, <strong>n</strong> is the number of compounding periods per year, and <strong>t</strong> is time in years.</p>
+        <p>Where <strong>P</strong> is your initial principal, <strong>r</strong> is the annual interest rate, <strong>n</strong> is the number of compounding periods per year, and <strong>t</strong> is time in years.</p>
 
-    <p>South African savings accounts and money market funds typically offer rates between <strong>8% and 11%</strong> per year. Fixed deposits and unit trusts may offer higher rates depending on term and risk profile.</p>
+        <p>South African savings accounts and money market funds typically offer rates between <strong>8% and 11%</strong> per year. Fixed deposits and unit trusts may offer higher rates depending on term and risk profile.</p>
+      </div>
+    </div>
   </div>
 
   <!-- Related -->
@@ -1150,6 +1180,10 @@
   chartCanvas.addEventListener('mouseleave', () => {
     document.getElementById('chartTooltip').style.display = 'none';
   });
+
+  function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
 </script>
 </body>
 </html>

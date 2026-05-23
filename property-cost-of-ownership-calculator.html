@@ -198,6 +198,7 @@
   }
 
   .accordion.open .accordion-body { display: block; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
 
   /* ── FIELD STYLES ── */
   .field { margin-bottom: 1.25rem; }
@@ -1018,19 +1019,27 @@
   </div><!-- /calc-layout -->
 
   <!-- ── EXPLAINER ── -->
-  <div class="explainer">
-    <h2>Understanding the True Cost of Owning Property in South Africa</h2>
-    <p>This calculator gives you a complete picture of what it actually costs to own a home in South Africa each month — not just the bond instalment, but every recurring expense that comes with the property. Many first-time buyers focus almost entirely on whether they can afford the monthly repayment, only to be surprised by rates accounts, levy statements, insurance premiums, and the inevitable maintenance bill.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">Understanding the True Cost of Owning Property</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>Understanding the True Cost of Owning Property in South Africa</h2>
+        <p>This calculator gives you a complete picture of what it actually costs to own a home in South Africa each month — not just the bond instalment, but every recurring expense that comes with the property. Many first-time buyers focus almost entirely on whether they can afford the monthly repayment, only to be surprised by rates accounts, levy statements, insurance premiums, and the inevitable maintenance bill.</p>
 
-    <p><strong>The bond repayment</strong> is calculated using the standard South African home loan formula: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan amount (purchase price minus deposit), r is the monthly interest rate (annual rate ÷ 12), and n is the total number of months. Most banks in South Africa offer 20-year home loans at variable interest rates linked to the prime lending rate, which itself is set by the South African Reserve Bank (SARB).</p>
+        <p><strong>The bond repayment</strong> is calculated using the standard South African home loan formula: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan amount (purchase price minus deposit), r is the monthly interest rate (annual rate ÷ 12), and n is the total number of months. Most banks in South Africa offer 20-year home loans at variable interest rates linked to the prime lending rate, which itself is set by the South African Reserve Bank (SARB).</p>
 
-    <p><strong>Rates and taxes</strong> are levied by your local municipality and are based on the municipal valuation of your property. They typically range from R500 to R3,000+ per month depending on property value and the municipality. <strong>Levies</strong> (also called body corporate contributions) apply to sectional title properties like flats or townhouses, and cover shared building maintenance, insurance, and management. Levies can vary significantly — a modest complex might charge R1,200/month while a high-end estate could charge R4,000 or more.</p>
+        <p><strong>Rates and taxes</strong> are levied by your local municipality and are based on the municipal valuation of your property. They typically range from R500 to R3,000+ per month depending on property value and the municipality. <strong>Levies</strong> (also called body corporate contributions) apply to sectional title properties like flats or townhouses, and cover shared building maintenance, insurance, and management. Levies can vary significantly — a modest complex might charge R1,200/month while a high-end estate could charge R4,000 or more.</p>
 
-    <p><strong>Transfer duty</strong> is a government tax paid when you purchase a property worth more than R1,100,000 (as of 2024). It is calculated on a sliding scale and can amount to several hundred thousand rand on higher-value properties. Conveyancing fees, bond registration costs, and deeds office fees add further to your upfront bill. Use the CalcVibe Bond Calculator to get a detailed estimate.</p>
+        <p><strong>Transfer duty</strong> is a government tax paid when you purchase a property worth more than R1,100,000 (as of 2024). It is calculated on a sliding scale and can amount to several hundred thousand rand on higher-value properties. Conveyancing fees, bond registration costs, and deeds office fees add further to your upfront bill. Use the CalcVibe Bond Calculator to get a detailed estimate.</p>
 
-    <p><strong>Maintenance reserve</strong> is the amount you should set aside each month for repairs and upkeep. The widely cited rule of thumb is to budget 1% of the property's value per year — so a R2 million home would require roughly R1,667 per month in maintenance reserves. Older properties, larger stands, and properties with pools or lifts typically require more. Failing to budget for maintenance is one of the leading causes of financial stress for property owners.</p>
+        <p><strong>Maintenance reserve</strong> is the amount you should set aside each month for repairs and upkeep. The widely cited rule of thumb is to budget 1% of the property's value per year — so a R2 million home would require roughly R1,667 per month in maintenance reserves. Older properties, larger stands, and properties with pools or lifts typically require more. Failing to budget for maintenance is one of the leading causes of financial stress for property owners.</p>
 
-    <p><em>Disclaimer: All figures are estimates only and should not be taken as financial, legal, or tax advice. Interest rates, municipal charges, and levies change frequently. Always verify costs with your bank, municipality, and a qualified property professional before making any purchase decisions.</em></p>
+        <p><em>Disclaimer: All figures are estimates only and should not be taken as financial, legal, or tax advice. Interest rates, municipal charges, and levies change frequently. Always verify costs with your bank, municipality, and a qualified property professional before making any purchase decisions.</em></p>
+      </div>
+    </div>
   </div>
 
   <!-- ── RELATED CALCULATORS ── -->

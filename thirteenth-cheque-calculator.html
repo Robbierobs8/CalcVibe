@@ -344,6 +344,28 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 1.5rem; cursor: pointer; user-select: none;
+    transition: background 0.15s; gap: 0.75rem;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   .related {
     margin-top: 1.5rem;
     animation: fadeUp 0.5s ease 0.45s both;
@@ -516,16 +538,24 @@
     </div>
   </div>
 
-  <div class="explainer">
-    <h2>How is a 13th cheque taxed in South Africa?</h2>
-    <p>A 13th cheque (year-end bonus) is treated as part of your annual income by SARS. It is taxed at your <strong>marginal rate</strong> — the rate that applies to the top portion of your total yearly earnings.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How a 13th Cheque Is Taxed in South Africa</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How is a 13th cheque taxed in South Africa?</h2>
+        <p>A 13th cheque (year-end bonus) is treated as part of your annual income by SARS. It is taxed at your <strong>marginal rate</strong> — the rate that applies to the top portion of your total yearly earnings.</p>
 
-    <p>This calculator works out the tax by comparing your annual PAYE with and without the bonus:</p>
-    <div class="formula-box">Tax on Bonus = <span>Tax(Annual Salary + Bonus)</span> − <span>Tax(Annual Salary alone)</span></div>
+        <p>This calculator works out the tax by comparing your annual PAYE with and without the bonus:</p>
+        <div class="formula-box">Tax on Bonus = <span>Tax(Annual Salary + Bonus)</span> − <span>Tax(Annual Salary alone)</span></div>
 
-    <p>UIF contributions of <strong>1%</strong> apply to the bonus up to the annual remuneration ceiling of <strong>R212,544</strong>. Once your regular salary already exceeds this ceiling, no further UIF is deducted from the bonus.</p>
+        <p>UIF contributions of <strong>1%</strong> apply to the bonus up to the annual remuneration ceiling of <strong>R212,544</strong>. Once your regular salary already exceeds this ceiling, no further UIF is deducted from the bonus.</p>
 
-    <p>Tax rebates applied (2025/2026): Primary <strong>R17,235</strong> · Secondary 65+ <strong>R9,444</strong> · Tertiary 75+ <strong>R3,145</strong>. Medical tax credits and retirement fund deductions are not included — consult a tax professional for a full picture.</p>
+        <p>Tax rebates applied (2025/2026): Primary <strong>R17,235</strong> · Secondary 65+ <strong>R9,444</strong> · Tertiary 75+ <strong>R3,145</strong>. Medical tax credits and retirement fund deductions are not included — consult a tax professional for a full picture.</p>
+      </div>
+    </div>
   </div>
 
   <div class="related">
@@ -621,6 +651,10 @@
   }
 
   calculate();
+
+  function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
 </script>
 </body>
 </html>
