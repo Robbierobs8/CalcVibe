@@ -131,6 +131,9 @@
       } else {
         el.value = el.classList.contains('js-money') ? fmtVal(parseVal(val)) : val;
       }
+      // Fire the page's own handlers so sliders, tooltips, and calc stay in sync
+      var evt = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input';
+      el.dispatchEvent(new Event(evt, { bubbles: true }));
       applied = true;
     });
     return applied;

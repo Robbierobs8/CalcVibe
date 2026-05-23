@@ -717,8 +717,11 @@
     th, td { padding-left: 1rem; padding-right: 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -735,7 +738,7 @@
   <p class="page-sub">See how your savings or investments grow over time with the power of compounding.</p>
 </div>
 
-<main>
+<main id="main">
 
   <!-- Input cards -->
   <div class="input-grid">
@@ -748,7 +751,7 @@
           <span class="label-with-tip">Initial Investment <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The lump sum you're starting with — this could be savings you already have.</span></span></span>
           <div class="field-num-wrap">
             <span class="field-unit">R</span>
-            <input type="text" inputmode="numeric" class="field-num" id="principalNum" value="10 000" style="width:96px"
+            <input type="text" inputmode="numeric" class="field-num" id="principalNum" value="10 000" data-share style="width:96px"
               oninput="onNumInput('principalNum','principal',500000)"
               onfocus="this.value=String(parseVal(this.value)||'')"
               onblur="this.value=fmtVal(parseVal(this.value));calculate()">
@@ -762,7 +765,7 @@
           <span class="label-with-tip">Monthly Contribution <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The amount you add every month going forward. Even small amounts make a big difference over time.</span></span></span>
           <div class="field-num-wrap">
             <span class="field-unit">R</span>
-            <input type="text" inputmode="numeric" class="field-num" id="monthlyNum" value="500" style="width:80px"
+            <input type="text" inputmode="numeric" class="field-num" id="monthlyNum" value="500" data-share style="width:80px"
               oninput="onNumInput('monthlyNum','monthly',20000)"
               onfocus="this.value=String(parseVal(this.value)||'')"
               onblur="this.value=fmtVal(parseVal(this.value));calculate()">
@@ -775,7 +778,7 @@
         <div class="field-label">
           <span class="label-with-tip">Annual Interest Rate <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The yearly return on your money. A typical SA savings account offers 7–9%. The JSE has historically returned around 12–14% per year.</span></span></span>
           <div class="field-num-wrap">
-            <input type="number" class="field-num" id="rateNum" value="9.0" min="0" max="100" step="0.5" style="width:40px" oninput="onNumInput('rateNum','rate',30)">
+            <input type="number" class="field-num" id="rateNum" value="9.0" min="0" max="100" step="0.5" style="width:40px" data-share oninput="onNumInput('rateNum','rate',30)">
             <span class="field-unit">%</span>
           </div>
         </div>
@@ -790,7 +793,7 @@
         <div class="field-label">
           <span class="label-with-tip">Investment Period <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">How many years you leave your money to grow. The longer the better — this is where compounding gets magical.</span></span></span>
           <div class="field-num-wrap">
-            <input type="number" class="field-num" id="yearsNum" value="20" min="1" max="1000" step="1" style="width:34px" oninput="onNumInput('yearsNum','years',50)">
+            <input type="number" class="field-num" id="yearsNum" value="20" min="1" max="1000" step="1" style="width:34px" data-share oninput="onNumInput('yearsNum','years',50)">
             <span class="field-unit">yrs</span>
           </div>
         </div>
@@ -799,7 +802,7 @@
 
       <div class="field">
         <div class="field-label" style="margin-bottom:0.5rem"><span class="label-with-tip">Compound Frequency <span class="tip-wrap" id="freqTipWrap"><span class="tip-icon">i</span><span class="tip-box" id="freqTipBox"></span></span></span></div>
-        <select id="frequency" onchange="updateFreqTip(); calculate()">
+        <select id="frequency" data-share onchange="updateFreqTip(); calculate()">
           <option value="1">Annually</option>
           <option value="2">Semi-Annually</option>
           <option value="4">Quarterly</option>
@@ -810,7 +813,7 @@
 
       <div class="field">
         <div class="field-label" style="margin-bottom:0.5rem"><span class="label-with-tip">Contribution Timing <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Start of period means you contribute at the beginning of each month — slightly better returns. End of period is the default for most debit orders.</span></span></span></div>
-        <select id="timing" onchange="calculate()">
+        <select id="timing" data-share onchange="calculate()">
           <option value="end" selected>End of period</option>
           <option value="start">Start of period</option>
         </select>
@@ -821,7 +824,7 @@
 
   <!-- Results -->
   <div class="results-card">
-    <div class="results-stats">
+    <div class="results-stats" aria-live="polite" aria-atomic="true">
       <div class="stat">
         <div class="stat-label">Final Balance</div>
         <div class="stat-value highlight" id="finalBalance">—</div>
@@ -855,6 +858,11 @@
         <div class="chart-tooltip" id="chartTooltip"></div>
       </div>
     </div>
+  </div>
+
+  <div class="result-actions" style="max-width:900px;margin:1.25rem auto 0;padding:0 1.5rem">
+    <button type="button" class="btn-action" onclick="CalcVibe.copyResult('finalBalance', this)">Copy final balance</button>
+    <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
   </div>
 
   <!-- Year-by-year table -->
@@ -919,6 +927,7 @@
   <div class="footer-disclaimer">For estimation purposes only. Interest rates shown are illustrative. Past performance does not guarantee future returns. Always consult a qualified financial adviser.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   let chartData = [];
 
@@ -1180,10 +1189,6 @@
   chartCanvas.addEventListener('mouseleave', () => {
     document.getElementById('chartTooltip').style.display = 'none';
   });
-
-  function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
 </script>
 </body>
 </html>
