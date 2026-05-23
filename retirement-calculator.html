@@ -518,8 +518,11 @@
     nav { padding: 0 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -536,12 +539,12 @@
   <p class="page-sub">Project your retirement savings using South African RA and pension rules.</p>
 </div>
 
-<main>
+<main id="main">
   <div class="calc-card">
     <div class="calc-body">
 
       <div class="info-row">
-        <span class="info-row-label">🇿🇦 RA Tax Deduction Limit</span>
+        <span class="info-row-label"><span aria-hidden="true">🇿🇦</span> RA Tax Deduction Limit</span>
         <span class="info-row-value">27.5% of income (max R350,000/yr)</span>
       </div>
 
@@ -549,14 +552,16 @@
         <div class="field">
           <label for="currentAge">Current Age</label>
           <div class="input-wrap">
-            <input type="number" id="currentAge" class="age-input" value="30" min="18" max="70" step="1" oninput="calculate()">
+            <input type="number" id="currentAge" class="age-input" value="30" min="18" max="70" step="1" data-share oninput="calculate()" aria-describedby="currentAge-help">
           </div>
+          <span class="input-help" id="currentAge-help">Your age today.</span>
         </div>
         <div class="field">
           <label for="retirementAge">Retirement Age</label>
           <div class="input-wrap">
-            <input type="number" id="retirementAge" class="age-input" value="65" min="50" max="75" step="1" oninput="calculate()">
+            <input type="number" id="retirementAge" class="age-input" value="65" min="50" max="75" step="1" data-share oninput="calculate()" aria-describedby="retirementAge-help">
           </div>
+          <span class="input-help" id="retirementAge-help">The age you plan to stop working.</span>
         </div>
       </div>
 
@@ -564,37 +569,40 @@
         <label for="currentSavings">Current Savings</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="number" id="currentSavings" value="0" min="0" step="1000" oninput="calculate()">
+          <input type="text" class="js-money" id="currentSavings" value="0" data-share aria-describedby="currentSavings-help">
         </div>
+        <span class="input-help" id="currentSavings-help">What you have already saved towards retirement. Enter 0 if you are starting fresh.</span>
       </div>
 
       <div class="field">
         <label for="monthlyContrib">Monthly Contribution</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="number" id="monthlyContrib" value="3000" min="0" step="100" oninput="calculate()">
+          <input type="text" class="js-money" id="monthlyContrib" value="3 000" data-share aria-describedby="monthlyContrib-help">
         </div>
+        <span class="input-help" id="monthlyContrib-help">What you put away each month (pension, provident or retirement annuity).</span>
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="annualReturn">Expected Annual Return</label>
           <div class="input-wrap">
-            <input type="number" id="annualReturn" class="no-prefix" value="10.0" min="0" max="30" step="0.5" oninput="calculate()">
+            <input type="number" id="annualReturn" class="no-prefix" value="10.0" min="0" max="30" step="0.5" data-share oninput="calculate()" aria-describedby="annualReturn-help">
             <span class="input-suffix">%</span>
           </div>
+          <span class="input-help" id="annualReturn-help">Average yearly growth you expect after fees.</span>
         </div>
         <div class="field">
           <label for="inflation">Expected Inflation</label>
           <div class="input-wrap">
-            <input type="number" id="inflation" class="no-prefix" value="5.0" min="0" max="20" step="0.5" oninput="calculate()">
+            <input type="number" id="inflation" class="no-prefix" value="5.0" min="0" max="20" step="0.5" data-share oninput="calculate()" aria-describedby="inflation-help">
             <span class="input-suffix">%</span>
           </div>
-          <div class="field-hint">SA 10-year average CPI: ~5.0% (2015–2024, Stats SA). Adjust if you expect inflation to differ.</div>
+          <div class="field-hint" id="inflation-help">SA 10-year average CPI: ~5.0% (2015–2024, Stats SA). Adjust if you expect inflation to differ.</div>
         </div>
       </div>
 
-      <div class="results">
+      <div class="results" aria-live="polite" aria-atomic="true">
         <div class="result-row highlight">
           <span class="result-label">Projected Fund Value (nominal)</span>
           <span class="result-value" id="resNominal">R 0</span>
@@ -611,6 +619,11 @@
           <span class="result-label">Est. Monthly Income (4% drawdown)</span>
           <span class="result-value" id="resIncome">R 0</span>
         </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn-action" onclick="CalcVibe.copyResult('resNominal', this)">Copy projected value</button>
+        <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
       </div>
 
     </div>
@@ -740,6 +753,7 @@
   <div class="footer-disclaimer">For estimation purposes only. This is not financial advice. Returns are not guaranteed. Consult a registered financial adviser before making retirement planning decisions. Tax rules are subject to change — verify with SARS or a tax professional.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   function fmt(n) {
     return 'R ' + Math.round(n).toLocaleString('en-ZA');
@@ -748,8 +762,8 @@
   function calculate() {
     const currentAge    = parseFloat(document.getElementById('currentAge').value)    || 0;
     const retirementAge = parseFloat(document.getElementById('retirementAge').value) || 0;
-    const PV            = parseFloat(document.getElementById('currentSavings').value) || 0;
-    const PMT           = parseFloat(document.getElementById('monthlyContrib').value) || 0;
+    const PV            = CalcVibe.parseVal(document.getElementById('currentSavings').value);
+    const PMT           = CalcVibe.parseVal(document.getElementById('monthlyContrib').value);
     const annReturn     = parseFloat(document.getElementById('annualReturn').value)   || 0;
     const annInflation  = parseFloat(document.getElementById('inflation').value)      || 0;
 
@@ -783,9 +797,7 @@
     document.getElementById('resIncome').textContent  = fmt(monthlyIncome);
   }
 
-  function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
+  fmt = function (n) { return CalcVibe.fmtR(n, 0); };
 
   // Init
   calculate();

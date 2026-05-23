@@ -451,8 +451,11 @@
     nav { padding: 0 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -469,55 +472,52 @@
   <p class="page-sub">Work out your year-end bonus and what you'll take home after PAYE tax and UIF.</p>
 </div>
 
-<main>
+<main id="main">
   <div class="calc-card">
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btnFull" onclick="setMode('full')">
-        🎁 Full Month Bonus
+    <div class="mode-toggle" role="group" aria-label="Bonus type">
+      <button type="button" class="mode-btn active" id="btnFull" aria-pressed="true" onclick="setMode('full')">
+        <span aria-hidden="true">🎁</span> Full Month Bonus
       </button>
-      <button class="mode-btn" id="btnCustom" onclick="setMode('custom')">
-        ✏️ Custom Amount
+      <button type="button" class="mode-btn" id="btnCustom" aria-pressed="false" onclick="setMode('custom')">
+        <span aria-hidden="true">✏️</span> Custom Amount
       </button>
     </div>
 
     <div class="calc-body">
       <div class="info-row">
-        <span class="info-label">🇿🇦 SARS Tax Year</span>
+        <span class="info-label"><span aria-hidden="true">🇿🇦</span> SARS Tax Year</span>
         <span class="info-value">2025 / 2026</span>
       </div>
 
       <div class="field">
-        <label>Monthly Gross Salary</label>
+        <label for="monthlySalary">Monthly Gross Salary</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="text" inputmode="numeric" id="monthlySalary" placeholder="0"
-            onfocus="this.value=String(parseVal(this.value)||'')"
-            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
-            oninput="calculate()">
+          <input type="text" class="js-money" id="monthlySalary" placeholder="0" data-share aria-describedby="monthlySalary-help">
         </div>
+        <span class="input-help" id="monthlySalary-help">Your normal monthly salary. A full 13th cheque equals one month's salary.</span>
       </div>
 
       <div class="field" id="customBonusField" style="display:none">
-        <label>Bonus Amount (Gross)</label>
+        <label for="customBonus">Bonus Amount (Gross)</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="text" inputmode="numeric" id="customBonus" placeholder="0"
-            onfocus="this.value=String(parseVal(this.value)||'')"
-            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
-            oninput="calculate()">
+          <input type="text" class="js-money" id="customBonus" placeholder="0" data-share aria-describedby="customBonus-help">
         </div>
+        <span class="input-help" id="customBonus-help">The gross bonus amount, if it differs from one month's salary.</span>
       </div>
 
       <div class="field">
-        <label>Age Bracket</label>
-        <select id="ageBracket" onchange="calculate()">
+        <label for="ageBracket">Age Bracket</label>
+        <select id="ageBracket" data-share onchange="calculate()" aria-describedby="ageBracket-help">
           <option value="under65">Under 65</option>
           <option value="65to74">65 – 74 years</option>
           <option value="75plus">75 years and older</option>
         </select>
+        <span class="input-help" id="ageBracket-help">SARS gives a larger tax rebate from age 65, and again from 75.</span>
       </div>
 
-      <div class="results">
+      <div class="results" aria-live="polite" aria-atomic="true">
         <div class="result-row">
           <span class="result-label">Gross Bonus</span>
           <span class="result-value" id="grossBonus">R 0.00</span>
@@ -534,6 +534,11 @@
           <span class="result-label">Net Take-Home</span>
           <span class="result-value" id="netBonus">R 0.00</span>
         </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn-action" onclick="CalcVibe.copyResult('netBonus', this)">Copy net bonus</button>
+        <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
       </div>
     </div>
   </div>
@@ -578,6 +583,7 @@
   <div class="footer-disclaimer">For estimation purposes only. Tax rules may change — always verify with SARS or a qualified tax professional. This calculator does not account for medical tax credits, retirement fund contributions, or other personal deductions.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   let mode = 'full';
 
@@ -621,6 +627,8 @@
     mode = m;
     document.getElementById('btnFull').classList.toggle('active', m === 'full');
     document.getElementById('btnCustom').classList.toggle('active', m === 'custom');
+    document.getElementById('btnFull').setAttribute('aria-pressed', m === 'full' ? 'true' : 'false');
+    document.getElementById('btnCustom').setAttribute('aria-pressed', m === 'custom' ? 'true' : 'false');
     document.getElementById('customBonusField').style.display = m === 'custom' ? 'block' : 'none';
     calculate();
   }
@@ -651,10 +659,6 @@
   }
 
   calculate();
-
-  function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
 </script>
 </body>
 </html>
