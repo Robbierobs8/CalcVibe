@@ -309,20 +309,6 @@
     height: 36px;
   }
 
-  @keyframes flagWave {
-    0%, 100% { transform: skewY(-1deg) scale(1); }
-    50%       { transform: skewY(1deg) scale(1.01); }
-  }
-  .sa-flag {
-    width: 48px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    animation: flagWave 3s ease-in-out infinite;
-    border-radius: 3px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-
   .about-title {
     font-weight: 600;
     font-size: 0.9rem;
@@ -555,26 +541,7 @@
   <!-- Trust strip -->
   <div class="about-strip">
     <div class="about-item">
-      <div class="about-icon">
-        <svg class="sa-flag" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="South African flag">
-          <!-- Red top band -->
-          <rect width="900" height="600" fill="#DE3831"/>
-          <!-- Blue bottom band -->
-          <rect y="300" width="900" height="300" fill="#002395"/>
-          <!-- White left triangle (outer border of chevron) -->
-          <path d="M0,0 L450,300 L0,600 Z" fill="#FFFFFF"/>
-          <!-- Green left triangle (inner body) -->
-          <path d="M0,60 L390,300 L0,540 Z" fill="#007749"/>
-          <!-- Black triangle (hoist) -->
-          <path d="M0,150 L300,300 L0,450 Z" fill="#000000"/>
-          <!-- White right stripes (top + bottom of horizontal band) -->
-          <path d="M450,300 L900,0 L900,60 L510,300 L900,540 L900,600 Z" fill="#FFFFFF"/>
-          <!-- Gold/yellow horizontal band -->
-          <path d="M510,300 L900,90 L900,510 Z" fill="#FFB612"/>
-          <!-- Green horizontal band -->
-          <path d="M510,300 L900,150 L900,450 Z" fill="#007749"/>
-        </svg>
-      </div>
+      <div class="about-icon">🧱</div>
       <div class="about-title">Built for South Africa</div>
       <div class="about-text">Every calculator uses current SA tax rates, SARS rules, and BCEA labour law.</div>
     </div>
