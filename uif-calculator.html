@@ -420,8 +420,11 @@
     nav { padding: 0 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -438,14 +441,14 @@
   <p class="page-sub">Calculate your UIF contributions and estimate your benefit if you become unemployed.</p>
 </div>
 
-<main>
+<main id="main">
   <div class="calc-card">
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btnContributions" onclick="setMode('contributions')">
-        💼 Contributions
+    <div class="mode-toggle" role="group" aria-label="UIF view">
+      <button type="button" class="mode-btn active" id="btnContributions" aria-pressed="true" onclick="setMode('contributions')">
+        <span aria-hidden="true">💼</span> Contributions
       </button>
-      <button class="mode-btn" id="btnBenefits" onclick="setMode('benefits')">
-        🛡️ Benefits
+      <button type="button" class="mode-btn" id="btnBenefits" aria-pressed="false" onclick="setMode('benefits')">
+        <span aria-hidden="true">🛡️</span> Benefits
       </button>
     </div>
 
@@ -454,7 +457,7 @@
       <!-- CONTRIBUTIONS MODE -->
       <div id="panelContributions">
         <div class="info-row">
-          <span class="info-row-label">🇿🇦 UIF Remuneration Ceiling</span>
+          <span class="info-row-label"><span aria-hidden="true">🇿🇦</span> UIF Remuneration Ceiling</span>
           <span class="info-row-value">R17,712 / month</span>
         </div>
 
@@ -462,11 +465,12 @@
           <label for="contribSalary">Monthly Gross Salary (R)</label>
           <div class="input-wrap">
             <span class="input-prefix">R</span>
-            <input type="number" id="contribSalary" value="15000" min="0" step="100" oninput="calculate()">
+            <input type="text" class="js-money" id="contribSalary" value="15 000" data-share aria-describedby="contribSalary-help">
           </div>
+          <span class="input-help" id="contribSalary-help">Your monthly remuneration. UIF is charged up to a R17,712/month ceiling.</span>
         </div>
 
-        <div class="results" id="contribResults">
+        <div class="results" id="contribResults" aria-live="polite" aria-atomic="true">
           <div class="result-row">
             <span class="result-label">Monthly Salary (capped)</span>
             <span class="result-value" id="rCappedSalary">R 15,000</span>
@@ -488,6 +492,11 @@
             <span class="result-value" id="rAnnualEmployee">R 1,800.00</span>
           </div>
         </div>
+
+        <div class="result-actions">
+          <button type="button" class="btn-action" onclick="CalcVibe.copyResult('rEmployeeContrib', this)">Copy contribution</button>
+          <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
+        </div>
       </div>
 
       <!-- BENEFITS MODE -->
@@ -496,20 +505,21 @@
           <label for="benefitSalary">Monthly Salary (R)</label>
           <div class="input-wrap">
             <span class="input-prefix">R</span>
-            <input type="number" id="benefitSalary" value="15000" min="0" step="100" oninput="calculate()">
+            <input type="text" class="js-money" id="benefitSalary" value="15 000" data-share aria-describedby="benefitSalary-help">
           </div>
+          <span class="input-help" id="benefitSalary-help">Your last monthly salary, used to estimate your daily benefit.</span>
         </div>
 
         <div class="field">
           <label for="yearsEmployed">Years Employed</label>
           <div class="input-wrap">
             <span class="input-prefix" style="left:14px; font-size:0.85rem; color:var(--ink-light);">yrs</span>
-            <input type="number" id="yearsEmployed" value="3" min="0.25" step="0.25" style="padding-left:3rem;" oninput="calculate()">
+            <input type="number" id="yearsEmployed" value="3" min="0.25" step="0.25" style="padding-left:3rem;" data-share oninput="calculate()" aria-describedby="yearsEmployed-help">
           </div>
-          <div class="field-note">Min 13 weeks contributions required to claim</div>
+          <div class="field-note" id="yearsEmployed-help">You earn 1 day of benefit per 4 days worked. At least 13 weeks of contributions are required to claim.</div>
         </div>
 
-        <div class="results" id="benefitResults">
+        <div class="results" id="benefitResults" aria-live="polite" aria-atomic="true">
           <div class="result-row">
             <span class="result-label">Daily Earnings</span>
             <span class="result-value" id="rDailyEarnings">R 500.00</span>
@@ -530,6 +540,11 @@
             <span class="result-label">Estimated Total Benefit</span>
             <span class="result-value" id="rTotalBenefit">—</span>
           </div>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" class="btn-action" onclick="CalcVibe.copyResult('rTotalBenefit', this)">Copy total benefit</button>
+          <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
         </div>
       </div>
 
@@ -575,6 +590,7 @@
   <div class="footer-disclaimer">For estimation purposes only. UIF rules and ceilings change — always verify with the Department of Employment and Labour or a qualified HR professional.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   const UIF_CEILING = 17712;
   let mode = 'contributions';
@@ -583,6 +599,8 @@
     mode = m;
     document.getElementById('btnContributions').classList.toggle('active', m === 'contributions');
     document.getElementById('btnBenefits').classList.toggle('active', m === 'benefits');
+    document.getElementById('btnContributions').setAttribute('aria-pressed', m === 'contributions' ? 'true' : 'false');
+    document.getElementById('btnBenefits').setAttribute('aria-pressed', m === 'benefits' ? 'true' : 'false');
     document.getElementById('panelContributions').style.display = m === 'contributions' ? '' : 'none';
     document.getElementById('panelBenefits').style.display = m === 'benefits' ? '' : 'none';
     calculate();
@@ -593,7 +611,7 @@
   }
 
   function calculateContributions() {
-    const salary = parseFloat(document.getElementById('contribSalary').value) || 0;
+    const salary = CalcVibe.parseVal(document.getElementById('contribSalary').value);
     const cappedSalary = Math.min(salary, UIF_CEILING);
     const employeeContrib = cappedSalary * 0.01;
     const employerContrib = cappedSalary * 0.01;
@@ -608,7 +626,7 @@
   }
 
   function calculateBenefits() {
-    const salary = parseFloat(document.getElementById('benefitSalary').value) || 0;
+    const salary = CalcVibe.parseVal(document.getElementById('benefitSalary').value);
     const yearsEmployed = parseFloat(document.getElementById('yearsEmployed').value) || 0;
 
     const dailyEarnings = salary / 30;
@@ -631,6 +649,8 @@
       calculateBenefits();
     }
   }
+
+  fmt = function (n) { return CalcVibe.fmtR(n); };
 
   // Init
   calculate();
