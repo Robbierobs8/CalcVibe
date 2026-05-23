@@ -105,6 +105,10 @@
     var params = new URLSearchParams();
     var els = document.querySelectorAll('[data-share]');
     Array.prototype.forEach.call(els, function (el) {
+      if (el.type === 'checkbox') {
+        if (el.checked) params.set(el.id, '1');
+        return;
+      }
       var val = el.classList.contains('js-money') ? parseVal(el.value) : el.value;
       if (val !== '' && val != null) params.set(el.id, val);
     });
@@ -122,7 +126,11 @@
     params.forEach(function (val, key) {
       var el = document.getElementById(key);
       if (!el || !el.hasAttribute('data-share')) return;
-      el.value = el.classList.contains('js-money') ? fmtVal(parseVal(val)) : val;
+      if (el.type === 'checkbox') {
+        el.checked = (val === '1' || val === 'true');
+      } else {
+        el.value = el.classList.contains('js-money') ? fmtVal(parseVal(val)) : val;
+      }
       applied = true;
     });
     return applied;

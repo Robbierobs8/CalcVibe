@@ -536,8 +536,11 @@
     nav { padding: 0 1rem; }
   }
 </style>
+<link rel="stylesheet" href="/calcvibe.css">
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to calculator</a>
 
 <nav>
   <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
@@ -554,7 +557,7 @@
   <p class="page-sub">Calculate your monthly bond repayment and total buying costs at South African home loan rates.</p>
 </div>
 
-<main>
+<main id="main">
   <div class="calc-card">
     <div class="calc-body">
 
@@ -562,40 +565,37 @@
         <label for="propertyPrice">Property Price</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="text" inputmode="numeric" id="propertyPrice" value="1 500 000"
-            onfocus="this.value=String(parseVal(this.value)||'')"
-            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
-            oninput="calculate()">
+          <input type="text" class="js-money" id="propertyPrice" value="1 500 000" data-share aria-describedby="propertyPrice-help">
         </div>
+        <span class="input-help" id="propertyPrice-help">The full purchase price of the property, before any deposit.</span>
       </div>
 
       <div class="field">
         <label for="deposit">Deposit</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="text" inputmode="numeric" id="deposit" value="150 000"
-            onfocus="this.value=String(parseVal(this.value)||'')"
-            onblur="this.value=fmtVal(parseVal(this.value));calculate()"
-            oninput="calculate()">
+          <input type="text" class="js-money" id="deposit" value="150 000" data-share aria-describedby="deposit-help">
         </div>
         <div class="loan-amount-hint">Loan amount: <strong id="loanAmountHint">—</strong></div>
+        <span class="input-help" id="deposit-help">Cash you pay upfront. A bigger deposit lowers your loan and monthly repayment.</span>
       </div>
 
       <div class="field">
         <label for="interestRate">Annual Interest Rate</label>
         <div class="input-wrap">
-          <input type="number" id="interestRate" class="no-prefix" value="10.25" min="0" max="40" step="0.25" oninput="calculate()">
+          <input type="number" id="interestRate" class="no-prefix" value="10.25" min="0" max="40" step="0.25" data-share oninput="calculate()" aria-describedby="interestRate-help">
           <span class="input-suffix">%</span>
         </div>
-        <div class="field-hint">SA prime rate is currently 10.25% (May 2026). Most home loans are priced at prime or prime&nbsp;+&nbsp;0.5% to 2% depending on your credit profile. Check SARB or your bank for the latest rate.</div>
+        <div class="field-hint" id="interestRate-help">SA prime rate is currently 10.25% (May 2026). Most home loans are priced at prime or prime&nbsp;+&nbsp;0.5% to 2% depending on your credit profile. Check SARB or your bank for the latest rate.</div>
       </div>
 
       <div class="field">
         <label for="loanTerm">Loan Term (years)</label>
         <div class="input-wrap">
-          <input type="number" id="loanTerm" class="no-prefix" value="20" min="1" max="30" step="1" oninput="calculate()">
+          <input type="number" id="loanTerm" class="no-prefix" value="20" min="1" max="30" step="1" data-share oninput="calculate()" aria-describedby="loanTerm-help">
           <span class="input-suffix">yrs</span>
         </div>
+        <span class="input-help" id="loanTerm-help">How long you take to repay. SA bonds are usually 20 years; a shorter term means higher repayments but less interest.</span>
       </div>
 
       <!-- Optional cost toggles -->
@@ -608,7 +608,7 @@
             <span class="option-note">Deeds Office levy + bond attorney fees (Law Society tariff + 15% VAT)</span>
           </div>
           <label class="toggle-wrap">
-            <input type="checkbox" id="toggleBondReg" onchange="calculate()">
+            <input type="checkbox" id="toggleBondReg" data-share onchange="calculate()">
             <span class="toggle-track"></span>
           </label>
         </div>
@@ -619,14 +619,14 @@
             <span class="option-note">SARS transfer duty + transfer attorney fees (Law Society tariff + 15% VAT)</span>
           </div>
           <label class="toggle-wrap">
-            <input type="checkbox" id="toggleTransfer" onchange="calculate()">
+            <input type="checkbox" id="toggleTransfer" data-share onchange="calculate()">
             <span class="toggle-track"></span>
           </label>
         </div>
       </div>
 
       <!-- Results -->
-      <div class="results">
+      <div class="results" aria-live="polite" aria-atomic="true">
         <div class="result-row">
           <span class="result-label">Loan Amount</span>
           <span class="result-value" id="resLoanAmount">—</span>
@@ -684,6 +684,11 @@
         </div>
       </div>
 
+      <div class="result-actions">
+        <button type="button" class="btn-action" onclick="CalcVibe.copyResult('resMonthly', this)">Copy monthly repayment</button>
+        <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
+      </div>
+
     </div>
   </div>
 
@@ -731,6 +736,7 @@
   <div class="footer-disclaimer">For estimation purposes only. Bond registration fees are approximate — actual costs vary by attorney. Transfer duty figures are based on SARS 2025/2026 rates. Always confirm with your bank, attorney, or a registered mortgage originator.</div>
 </footer>
 
+<script src="/calcvibe.js"></script>
 <script>
   function fmtVal(n) {
     const num = Math.round(parseFloat(n) || 0);
@@ -843,11 +849,8 @@
     }
   }
 
+  fmt = function (n) { return CalcVibe.fmtR(n); };
   calculate();
-
-  function toggleAccordion(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
 </script>
 </body>
 </html>
