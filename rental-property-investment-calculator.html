@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rental Property Investment Calculator South Africa — CalcVibe</title>
-<meta name="description" content="Free South African rental property investment calculator. Compare short-term Airbnb vs long-term rental yields, cashflow, and capital growth. No sign-up needed.">
+<meta name="description" content="Free South African rental property investment calculator. Build a full income statement for short-term Airbnb vs long-term rental — cashflow, yields, and capital growth. No sign-up needed.">
 <meta name="google-site-verification" content="ITemKsIPzdlNXNDdivHryQ_udybfx9siLruXTNzNjY8" />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -115,30 +115,11 @@ h1 {
   animation: fadeUp 0.4s ease 0.2s both;
 }
 
-/* MAIN LAYOUT */
+/* MAIN LAYOUT — single column, statement-style */
 main {
-  max-width: 1100px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 5rem;
-}
-
-.main-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 1.5rem;
-  align-items: start;
-}
-
-@media (max-width: 900px) {
-  .main-grid { grid-template-columns: 1fr; }
-  .results-col { position: static !important; }
-}
-
-.inputs-col {}
-
-.results-col {
-  position: sticky;
-  top: 80px;
 }
 
 /* ACCORDION CARDS */
@@ -200,7 +181,7 @@ main {
 
 .accordion.open .accordion-body {
   padding: 0 1.25rem 1.25rem;
-  max-height: 3000px;
+  max-height: 4000px;
 }
 .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
 
@@ -303,6 +284,8 @@ input[type="range"]::-moz-range-thumb {
   font-weight: 400;
   margin-top: 0.4rem;
 }
+
+.field-hint strong { color: var(--accent); font-weight: 600; }
 
 /* TOOLTIPS */
 .label-with-tip {
@@ -407,6 +390,44 @@ input[type="range"]::-moz-range-thumb {
   color: #fff;
 }
 
+.pill-toggle.small { margin-bottom: 0; }
+.pill-toggle.small .pill-btn { padding: 0.3rem 0.7rem; font-size: 0.72rem; }
+
+/* DERIVED DISPLAY (read-only purchase summary) */
+.derived {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+}
+
+.derived-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.35rem 0;
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  border-bottom: 1px solid var(--border);
+}
+
+.derived-row:last-child { border-bottom: none; }
+
+.derived-row .d-val {
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.derived-row.highlight { padding-top: 0.5rem; }
+.derived-row.highlight .d-label { font-weight: 600; color: var(--ink); }
+.derived-row.highlight .d-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--accent);
+}
+
 /* COST ROWS */
 .cost-rows { margin-bottom: 0.75rem; }
 
@@ -466,7 +487,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--accent);
   outline: none;
   -moz-appearance: textfield;
-  width: 70px;
+  width: 80px;
   text-align: right;
 }
 
@@ -510,8 +531,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--ink-light);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .add-row-btn:hover {
@@ -519,36 +539,76 @@ input[type="range"]::-moz-range-thumb {
   color: var(--accent);
 }
 
-.municipal-group {
+.op-subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.65rem 0 0;
+  border-top: 2px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.op-subtotal .op-subtotal-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* MANAGEMENT SUB-OPTIONS */
+.sub-option {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.1rem;
 }
 
-.municipal-group-title {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-light);
-  margin-bottom: 0.5rem;
+.sub-option-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
-.double-count-warn {
-  background: #fff8ed;
-  border: 1px solid #f5c36a;
-  border-radius: 8px;
-  padding: 0.5rem 0.75rem;
+.toggle-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-size: 0.73rem;
-  color: #8a5a00;
-  font-weight: 400;
-  margin-top: 0.5rem;
-  display: none;
+  color: var(--ink-light);
+  cursor: pointer;
+  user-select: none;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
 }
 
-.double-count-warn.visible { display: block; }
+.toggle-check input { display: none; }
+
+.toggle-check.checked {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.sub-option-body { margin-top: 0.85rem; }
+.sub-option-body.disabled { opacity: 0.4; pointer-events: none; }
+
+.basis-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  flex-wrap: wrap;
+}
 
 /* CAPITAL GROWTH TOGGLE in header */
 .section-toggle-check {
@@ -575,18 +635,134 @@ input[type="range"]::-moz-range-thumb {
   background: var(--accent-light);
 }
 
-/* RESULTS CARD */
+/* INCOME STATEMENT (centrepiece) */
+.is-panel {
+  background: #fbfaf6;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.5rem 1.75rem;
+  margin-bottom: 1rem;
+  font-variant-numeric: tabular-nums;
+  animation: fadeUp 0.5s ease 0.3s both;
+}
+
+.is-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.is-subtitle {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  font-weight: 300;
+  margin-bottom: 1.1rem;
+}
+
+.is-section-head {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 1.1rem 0 0.3rem;
+}
+
+.is-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.26rem 0;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.is-line .is-amt {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.is-line.indent > .is-text { padding-left: 1rem; color: var(--ink-light); font-weight: 400; font-size: 0.85rem; }
+.is-line.indent .is-amt { font-weight: 400; color: var(--ink-light); }
+
+.is-rule { border-top: 1px solid var(--border); margin: 0.4rem 0; }
+.is-rule.strong { border-top: 2px solid var(--ink); margin: 0.6rem 0; }
+
+.is-line.subtotal { font-weight: 700; }
+.is-line.subtotal .is-text { font-weight: 700; color: var(--ink); }
+.is-line.subtotal .is-amt { font-weight: 700; color: var(--ink); }
+
+.is-line.cashflow { font-weight: 700; font-size: 0.95rem; align-items: baseline; }
+.is-line.cashflow .is-amt.big {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.is-amt.pos-cf { color: #1a8f4c; }
+.is-amt.neg-cf { color: #d94040; }
+.is-line.hide { display: none; }
+
+/* CASHFLOW BANNER */
+.cashflow-banner {
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  animation: fadeUp 0.5s ease 0.28s both;
+  display: none;
+}
+.cashflow-banner strong { font-weight: 700; }
+
+.cashflow-banner.positive {
+  background: #eaf9f1;
+  border: 1.5px solid #6ee9a0;
+  color: #1a5c30;
+  display: block;
+}
+
+.cashflow-banner.warning {
+  background: #fff8ed;
+  border: 1.5px solid var(--accent2);
+  color: #7a4500;
+  display: block;
+}
+
+.cashflow-banner.info {
+  background: #eef3fb;
+  border: 1.5px solid #9bb8e6;
+  color: #2a4a7a;
+  display: block;
+}
+
+/* KEY METRICS (dark card) */
 .results-card {
   background: var(--ink);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow);
   margin-bottom: 1rem;
-  animation: fadeUp 0.5s ease 0.3s both;
+  animation: fadeUp 0.5s ease 0.35s both;
 }
 
-.results-top {
-  padding: 1.5rem;
+.results-top { padding: 1.25rem 1.5rem; }
+
+.results-card-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0.5rem;
 }
 
 .res-row {
@@ -596,13 +772,11 @@ input[type="range"]::-moz-range-thumb {
   padding: 0.45rem 0;
 }
 
-.res-row + .res-row {
-  border-top: 1px solid rgba(255,255,255,0.07);
-}
+.res-row + .res-row { border-top: 1px solid rgba(255,255,255,0.07); }
 
 .res-label {
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.6);
   font-weight: 300;
   display: flex;
   align-items: center;
@@ -610,192 +784,34 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .res-value {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: rgba(255,255,255,0.85);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  font-variant-numeric: tabular-nums;
 }
 
-.res-row.cashflow-row {
-  padding: 0.75rem 0 0.35rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
-  border-top: 1px solid rgba(255,255,255,0.07);
-}
+.res-value.pos-cf { color: #6ee9a0; }
+.res-value.neg-cf { color: #ff8a8a; }
 
-.cashflow-label-small {
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
-}
-
-.cashflow-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-.cashflow-value.positive { color: #6ee9a0; }
-.cashflow-value.negative { color: #ff8a8a; }
-.cashflow-value.neutral  { color: rgba(255,255,255,0.85); }
-
-.res-divider {
-  border: none;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  margin: 0.35rem 0;
-}
-
-/* Tooltip in results (light variant) */
-.res-tip-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
+/* tooltip in results (light variant) */
+.res-tip-wrap { position: relative; display: inline-flex; align-items: center; }
 .res-tip-icon {
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.5);
-  font-size: 0.55rem;
-  font-weight: 700;
-  font-style: italic;
-  font-family: Georgia, serif;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.2s, color 0.2s;
-  user-select: none;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5);
+  font-size: 0.55rem; font-weight: 700; font-style: italic; font-family: Georgia, serif;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: background 0.2s, color 0.2s; user-select: none;
 }
-
-.res-tip-icon:hover, .res-tip-wrap.open .res-tip-icon {
-  background: rgba(255,255,255,0.3);
-  color: #fff;
-}
-
+.res-tip-icon:hover, .res-tip-wrap.open .res-tip-icon { background: rgba(255,255,255,0.3); color: #fff; }
 .res-tip-box {
-  position: absolute;
-  bottom: calc(100% + 7px);
-  right: 0;
-  transform: none;
-  background: #fff;
-  color: var(--ink);
-  font-family: 'Epilogue', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 0.6rem 0.8rem;
-  border-radius: 8px;
-  width: 210px;
-  z-index: 200;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  position: absolute; bottom: calc(100% + 7px); right: 0;
+  background: #fff; color: var(--ink);
+  font-family: 'Epilogue', sans-serif; font-size: 0.72rem; font-weight: 400; line-height: 1.5;
+  padding: 0.6rem 0.8rem; border-radius: 8px; width: 220px; z-index: 200;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s; box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
-
-.res-tip-box::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  right: 5px;
-  border: 5px solid transparent;
-  border-top-color: #fff;
-}
-
-.res-tip-wrap:hover .res-tip-box,
-.res-tip-wrap.open .res-tip-box { opacity: 1; }
-
-/* CASHFLOW BANNER */
-.cashflow-banner {
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
-  font-size: 0.82rem;
-  font-weight: 400;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  animation: fadeUp 0.5s ease 0.35s both;
-  display: none;
-}
-
-.cashflow-banner.positive {
-  background: #eaf9f1;
-  border: 1.5px solid #6ee9a0;
-  color: #1a5c30;
-  display: block;
-}
-
-.cashflow-banner.negative {
-  background: #fff8ed;
-  border: 1.5px solid var(--accent2);
-  color: #7a4500;
-  display: block;
-}
-
-/* COMPARISON CARD */
-.comparison-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  margin-bottom: 1rem;
-  animation: fadeUp 0.5s ease 0.4s both;
-}
-
-.comparison-header {
-  padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-light);
-}
-
-.comparison-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.comparison-table th {
-  padding: 0.55rem 1rem;
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-light);
-  border-bottom: 1px solid var(--border);
-}
-
-.comparison-table th:first-child { text-align: left; }
-
-.comparison-table th.col-self { color: var(--accent); }
-.comparison-table th.col-agent { color: var(--accent2); }
-
-.comparison-table td {
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  color: var(--ink);
-  border-top: 1px solid var(--border);
-  text-align: center;
-}
-
-.comparison-table td:first-child {
-  text-align: left;
-  font-size: 0.75rem;
-  color: var(--ink-light);
-}
-
-.comparison-table td.positive { color: var(--accent); font-weight: 500; }
-.comparison-table td.negative { color: #d94040; font-weight: 500; }
+.res-tip-box::after { content: ''; position: absolute; top: 100%; right: 5px; border: 5px solid transparent; border-top-color: #fff; }
+.res-tip-wrap:hover .res-tip-box, .res-tip-wrap.open .res-tip-box { opacity: 1; }
 
 /* CAPITAL GROWTH CARD */
 .capital-card {
@@ -805,7 +821,6 @@ input[type="range"]::-moz-range-thumb {
   overflow: hidden;
   box-shadow: var(--shadow);
   margin-bottom: 1rem;
-  animation: fadeUp 0.5s ease 0.45s both;
   display: none;
 }
 
@@ -839,23 +854,10 @@ input[type="range"]::-moz-range-thumb {
   margin-top: 0.25rem;
 }
 
-.capital-label {
-  font-size: 0.78rem;
-  color: var(--ink-light);
-  font-weight: 400;
-}
+.capital-label { font-size: 0.78rem; color: var(--ink-light); font-weight: 400; }
+.capital-row.total .capital-label { font-weight: 600; color: var(--ink); }
 
-.capital-row.total .capital-label {
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.capital-value {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--ink);
-}
-
+.capital-value { font-size: 0.88rem; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; }
 .capital-value.accent { color: var(--accent); font-weight: 600; }
 .capital-value.positive { color: var(--accent); }
 .capital-value.negative { color: #d94040; }
@@ -986,6 +988,18 @@ footer {
   .related-grid { grid-template-columns: 1fr; }
   nav { padding: 0 1rem; }
   .pill-toggle { flex-wrap: wrap; }
+  .is-panel { padding: 1.25rem 1rem 1.5rem; }
+  .is-line { font-size: 0.85rem; }
+}
+
+@media print {
+  nav, .breadcrumb, .pill-toggle, .add-row-btn, .cost-row-remove,
+  .result-actions, .related, footer, .skip-link, .cashflow-banner,
+  .section-toggle-check, .accordion-chevron { display: none !important; }
+  body { background: #fff; }
+  .accordion, .is-panel, .results-card, .capital-card { box-shadow: none; break-inside: avoid; }
+  .results-card { background: #fff; color: var(--ink); border: 1px solid #ccc; }
+  .results-card .res-label, .results-card .res-value, .results-card .results-card-title { color: var(--ink) !important; }
 }
 </style>
 <link rel="stylesheet" href="/calcvibe.css">
@@ -1006,450 +1020,449 @@ footer {
 <div class="page-header">
   <div class="eyebrow">Property · South Africa</div>
   <h1>Rental Property Investment Calculator</h1>
-  <p class="page-sub">Compare short-term Airbnb vs long-term rental yields, monthly cashflow, and projected capital growth.</p>
+  <p class="page-sub">Build a full monthly income statement — short-term Airbnb vs long-term rental — with cashflow, yields, and capital growth.</p>
 </div>
 
 <main id="main">
   <input type="hidden" id="shareMode" value="short" data-share>
-  <div class="main-grid">
+  <input type="hidden" id="shareMgmt" value="1" data-share>
+  <input type="hidden" id="shareBasis" value="afterPlatform" data-share>
 
-    <!-- ======== INPUTS COLUMN ======== -->
-    <div class="inputs-col">
+  <!-- ============ SECTION 1 — PURCHASE & FINANCING ============ -->
+  <div class="accordion open" id="accPurchase">
+    <div class="accordion-header" onclick="toggleAccordion('accPurchase')">
+      <span class="accordion-title">1 — Purchase &amp; Financing Assumptions</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
 
-      <!-- SECTION A: Purchase & Financing -->
-      <div class="accordion open" id="accA">
-        <div class="accordion-header" onclick="toggleAccordion('accA')">
-          <div class="accordion-title-group">
-            <span class="accordion-title">A — Purchase &amp; Financing</span>
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Property Price
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The purchase price of the property, before transfer costs or furnishings.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <span class="field-unit">R</span>
+            <input type="text" inputmode="numeric" class="field-num" id="priceNum" value="1 900 000" style="width:102px" aria-label="Property price"
+              oninput="onNumInput('priceNum','priceSlider',20000000)"
+              onfocus="this.value=String(parseVal(this.value)||'')"
+              onblur="this.value=fmtVal(parseVal(this.value));calculate()">
           </div>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="accordion-body">
-
-          <!-- Property Price -->
-          <div class="field">
-            <div class="field-label">
-              <span class="label-with-tip">
-                Property Price
-                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The full purchase price of the investment property.</span></span>
-              </span>
-              <div class="field-num-wrap">
-                <span class="field-unit">R</span>
-                <input type="text" inputmode="numeric" class="field-num" id="priceNum" value="1 500 000" style="width:102px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('priceNum','priceSlider',20000000)">
-              </div>
-            </div>
-            <input type="range" id="priceSlider" min="200000" max="20000000" step="100000" value="1500000" oninput="onSlider('priceSlider','priceNum',false)">
-          </div>
-
-          <!-- Deposit -->
-          <div class="field">
-            <div class="field-label">
-              <span class="label-with-tip">
-                Deposit
-                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Your cash deposit. A higher deposit improves cashflow but reduces your cash-on-cash return.</span></span>
-              </span>
-              <div class="field-num-wrap">
-                <span class="field-unit">R</span>
-                <input type="text" inputmode="numeric" class="field-num" id="depositNum" value="150 000" style="width:90px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('depositNum','depositSlider',5000000)">
-              </div>
-            </div>
-            <input type="range" id="depositSlider" min="0" max="5000000" step="10000" value="150000" oninput="onSlider('depositSlider','depositNum',false)">
-            <div class="field-hint">Loan amount: <strong id="loanAmountHint">—</strong></div>
-          </div>
-
-          <!-- Interest Rate -->
-          <div class="field">
-            <div class="field-label">
-              <span class="label-with-tip">
-                Annual Interest Rate
-                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA prime rate is currently 10.25% (May 2026). Most home loans are priced at prime or prime + 0.5% to 2% depending on your credit profile. Check SARB or your bank for the latest rate.</span></span>
-              </span>
-              <div class="field-num-wrap">
-                <input type="number" class="field-num" id="rateNum" value="10.25" style="width:46px" oninput="onNumInput('rateNum','rateSlider',25)">
-                <span class="field-unit">%</span>
-              </div>
-            </div>
-            <input type="range" id="rateSlider" min="0" max="25" step="0.25" value="10.25" oninput="onSlider('rateSlider','rateNum',true)">
-          </div>
-
-          <!-- Bond Period -->
-          <div class="field">
-            <div class="field-label">
-              <span class="label-with-tip">
-                Bond Period
-                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Loan term. Longer term = lower monthly payment = better cashflow, but more total interest.</span></span>
-              </span>
-              <div class="field-num-wrap">
-                <input type="number" class="field-num" id="termNum" value="20" style="width:36px" oninput="onNumInput('termNum','termSlider',30)">
-                <span class="field-unit">yrs</span>
-              </div>
-            </div>
-            <input type="range" id="termSlider" min="1" max="30" step="1" value="20" oninput="onSlider('termSlider','termNum',false)">
-          </div>
-
-        </div>
+        <input type="range" id="priceSlider" min="200000" max="20000000" step="50000" value="1900000" oninput="onSlider('priceSlider','priceNum',false)">
       </div>
 
-      <!-- SECTION B: Monthly Operating Costs -->
-      <div class="accordion open" id="accB">
-        <div class="accordion-header" onclick="toggleAccordion('accB')">
-          <div class="accordion-title-group">
-            <span class="accordion-title">B — Monthly Operating Costs</span>
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Transfer &amp; legal costs
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Transfer duty, conveyancing and bond registration fees paid upfront. This is cash, not financed by the bond.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <span class="field-unit">R</span>
+            <input type="text" inputmode="numeric" class="field-num" id="transferNum" value="40 500" style="width:84px" aria-label="Transfer and legal costs"
+              oninput="onNumInput('transferNum','transferSlider',1000000)"
+              onfocus="this.value=String(parseVal(this.value)||'')"
+              onblur="this.value=fmtVal(parseVal(this.value));calculate()">
           </div>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="accordion-body">
-
-          <div class="cost-rows" id="costRowsContainer"></div>
-
-          <div id="municipalGroupWrap" style="display:none">
-            <div class="municipal-group">
-              <div class="municipal-group-title">Municipal Details</div>
-              <div id="municipalRows"></div>
-            </div>
-            <div class="double-count-warn" id="doubleCountWarn">
-              Warning: If you already have Rates &amp; Taxes or Water &amp; Electricity in your costs above, adding municipal details here will double-count those amounts.
-            </div>
-          </div>
-
-          <div style="margin-bottom:0.75rem">
-            <button class="add-row-btn" id="btnMunicipal" onclick="toggleMunicipal()">+ Add Municipal Detail</button>
-            <button class="add-row-btn" onclick="addRow()">+ Add Custom Cost</button>
-          </div>
-
-          <!-- Annual Maintenance -->
-          <div class="field" style="border-top:1px solid var(--border); padding-top:0.85rem; margin-top:0.35rem">
-            <div class="field-label">
-              <span class="label-with-tip">
-                Annual Maintenance
-                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">1% of property value per year is the standard guideline.</span></span>
-              </span>
-              <div class="field-num-wrap">
-                <input type="number" class="field-num" id="maintNum" value="1.0" style="width:40px" oninput="onNumInput('maintNum','maintSlider',5)">
-                <span class="field-unit">%</span>
-              </div>
-            </div>
-            <input type="range" id="maintSlider" min="0" max="5" step="0.1" value="1.0" oninput="onSlider('maintSlider','maintNum',true)">
-            <div class="field-hint" id="maintHint">Monthly equivalent: —</div>
-          </div>
-
-        </div>
+        <input type="range" id="transferSlider" min="0" max="1000000" step="500" value="40500" oninput="onSlider('transferSlider','transferNum',false)">
       </div>
 
-      <!-- SECTION C: Rental Income -->
-      <div class="accordion open" id="accC">
-        <div class="accordion-header" onclick="toggleAccordion('accC')">
-          <div class="accordion-title-group">
-            <span class="accordion-title">C — Rental Income</span>
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Furnishings / initial setup
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Furniture, appliances and styling to make the property rentable. Upfront cash for short-term lets in particular.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <span class="field-unit">R</span>
+            <input type="text" inputmode="numeric" class="field-num" id="furnishingsNum" value="150 000" style="width:84px" aria-label="Furnishings and initial setup"
+              oninput="onNumInput('furnishingsNum','furnishingsSlider',3000000)"
+              onfocus="this.value=String(parseVal(this.value)||'')"
+              onblur="this.value=fmtVal(parseVal(this.value));calculate()">
           </div>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="accordion-body">
+        <input type="range" id="furnishingsSlider" min="0" max="3000000" step="10000" value="150000" oninput="onSlider('furnishingsSlider','furnishingsNum',false)">
+      </div>
 
-          <!-- Mode toggle -->
-          <div class="pill-toggle" id="modeToggle" role="group" aria-label="Rental strategy">
-            <button type="button" class="pill-btn active" id="btnShortTerm" aria-pressed="true" onclick="setMode('short')">Short-term (Airbnb)</button>
-            <button type="button" class="pill-btn" id="btnLongTerm" aria-pressed="false" onclick="setMode('long')">Long-term (Rental)</button>
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Deposit
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Cash you pay towards the purchase. A larger deposit reduces your loan and monthly bond repayment.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <span class="field-unit">R</span>
+            <input type="text" inputmode="numeric" class="field-num" id="depositNum" value="180 000" style="width:84px" aria-label="Deposit"
+              oninput="onNumInput('depositNum','depositSlider',5000000)"
+              onfocus="this.value=String(parseVal(this.value)||'')"
+              onblur="this.value=fmtVal(parseVal(this.value));calculate()">
           </div>
+        </div>
+        <input type="range" id="depositSlider" min="0" max="5000000" step="10000" value="180000" oninput="onSlider('depositSlider','depositNum',false)">
+      </div>
 
-          <!-- Short-term fields -->
-          <div id="shortTermFields">
-
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Available nights/month
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Total nights the property is available for booking per month.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="nightsNum" value="30" style="width:40px" oninput="onNumInput('nightsNum','nightsSlider',31)">
-                  <span class="field-unit">nights</span>
-                </div>
-              </div>
-              <input type="range" id="nightsSlider" min="0" max="31" step="1" value="30" oninput="onSlider('nightsSlider','nightsNum',false)">
-            </div>
-
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Average rate per night
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Your target nightly rate. Check similar listings on Airbnb or Booking.com for your area.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <span class="field-unit">R</span>
-                  <input type="text" inputmode="numeric" class="field-num" id="nightRateNum" value="1 700" style="width:72px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('nightRateNum','nightRateSlider',10000)">
-                </div>
-              </div>
-              <input type="range" id="nightRateSlider" min="100" max="10000" step="50" value="1700" oninput="onSlider('nightRateSlider','nightRateNum',false)">
-            </div>
-
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Occupancy rate
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Percentage of available nights that are booked. SA coastal holiday towns typically see 60–80% in season.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="occupancyNum" value="70" style="width:40px" oninput="onNumInput('occupancyNum','occupancySlider',100)">
-                  <span class="field-unit">%</span>
-                </div>
-              </div>
-              <input type="range" id="occupancySlider" min="0" max="100" step="1" value="70" oninput="onSlider('occupancySlider','occupancyNum',false)">
-            </div>
-
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Platform fee
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Airbnb's standard host fee is around 14–18%. Higher if you use a co-host or split-fee model.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="platformFeeNum" value="18.0" style="width:44px" oninput="onNumInput('platformFeeNum','platformFeeSlider',30)">
-                  <span class="field-unit">%</span>
-                </div>
-              </div>
-              <input type="range" id="platformFeeSlider" min="0" max="30" step="0.5" value="18" oninput="onSlider('platformFeeSlider','platformFeeNum',true)">
-            </div>
-
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Property management fee
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Management companies handling Airbnb properties typically charge 18–25% of revenue. Set to 0 if self-managing.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="mgmtFeeNum" value="20.0" style="width:44px" oninput="onNumInput('mgmtFeeNum','mgmtFeeSlider',35)">
-                  <span class="field-unit">%</span>
-                </div>
-              </div>
-              <input type="range" id="mgmtFeeSlider" min="0" max="35" step="0.5" value="20" oninput="onSlider('mgmtFeeSlider','mgmtFeeNum',true)">
-            </div>
-
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Annual Interest Rate
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA prime is 10.75% (illustrative, May 2026). Most home loans price at prime or prime + 0.5% to 2% depending on your profile.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <input type="number" class="field-num" id="rateNum" value="10.75" min="0" step="0.25" style="width:48px" aria-label="Annual interest rate" oninput="onNumInput('rateNum','rateSlider',25)">
+            <span class="field-unit">%</span>
           </div>
+        </div>
+        <input type="range" id="rateSlider" min="0" max="25" step="0.25" value="10.75" oninput="onSlider('rateSlider','rateNum',true)">
+      </div>
 
-          <!-- Long-term fields -->
-          <div id="longTermFields" style="display:none">
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Bond Period
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The repayment term. SA bonds are usually 20 years; a shorter term means higher repayments but far less total interest.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <input type="number" class="field-num" id="termNum" value="20" min="1" step="1" style="width:36px" aria-label="Bond period in years" oninput="onNumInput('termNum','termSlider',30)">
+            <span class="field-unit">yrs</span>
+          </div>
+        </div>
+        <input type="range" id="termSlider" min="1" max="30" step="1" value="20" oninput="onSlider('termSlider','termNum',false)">
+      </div>
 
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Monthly rent
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The monthly rental amount. Check PropData or Private Property for comparable rentals in your area.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <span class="field-unit">R</span>
-                  <input type="text" inputmode="numeric" class="field-num" id="rentNum" value="12 000" style="width:78px" onfocus="this.value=String(parseVal(this.value)||'')" onblur="this.value=fmtVal(parseVal(this.value));calculate()" oninput="onNumInput('rentNum','rentSlider',100000)">
-                </div>
-              </div>
-              <input type="range" id="rentSlider" min="1000" max="100000" step="500" value="12000" oninput="onSlider('rentSlider','rentNum',false)">
+      <div class="derived">
+        <div class="derived-row"><span class="d-label">Total Project Cost <span style="font-weight:400;opacity:0.7">(price + transfer + furnishings)</span></span><span class="d-val" id="dProject">—</span></div>
+        <div class="derived-row"><span class="d-label">Loan Amount <span style="font-weight:400;opacity:0.7">(project cost − deposit)</span></span><span class="d-val" id="dLoan">—</span></div>
+        <div class="derived-row"><span class="d-label">Cash Investment Required <span style="font-weight:400;opacity:0.7">(deposit + transfer + furnishings)</span></span><span class="d-val" id="dCash">—</span></div>
+        <div class="derived-row highlight"><span class="d-label">Monthly Bond Repayment</span><span class="d-val" id="dBond">—</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ SECTION 2 — OPERATING COSTS ============ -->
+  <div class="accordion open" id="accCosts">
+    <div class="accordion-header" onclick="toggleAccordion('accCosts')">
+      <span class="accordion-title">2 — Operating Costs</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+
+      <div class="cost-rows" id="costRowsArea"><!-- rendered by JS --></div>
+
+      <button type="button" class="add-row-btn" onclick="addRow()"><span aria-hidden="true">+</span> Add Custom Cost</button>
+
+      <!-- Maintenance reserve (% of property value) -->
+      <div class="field" style="margin-top:0.5rem">
+        <div class="field-label">
+          <span class="label-with-tip">Annual Maintenance Reserve
+            <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">A yearly allowance for repairs and upkeep, as a percentage of property value. 1% is a common guideline; older or larger properties may need more.</span></span>
+          </span>
+          <div class="field-num-wrap">
+            <input type="number" class="field-num" id="maintNum" value="1.0" min="0" step="0.1" style="width:40px" aria-label="Annual maintenance reserve percent" oninput="onNumInput('maintNum','maintSlider',5)">
+            <span class="field-unit">%</span>
+          </div>
+        </div>
+        <input type="range" id="maintSlider" min="0" max="5" step="0.1" value="1.0" oninput="onSlider('maintSlider','maintNum',true)">
+        <div class="field-hint">Monthly equivalent: <strong id="maintHint">—</strong></div>
+      </div>
+
+      <div class="op-subtotal">
+        <span>Total Operating Costs <span style="font-weight:400;color:var(--ink-light);font-size:0.74rem">(excl. platform/management fees)</span></span>
+        <span class="op-subtotal-val" id="opSubtotal">—</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ SECTION 3 — INCOME ASSUMPTIONS ============ -->
+  <div class="accordion open" id="accIncome">
+    <div class="accordion-header" onclick="toggleAccordion('accIncome')">
+      <span class="accordion-title">3 — Income Assumptions</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+
+      <div class="pill-toggle" id="modeToggle" role="group" aria-label="Rental strategy">
+        <button type="button" class="pill-btn active" id="btnShortTerm" aria-pressed="true" onclick="setMode('short')">Short-term (Airbnb)</button>
+        <button type="button" class="pill-btn" id="btnLongTerm" aria-pressed="false" onclick="setMode('long')">Long-term rental</button>
+      </div>
+
+      <!-- SHORT-TERM FIELDS -->
+      <div id="shortTermFields">
+
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Available nights / month
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Total nights the property is available to book each month.</span></span>
+            </span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="nightsNum" value="30" min="0" step="1" style="width:40px" aria-label="Available nights per month" oninput="onNumInput('nightsNum','nightsSlider',31)">
+              <span class="field-unit">nights</span>
             </div>
+          </div>
+          <input type="range" id="nightsSlider" min="0" max="31" step="1" value="30" oninput="onSlider('nightsSlider','nightsNum',false)">
+        </div>
 
-            <div class="field">
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Rate per night
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Your average nightly rate. Check comparable listings on Airbnb or Booking.com for your area and season.</span></span>
+            </span>
+            <div class="field-num-wrap">
+              <span class="field-unit">R</span>
+              <input type="text" inputmode="numeric" class="field-num" id="nightRateNum" value="1 700" style="width:72px" aria-label="Rate per night"
+                oninput="onNumInput('nightRateNum','nightRateSlider',10000)"
+                onfocus="this.value=String(parseVal(this.value)||'')"
+                onblur="this.value=fmtVal(parseVal(this.value));calculate()">
+            </div>
+          </div>
+          <input type="range" id="nightRateSlider" min="100" max="10000" step="50" value="1700" oninput="onSlider('nightRateSlider','nightRateNum',false)">
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Occupancy
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Percentage of available nights that are actually booked. SA holiday towns often see 60–80% in season, lower off-season.</span></span>
+            </span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="occupancyNum" value="70" min="0" step="1" style="width:40px" aria-label="Occupancy percent" oninput="onNumInput('occupancyNum','occupancySlider',100)">
+              <span class="field-unit">%</span>
+            </div>
+          </div>
+          <input type="range" id="occupancySlider" min="0" max="100" step="1" value="70" oninput="onSlider('occupancySlider','occupancyNum',false)">
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Platform fee
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The booking platform's host fee, deducted from gross income. Airbnb's host-only fee is typically 14–18%.</span></span>
+            </span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="platformFeeNum" value="17.5" min="0" step="0.5" style="width:48px" aria-label="Platform fee percent" oninput="onNumInput('platformFeeNum','platformFeeSlider',30)">
+              <span class="field-unit">%</span>
+            </div>
+          </div>
+          <input type="range" id="platformFeeSlider" min="0" max="30" step="0.5" value="17.5" oninput="onSlider('platformFeeSlider','platformFeeNum',true)">
+        </div>
+
+        <div class="sub-option">
+          <div class="sub-option-head">
+            <span class="label-with-tip" style="font-size:0.8rem;font-weight:500;color:var(--ink-light)">Property management fee
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Companies that fully manage an Airbnb typically charge 18–25%. Turn off if you self-manage. The statement always shows both self-managed and managed cashflow.</span></span>
+            </span>
+            <label class="toggle-check checked" id="mgmtToggleLabel">
+              <input type="checkbox" id="mgmtEnabled" checked onchange="onMgmtToggle()">
+              <span id="mgmtToggleText">Included</span>
+            </label>
+          </div>
+          <div class="sub-option-body" id="mgmtBody">
+            <div class="field" style="margin-top:0.85rem;margin-bottom:0">
               <div class="field-label">
-                <span class="label-with-tip">
-                  Vacancy rate
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Expected percentage of months where the property is vacant between tenants. 5–10% is typical in most SA metros.</span></span>
-                </span>
+                <span>Management fee</span>
                 <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="vacancyNum" value="5" style="width:40px" oninput="onNumInput('vacancyNum','vacancySlider',50)">
+                  <input type="number" class="field-num" id="mgmtFeeNum" value="20" min="0" step="0.5" style="width:48px" aria-label="Management fee percent" oninput="onNumInput('mgmtFeeNum','mgmtFeeSlider',40)">
                   <span class="field-unit">%</span>
                 </div>
               </div>
-              <input type="range" id="vacancySlider" min="0" max="50" step="1" value="5" oninput="onSlider('vacancySlider','vacancyNum',false)">
+              <input type="range" id="mgmtFeeSlider" min="0" max="40" step="0.5" value="20" oninput="onSlider('mgmtFeeSlider','mgmtFeeNum',true)">
             </div>
+            <div class="basis-row">
+              <span class="label-with-tip">Charged on
+                <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Most SA managers charge a percentage of income after the platform fee has been deducted. Some charge on gross income.</span></span>
+              </span>
+              <div class="pill-toggle small" role="group" aria-label="Management fee basis">
+                <button type="button" class="pill-btn" id="btnBasisGross" aria-pressed="false" onclick="setBasis('gross')">% of gross</button>
+                <button type="button" class="pill-btn active" id="btnBasisAfter" aria-pressed="true" onclick="setBasis('afterPlatform')">after platform fees</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <div class="field">
+      </div>
+
+      <!-- LONG-TERM FIELDS -->
+      <div id="longTermFields" style="display:none">
+
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Monthly rent
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">The monthly rental you expect to charge. Check PropData or Private Property for comparable rentals nearby.</span></span>
+            </span>
+            <div class="field-num-wrap">
+              <span class="field-unit">R</span>
+              <input type="text" inputmode="numeric" class="field-num" id="rentNum" value="12 000" style="width:78px" aria-label="Monthly rent"
+                oninput="onNumInput('rentNum','rentSlider',100000)"
+                onfocus="this.value=String(parseVal(this.value)||'')"
+                onblur="this.value=fmtVal(parseVal(this.value));calculate()">
+            </div>
+          </div>
+          <input type="range" id="rentSlider" min="1000" max="100000" step="500" value="12000" oninput="onSlider('rentSlider','rentNum',false)">
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Vacancy rate
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Expected share of the year the property sits empty between tenants. 5–10% is typical in most SA metros.</span></span>
+            </span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="vacancyNum" value="5" min="0" step="1" style="width:40px" aria-label="Vacancy rate percent" oninput="onNumInput('vacancyNum','vacancySlider',50)">
+              <span class="field-unit">%</span>
+            </div>
+          </div>
+          <input type="range" id="vacancySlider" min="0" max="50" step="1" value="5" oninput="onSlider('vacancySlider','vacancyNum',false)">
+        </div>
+
+        <div class="sub-option">
+          <div class="sub-option-head">
+            <span class="label-with-tip" style="font-size:0.8rem;font-weight:500;color:var(--ink-light)">Rental agent fee
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA rental agents typically charge 7–10% of monthly rent collected to place tenants and manage the lease. Turn off if you self-manage.</span></span>
+            </span>
+            <label class="toggle-check checked" id="agentToggleLabel">
+              <input type="checkbox" id="agentEnabled" checked onchange="onAgentToggle()">
+              <span id="agentToggleText">Included</span>
+            </label>
+          </div>
+          <div class="sub-option-body" id="agentBody">
+            <div class="field" style="margin-top:0.85rem;margin-bottom:0">
               <div class="field-label">
-                <span class="label-with-tip">
-                  Rental agent fee
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Standard SA rental agents charge 7–10% of monthly rent. Premium or specialist agents may charge more. Set to 0 if self-managing.</span></span>
-                </span>
+                <span>Agent fee</span>
                 <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="agentFeeNum" value="10.0" style="width:44px" oninput="onNumInput('agentFeeNum','agentFeeSlider',25)">
+                  <input type="number" class="field-num" id="agentFeeNum" value="10" min="0" step="0.5" style="width:48px" aria-label="Rental agent fee percent" oninput="onNumInput('agentFeeNum','agentFeeSlider',25)">
                   <span class="field-unit">%</span>
                 </div>
               </div>
               <input type="range" id="agentFeeSlider" min="0" max="25" step="0.5" value="10" oninput="onSlider('agentFeeSlider','agentFeeNum',true)">
             </div>
-
           </div>
-
         </div>
+
       </div>
 
-      <!-- SECTION D: Capital Growth (collapsed, toggleable) -->
-      <div class="accordion" id="accD">
-        <div class="accordion-header" onclick="toggleAccordion('accD')">
-          <div class="accordion-title-group">
-            <span class="accordion-title">D — Capital Growth (Optional)</span>
-          </div>
-          <label class="section-toggle-check" id="growthToggleLabel" onclick="event.stopPropagation()">
-            <input type="checkbox" id="growthEnabled" data-share onchange="onGrowthToggle()">
-            <span id="growthToggleText">Enable</span>
-          </label>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="accordion-body">
+    </div>
+  </div>
 
-          <div id="growthFieldsWrap" style="opacity:0.4; pointer-events:none">
+  <!-- ============ SECTION 4 — INCOME STATEMENT ============ -->
+  <div class="cashflow-banner" id="cashflowBanner"></div>
 
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Annual capital growth
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA residential property has historically grown around 4–7% per annum. This varies significantly by location and property type.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="growthNum" value="5.0" style="width:44px" oninput="onNumInput('growthNum','growthSlider',15)">
-                  <span class="field-unit">%</span>
-                </div>
-              </div>
-              <input type="range" id="growthSlider" min="0" max="15" step="0.25" value="5" oninput="onSlider('growthSlider','growthNum',true)">
-            </div>
+  <section class="is-panel" id="incomeStatement" aria-live="polite" aria-atomic="true">
+    <div class="is-title">Monthly Income Statement</div>
+    <div class="is-subtitle" id="isModeNote">Short-term (Airbnb) letting</div>
 
-            <div class="field">
-              <div class="field-label">
-                <span class="label-with-tip">
-                  Projection period
-                  <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">How many years to project growth over. Uses your bond period as the upper limit.</span></span>
-                </span>
-                <div class="field-num-wrap">
-                  <input type="number" class="field-num" id="growthYearsNum" value="10" style="width:36px" oninput="onNumInput('growthYearsNum','growthYearsSlider',30)">
-                  <span class="field-unit">yrs</span>
-                </div>
-              </div>
-              <input type="range" id="growthYearsSlider" min="1" max="30" step="1" value="10" oninput="onSlider('growthYearsSlider','growthYearsNum',false)">
-            </div>
+    <div class="is-section-head">Income</div>
+    <div class="is-line"><span class="is-text">Gross Rental Income</span><span class="is-amt" id="isGross">—</span></div>
+    <div class="is-line indent" id="isPrimaryLine"><span class="is-text" id="isPrimaryLabel">Less: Platform fees</span><span class="is-amt" id="isPrimary">—</span></div>
+    <div class="is-rule"></div>
+    <div class="is-line subtotal"><span class="is-text" id="isNetSelfLabel">Net Income (self-managed)</span><span class="is-amt" id="isNetSelf">—</span></div>
+    <div class="is-line indent" id="isMgmtLine"><span class="is-text" id="isMgmtLabel">Less: Management fees</span><span class="is-amt" id="isMgmt">—</span></div>
+    <div class="is-rule" id="isNetManagedRule"></div>
+    <div class="is-line subtotal" id="isNetManagedLine"><span class="is-text" id="isNetManagedLabel">Net Income (with manager)</span><span class="is-amt" id="isNetManaged">—</span></div>
 
-          </div>
+    <div class="is-section-head">Operating Expenses</div>
+    <div class="is-line indent"><span class="is-text">Monthly Bond Repayment</span><span class="is-amt" id="isBond">—</span></div>
+    <div id="isExpenseRows"><!-- cost rows + maintenance rendered by JS --></div>
+    <div class="is-rule"></div>
+    <div class="is-line subtotal"><span class="is-text">Total Expenses</span><span class="is-amt" id="isTotalExp">—</span></div>
 
-        </div>
+    <div class="is-rule strong"></div>
+    <div class="is-line cashflow"><span class="is-text" id="isCashSelfLabel">Monthly Cashflow (self-managed)</span><span class="is-amt big" id="isCashSelf">—</span></div>
+    <div class="is-line cashflow" id="isCashManagedLine"><span class="is-text" id="isCashManagedLabel">Monthly Cashflow (with manager)</span><span class="is-amt big" id="isCashManaged">—</span></div>
+  </section>
+
+  <!-- KEY METRICS -->
+  <div class="results-card">
+    <div class="results-top">
+      <div class="results-card-title">Key Investment Metrics</div>
+      <div class="res-row">
+        <span class="res-label">Annual Cashflow (self-managed)</span>
+        <span class="res-value" id="mAnnualSelf">—</span>
       </div>
+      <div class="res-row" id="mAnnualManagedRow">
+        <span class="res-label">Annual Cashflow (with manager)</span>
+        <span class="res-value" id="mAnnualManaged">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Gross Rental Yield
+          <span class="res-tip-wrap"><span class="res-tip-icon">i</span><span class="res-tip-box">Annual gross rental income ÷ property price × 100.</span></span>
+        </span>
+        <span class="res-value" id="mGrossYield">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Net Rental Yield
+          <span class="res-tip-wrap"><span class="res-tip-icon">i</span><span class="res-tip-box">Annual self-managed cashflow ÷ property price × 100.</span></span>
+        </span>
+        <span class="res-value" id="mNetYield">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label" id="mBreakEvenLabel">Break-even Occupancy
+          <span class="res-tip-wrap"><span class="res-tip-icon">i</span><span class="res-tip-box">The occupancy at which self-managed income exactly covers all monthly costs.</span></span>
+        </span>
+        <span class="res-value" id="mBreakEven">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Cash-on-Cash Return
+          <span class="res-tip-wrap"><span class="res-tip-icon">i</span><span class="res-tip-box">Annual self-managed cashflow ÷ cash actually invested (deposit + transfer + furnishings) × 100.</span></span>
+        </span>
+        <span class="res-value" id="mCoC">—</span>
+      </div>
+    </div>
+  </div>
 
-    </div><!-- /inputs-col -->
+  <div class="result-actions" style="margin-bottom:1.25rem">
+    <button type="button" class="btn-action" onclick="copyStatement(this)">Copy income statement</button>
+    <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
+  </div>
 
-    <!-- ======== RESULTS COLUMN ======== -->
-    <div class="results-col">
+  <!-- ============ SECTION 5 — CAPITAL GROWTH (optional) ============ -->
+  <div class="accordion" id="accGrowth">
+    <div class="accordion-header" onclick="toggleAccordion('accGrowth')">
+      <div class="accordion-title-group">
+        <span class="accordion-title">5 — Capital Growth (Optional)</span>
+      </div>
+      <label class="section-toggle-check" id="growthToggleLabel" onclick="event.stopPropagation()">
+        <input type="checkbox" id="growthEnabled" data-share onchange="onGrowthToggle()">
+        <span id="growthToggleText">Enable</span>
+      </label>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div id="growthFieldsWrap" style="opacity:0.4; pointer-events:none">
 
-      <!-- Main results card -->
-      <div class="results-card" aria-live="polite" aria-atomic="true">
-        <div class="results-top">
-
-          <div class="res-row">
-            <span class="res-label">Monthly Bond Payment</span>
-            <span class="res-value" id="resBond">—</span>
-          </div>
-          <div class="res-row">
-            <span class="res-label">Total Monthly Costs</span>
-            <span class="res-value" id="resTotalCosts">—</span>
-          </div>
-          <div class="res-row">
-            <span class="res-label">Total Monthly Income</span>
-            <span class="res-value" id="resTotalIncome">—</span>
-          </div>
-
-          <div class="res-row cashflow-row">
-            <span class="cashflow-label-small">Monthly Cashflow</span>
-            <span class="cashflow-value neutral" id="resCashflow">—</span>
-          </div>
-
-          <hr class="res-divider">
-
-          <div class="res-row">
-            <span class="res-label">Annual Cashflow</span>
-            <span class="res-value" id="resAnnualCashflow">—</span>
-          </div>
-          <div class="res-row">
-            <span class="res-label">
-              Gross Rental Yield
-              <span class="res-tip-wrap">
-                <span class="res-tip-icon">i</span>
-                <span class="res-tip-box">Annual gross rent ÷ Property price × 100</span>
-              </span>
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Annual capital growth
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA residential property has historically grown ~4–7% per year, varying widely by location and type.</span></span>
             </span>
-            <span class="res-value" id="resGrossYield">—</span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="growthNum" value="5.0" min="0" step="0.25" style="width:44px" aria-label="Annual capital growth percent" oninput="onNumInput('growthNum','growthSlider',15)">
+              <span class="field-unit">%</span>
+            </div>
           </div>
-          <div class="res-row">
-            <span class="res-label">
-              Net Rental Yield
-              <span class="res-tip-wrap">
-                <span class="res-tip-icon">i</span>
-                <span class="res-tip-box">(Annual rent − Annual costs) ÷ Property price × 100</span>
-              </span>
+          <input type="range" id="growthSlider" min="0" max="15" step="0.25" value="5" oninput="onSlider('growthSlider','growthNum',true)">
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Projection period
+              <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">How many years to project growth and equity over. Capped at your bond period.</span></span>
             </span>
-            <span class="res-value" id="resNetYield">—</span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="growthYearsNum" value="10" min="1" step="1" style="width:36px" aria-label="Projection period in years" oninput="onNumInput('growthYearsNum','growthYearsSlider',30)">
+              <span class="field-unit">yrs</span>
+            </div>
           </div>
-          <div class="res-row" id="breakEvenRow">
-            <span class="res-label" id="breakEvenLabel">Break-even Occupancy</span>
-            <span class="res-value" id="resBreakEven">—</span>
-          </div>
+          <input type="range" id="growthYearsSlider" min="1" max="30" step="1" value="10" oninput="onSlider('growthYearsSlider','growthYearsNum',false)">
+        </div>
 
+      </div>
+
+      <div class="capital-card visible" id="capitalCard" style="box-shadow:none;border:none;margin:0.75rem 0 0">
+        <div class="capital-body" style="padding:0">
+          <div class="capital-row"><span class="capital-label">Projected property value</span><span class="capital-value accent" id="capFuturePrice">—</span></div>
+          <div class="capital-row"><span class="capital-label">Capital appreciation</span><span class="capital-value positive" id="capGain">—</span></div>
+          <div class="capital-row"><span class="capital-label">Equity built (loan repaid)</span><span class="capital-value" id="capEquity">—</span></div>
+          <div class="capital-row"><span class="capital-label">Net cashflow over period (self-managed)</span><span class="capital-value" id="capCashflow">—</span></div>
+          <div class="capital-row total"><span class="capital-label">Total wealth created</span><span class="capital-value" id="capTotalWealth">—</span></div>
         </div>
       </div>
-
-      <!-- Cashflow banner -->
-      <div class="cashflow-banner" id="cashflowBanner"></div>
-
-      <!-- Side-by-side comparison -->
-      <div class="comparison-card">
-        <div class="comparison-header">Self-managed vs. Using an Agent</div>
-        <table class="comparison-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th class="col-self">Self-manage</th>
-              <th class="col-agent">With Agent</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Monthly income</td>
-              <td id="cmpSelfIncome">—</td>
-              <td id="cmpAgentIncome">—</td>
-            </tr>
-            <tr>
-              <td>Monthly cashflow</td>
-              <td id="cmpSelfCashflow" class="">—</td>
-              <td id="cmpAgentCashflow" class="">—</td>
-            </tr>
-            <tr>
-              <td>Annual cashflow</td>
-              <td id="cmpSelfAnnual" class="">—</td>
-              <td id="cmpAgentAnnual" class="">—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Capital growth card (only when Section D enabled) -->
-      <div class="capital-card" id="capitalCard">
-        <div class="capital-header" id="capitalCardHeader">Capital Growth Projection</div>
-        <div class="capital-body">
-          <div class="capital-row">
-            <span class="capital-label">Projected property value</span>
-            <span class="capital-value accent" id="capFuturePrice">—</span>
-          </div>
-          <div class="capital-row">
-            <span class="capital-label">Capital appreciation</span>
-            <span class="capital-value positive" id="capGain">—</span>
-          </div>
-          <div class="capital-row">
-            <span class="capital-label">Equity built (loan repaid)</span>
-            <span class="capital-value" id="capEquity">—</span>
-          </div>
-          <div class="capital-row">
-            <span class="capital-label">Net cashflow over period</span>
-            <span class="capital-value" id="capCashflow">—</span>
-          </div>
-          <div class="capital-row total">
-            <span class="capital-label">Total wealth created</span>
-            <span class="capital-value" id="capTotalWealth">—</span>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /results-col -->
-  </div><!-- /main-grid -->
+    </div>
+  </div>
 
   <!-- EXPLAINER -->
   <div class="accordion" id="accLearn">
@@ -1477,27 +1490,22 @@ footer {
     </div>
   </div>
 
-  <div class="result-actions" style="max-width:1180px;margin:0 auto 1.5rem;padding:0 1.5rem">
-    <button type="button" class="btn-action" onclick="CalcVibe.copyResult('resCashflow', this)">Copy monthly cashflow</button>
-    <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
-  </div>
-
   <!-- RELATED -->
   <div class="related">
     <div class="related-title">Related Calculators</div>
     <div class="related-grid">
       <a href="/bond-repayment-calculator.html" class="related-card">
-        🏠 Bond Repayment Calculator
+        <span aria-hidden="true">🏠</span> Bond Repayment Calculator
       </a>
       <a href="/property-cost-of-ownership-calculator.html" class="related-card">
-        🔑 Property Cost of Ownership
+        <span aria-hidden="true">🔑</span> Property Cost of Ownership
       </a>
     </div>
   </div>
 
 </main>
 
-<div class="last-updated">Rates &amp; figures last updated: May 2026 | Based on SARS 2025/2026 transfer duty rates and Deeds Office tariffs</div>
+<div class="last-updated">Rates &amp; figures last updated: May 2026 | Bond formula and fee structure verified against an investor income-statement model</div>
 <footer>
   <div class="footer-logo">CalcVibe</div>
   <div class="footer-text">Free South African financial &amp; property calculators</div>
@@ -1507,514 +1515,455 @@ footer {
 <script src="/calcvibe.js"></script>
 <script>
 // =============================================
-// STATE
-// =============================================
-let rentalMode = 'short'; // 'short' | 'long'
-let municipalVisible = false;
-
-// Cost rows
-let nextRowId = 1;
-let costRows = [];
-
-const DEFAULT_ROWS = [
-  { label: 'Rates & Taxes',         amount: 1000, category: 'rates' },
-  { label: 'Levies/Body Corporate', amount: 1400, category: 'levies' },
-  { label: 'Water & Electricity',   amount: 500,  category: 'utilities' },
-  { label: 'Insurance',             amount: 500,  category: 'insurance' },
-  { label: 'Internet/WiFi',         amount: 500,  category: 'internet' },
-  { label: 'Consumables',           amount: 500,  category: 'consumables' },
-];
-
-const MUNICIPAL_DEFAULTS = [
-  { label: 'Property Rates',    amount: 0, id: 'm1' },
-  { label: 'Water & Sewerage',  amount: 0, id: 'm2' },
-  { label: 'Electricity',       amount: 0, id: 'm3' },
-  { label: 'Refuse Removal',    amount: 0, id: 'm4' },
-  { label: 'Other Municipal',   amount: 0, id: 'm5' },
-];
-
-// =============================================
 // HELPERS
 // =============================================
-function fmtVal(n) {
-  const num = Math.round(parseFloat(n) || 0);
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-function parseVal(s) {
-  return parseFloat(String(s || '').replace(/[ \s,]/g, '')) || 0;
-}
-
-function fmtR(n, decimals) {
-  if (isNaN(n) || !isFinite(n)) return '—';
-  const abs = Math.abs(n);
-  const sign = n < 0 ? '-' : '';
-  if (decimals !== undefined) {
-    const parts = abs.toFixed(decimals).split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return sign + 'R ' + parts.join('.');
-  }
-  return sign + 'R ' + Math.round(abs).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-function fmtPct(n, dec) {
-  if (isNaN(n) || !isFinite(n)) return '—';
-  return (n).toFixed(dec !== undefined ? dec : 1) + '%';
-}
-
-function calcTransferDuty(price) {
-  if (price <= 1100000)  return 0;
-  if (price <= 1512500)  return (price - 1100000) * 0.03;
-  if (price <= 2117500)  return 12375  + (price - 1512500) * 0.06;
-  if (price <= 2722500)  return 48675  + (price - 2117500) * 0.08;
-  if (price <= 12100000) return 97075  + (price - 2722500) * 0.11;
-  return 1128600 + (price - 12100000) * 0.13;
-}
-
-function calcBondReg(bondAmt) {
-  // Deeds Office 2025/2026 tariff scale + 15% VAT
-  if (bondAmt <= 0) return 0;
-  let fee;
-  if      (bondAmt <=    90000) fee = 0;
-  else if (bondAmt <=   600000) fee = 600  + (bondAmt -    90000) * 0.004;
-  else if (bondAmt <=  1200000) fee = 2640 + (bondAmt -   600000) * 0.003;
-  else if (bondAmt <=  2400000) fee = 4440 + (bondAmt -  1200000) * 0.002;
-  else if (bondAmt <=  4800000) fee = 6840 + (bondAmt -  2400000) * 0.0015;
-  else                          fee = 10440 + (bondAmt - 4800000) * 0.001;
-  return Math.round(fee * 1.15);
-}
-
-function v(id) {
-  const inp = document.getElementById(id);
-  return inp ? (inp.type === 'text' ? parseVal(inp.value) : parseFloat(inp.value) || 0) : 0;
-}
 function el(id) { return document.getElementById(id); }
 
-// =============================================
-// DUAL-MODE SLIDER/NUM SYNC
-// =============================================
-function onSlider(sliderId, numId, isRate) {
-  const val   = parseFloat(el(sliderId).value);
-  const input = el(numId);
-  input.value = isRate ? val.toFixed(1) : (input.type === 'text' ? fmtVal(val) : val);
-  calculate();
+function parseVal(s) {
+  return parseFloat(String(s == null ? '' : s).replace(/[^0-9.\-]/g, '')) || 0;
 }
+function fmtVal(n) {
+  var num = Number(n) || 0;
+  var parts = String(num).split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return parts.join('.');
+}
+function R(n) { return CalcVibe.fmtR(n, 2); }              // "R 1 234.56"
+function R0(n) { return CalcVibe.fmtR(n, 0); }             // "R 1 234"
+function paren(n) { return '(' + CalcVibe.fmtR(Math.abs(n), 2) + ')'; }  // "(R 1 234.56)"
 
+// =============================================
+// STATE
+// =============================================
+var rentalMode = 'short';   // 'short' | 'long'
+var mgmtBasis  = 'afterPlatform'; // 'afterPlatform' | 'gross'
+var nextCustom = 1;
+var LAST = {};
+
+var DEFAULT_COSTS = [
+  { key: 'rates',       label: 'Rates & Taxes',          amount: 1000 },
+  { key: 'levies',      label: 'Levies / Body Corporate', amount: 1400 },
+  { key: 'wifi',        label: 'Wifi',                    amount: 500 },
+  { key: 'water',       label: 'Water & Electricity',     amount: 500 },
+  { key: 'insurance',   label: 'Insurance',               amount: 500 },
+  { key: 'consumables', label: 'Consumables',             amount: 500 }
+];
+var costRows = DEFAULT_COSTS.map(function (r) { return { key: r.key, label: r.label, amount: r.amount }; });
+
+// =============================================
+// SLIDER / NUMBER SYNC
+// =============================================
 function onNumInput(numId, sliderId, sliderMax) {
-  const slider = el(sliderId);
-  const input  = el(numId);
-  const val    = input.type === 'text' ? parseVal(input.value) : parseFloat(input.value);
-  if (!isNaN(val)) {
-    slider.value = Math.min(Math.max(val, parseFloat(slider.min) || 0), sliderMax);
+  var input = el(numId);
+  var val = input.type === 'text' ? parseVal(input.value) : parseFloat(input.value);
+  var slider = el(sliderId);
+  if (slider && !isNaN(val)) {
+    var min = parseFloat(slider.min) || 0;
+    slider.value = Math.min(Math.max(val, min), sliderMax);
   }
   calculate();
 }
+function onSlider(sliderId, numId, isDecimal) {
+  var v = parseFloat(el(sliderId).value);
+  var input = el(numId);
+  if (input.type === 'text') input.value = fmtVal(v);
+  else input.value = isDecimal ? v : Math.round(v);
+  calculate();
+}
 
 // =============================================
-// ACCORDION
-// =============================================
-// =============================================
-// RENTAL MODE TOGGLE
+// MODE / TOGGLES
 // =============================================
 function setMode(mode) {
   rentalMode = mode;
-  el('btnShortTerm').classList.toggle('active', mode === 'short');
-  el('btnLongTerm').classList.toggle('active', mode === 'long');
-  el('btnShortTerm').setAttribute('aria-pressed', mode === 'short' ? 'true' : 'false');
-  el('btnLongTerm').setAttribute('aria-pressed', mode === 'long' ? 'true' : 'false');
-  var sm = el('shareMode'); if (sm) sm.value = mode;
-  el('shortTermFields').style.display = mode === 'short' ? '' : 'none';
-  el('longTermFields').style.display  = mode === 'long'  ? '' : 'none';
-
-  // Update break-even label
-  el('breakEvenLabel').textContent = mode === 'short' ? 'Break-even Occupancy' : 'Break-even Rent';
-
+  var isShort = mode === 'short';
+  el('btnShortTerm').classList.toggle('active', isShort);
+  el('btnLongTerm').classList.toggle('active', !isShort);
+  el('btnShortTerm').setAttribute('aria-pressed', isShort ? 'true' : 'false');
+  el('btnLongTerm').setAttribute('aria-pressed', isShort ? 'false' : 'true');
+  el('shortTermFields').style.display = isShort ? '' : 'none';
+  el('longTermFields').style.display = isShort ? 'none' : '';
+  if (el('shareMode')) el('shareMode').value = mode;
   calculate();
 }
 
-// =============================================
-// CAPITAL GROWTH TOGGLE
-// =============================================
+function setBasis(basis) {
+  mgmtBasis = basis;
+  el('btnBasisGross').classList.toggle('active', basis === 'gross');
+  el('btnBasisAfter').classList.toggle('active', basis === 'afterPlatform');
+  el('btnBasisGross').setAttribute('aria-pressed', basis === 'gross' ? 'true' : 'false');
+  el('btnBasisAfter').setAttribute('aria-pressed', basis === 'afterPlatform' ? 'true' : 'false');
+  if (el('shareBasis')) el('shareBasis').value = basis;
+  calculate();
+}
+
+function onMgmtToggle() {
+  var on = el('mgmtEnabled').checked;
+  el('mgmtToggleLabel').classList.toggle('checked', on);
+  el('mgmtToggleText').textContent = on ? 'Included' : 'Excluded';
+  el('mgmtBody').classList.toggle('disabled', !on);
+  if (el('shareMgmt')) el('shareMgmt').value = on ? '1' : '0';
+  calculate();
+}
+
+function onAgentToggle() {
+  var on = el('agentEnabled').checked;
+  el('agentToggleLabel').classList.toggle('checked', on);
+  el('agentToggleText').textContent = on ? 'Included' : 'Excluded';
+  el('agentBody').classList.toggle('disabled', !on);
+  if (el('shareMgmt')) el('shareMgmt').value = on ? '1' : '0';
+  calculate();
+}
+
 function onGrowthToggle() {
-  const enabled = el('growthEnabled').checked;
-  el('growthFieldsWrap').style.opacity       = enabled ? '1' : '0.4';
-  el('growthFieldsWrap').style.pointerEvents = enabled ? 'auto' : 'none';
-  el('growthToggleLabel').classList.toggle('checked', enabled);
-  el('growthToggleText').textContent = enabled ? 'Enabled' : 'Enable';
-  el('capitalCard').classList.toggle('visible', enabled);
+  var on = el('growthEnabled').checked;
+  el('growthFieldsWrap').style.opacity = on ? '1' : '0.4';
+  el('growthFieldsWrap').style.pointerEvents = on ? 'auto' : 'none';
+  el('growthToggleLabel').classList.toggle('checked', on);
+  el('growthToggleText').textContent = on ? 'Enabled' : 'Enable';
+  el('capitalCard').style.display = on ? 'block' : 'none';
   calculate();
 }
 
 // =============================================
-// COST ROWS
+// OPERATING COST ROWS
 // =============================================
-function initCostRows() {
-  costRows = DEFAULT_ROWS.map(r => ({ id: nextRowId++, label: r.label, amount: r.amount, category: r.category }));
-  renderCostRows();
-  renderMunicipalRows();
-}
-
 function renderCostRows() {
-  const container = el('costRowsContainer');
-  container.innerHTML = '';
-  costRows.forEach(row => {
-    const div = document.createElement('div');
-    div.className = 'cost-row';
-    div.dataset.id = row.id;
-    div.innerHTML = `
-      <input type="text" class="cost-row-label" value="${escHtml(row.label)}" placeholder="Cost label"
-        oninput="updateRowLabel(${row.id}, this.value)">
-      <div class="cost-row-amount-wrap">
-        <span class="cost-row-unit">R</span>
-        <input type="text" inputmode="numeric" class="cost-row-amount" value="${fmtVal(row.amount)}"
-          oninput="updateRowAmount(${row.id}, this.value)">
-      </div>
-      <button class="cost-row-remove" onclick="removeRow(${row.id})" title="Remove">×</button>
-    `;
-    container.appendChild(div);
+  var html = '';
+  costRows.forEach(function (r) {
+    html += '<div class="cost-row">' +
+      '<input type="text" class="cost-row-label" value="' + escapeAttr(r.label) + '" aria-label="Cost name" oninput="updateCostLabel(\'' + r.key + '\', this.value)">' +
+      '<span class="cost-row-amount-wrap"><span class="cost-row-unit">R</span>' +
+      '<input type="text" inputmode="numeric" class="cost-row-amount" id="cost_' + r.key + '" value="' + fmtVal(r.amount) + '" aria-label="' + escapeAttr(r.label) + ' monthly amount" ' +
+      'oninput="updateCostAmount(\'' + r.key + '\', this.value)" ' +
+      'onfocus="this.value=String(parseVal(this.value)||\'\')" ' +
+      'onblur="this.value=fmtVal(parseVal(this.value));calculate()"></span>' +
+      '<button type="button" class="cost-row-remove" aria-label="Remove ' + escapeAttr(r.label) + '" title="Remove" onclick="removeRow(\'' + r.key + '\')">&times;</button>' +
+    '</div>';
   });
+  el('costRowsArea').innerHTML = html;
+  // any newly-rendered amount input should be shareable
+  el('costRowsArea').querySelectorAll('.cost-row-amount').forEach(function (e) { e.setAttribute('data-share', ''); });
 }
 
-function renderMunicipalRows() {
-  const container = el('municipalRows');
-  container.innerHTML = '';
-  MUNICIPAL_DEFAULTS.forEach(row => {
-    const div = document.createElement('div');
-    div.className = 'cost-row';
-    div.innerHTML = `
-      <span style="flex:1;font-size:0.8rem;color:var(--ink);font-weight:500">${escHtml(row.label)}</span>
-      <div class="cost-row-amount-wrap">
-        <span class="cost-row-unit">R</span>
-        <input type="text" inputmode="numeric" class="cost-row-amount" id="${row.id}" value="${fmtVal(row.amount)}"
-          oninput="calculate()">
-      </div>
-    `;
-    container.appendChild(div);
-  });
-}
+function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
+function updateCostLabel(key, val) { var r = findRow(key); if (r) r.label = val; calculate(); }
+function updateCostAmount(key, val) { var r = findRow(key); if (r) r.amount = parseVal(val); calculate(); }
+function findRow(key) { for (var i = 0; i < costRows.length; i++) if (costRows[i].key === key) return costRows[i]; return null; }
+
+function removeRow(key) {
+  costRows = costRows.filter(function (r) { return r.key !== key; });
+  renderCostRows();
+  calculate();
+}
 function addRow() {
-  costRows.push({ id: nextRowId++, label: '', amount: 0, category: 'other' });
+  costRows.push({ key: 'custom' + (nextCustom++), label: '', amount: 0 });
   renderCostRows();
   calculate();
 }
 
-function removeRow(id) {
-  costRows = costRows.filter(r => r.id !== id);
-  renderCostRows();
-  calculate();
-}
-
-function updateRowLabel(id, label) {
-  const row = costRows.find(r => r.id === id);
-  if (row) { row.label = label; checkDoubleCount(); }
-}
-
-function updateRowAmount(id, val) {
-  const row = costRows.find(r => r.id === id);
-  if (row) { row.amount = parseVal(val); calculate(); }
-}
-
-function checkDoubleCount() {
-  if (!municipalVisible) { el('doubleCountWarn').classList.remove('visible'); return; }
-  const labels = costRows.map(r => r.label.toLowerCase());
-  const hasRates = labels.some(l => l.includes('rate') || l.includes('tax'));
-  const hasWater = labels.some(l => l.includes('water') || l.includes('electricity'));
-  el('doubleCountWarn').classList.toggle('visible', hasRates || hasWater);
-}
-
-function toggleMunicipal() {
-  municipalVisible = !municipalVisible;
-  el('municipalGroupWrap').style.display = municipalVisible ? '' : 'none';
-  el('btnMunicipal').textContent = municipalVisible ? '− Remove Municipal Detail' : '+ Add Municipal Detail';
-  checkDoubleCount();
-  calculate();
-}
-
-function getMunicipalTotal() {
-  if (!municipalVisible) return 0;
-  return MUNICIPAL_DEFAULTS.reduce((sum, row) => {
-    const inp = el(row.id);
-    return sum + (inp ? parseVal(inp.value) : 0);
-  }, 0);
-}
-
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function sumCostRows() {
-  return costRows.reduce((s, r) => s + (r.amount || 0), 0) + getMunicipalTotal();
-}
-
 // =============================================
-// BOND CALCULATION
-// =============================================
-function calcBond(price, deposit, annRate, years) {
-  const P = Math.max(0, price - deposit);
-  const n = years * 12;
-  if (n <= 0 || P <= 0) return 0;
-  const r = annRate / 100 / 12;
-  if (r === 0) return P / n;
-  return P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-}
-
-// Rough equity built: principal repaid over growthYears out of full term
-function calcEquityBuilt(price, deposit, annRate, termYears, growthYears) {
-  const P = Math.max(0, price - deposit);
-  if (P <= 0) return deposit;
-  const r = annRate / 100 / 12;
-  const n = termYears * 12;
-  const months = Math.min(growthYears * 12, n);
-  if (r === 0) return (P / n) * months + deposit;
-  const M = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-  // Remaining balance after `months` payments
-  const remaining = P * Math.pow(1 + r, months) - M * (Math.pow(1 + r, months) - 1) / r;
-  return Math.max(0, P - remaining) + deposit;
-}
-
-// =============================================
-// INCOME CALCULATION
-// =============================================
-function calcShortTermIncome(nights, avgRate, occupancy, platformFee, mgmtFee) {
-  const grossMonthly   = nights * avgRate * (occupancy / 100);
-  const afterPlatform  = grossMonthly * (1 - platformFee / 100);
-  const netMonthly     = afterPlatform * (1 - mgmtFee / 100);
-  return { grossMonthly, netMonthly };
-}
-
-function calcLongTermIncome(monthlyRent, vacancy, agentFee) {
-  const effectiveMonthly = monthlyRent * (1 - vacancy / 100) * (1 - agentFee / 100);
-  return { grossMonthly: monthlyRent, netMonthly: effectiveMonthly };
-}
-
-// Self-manage variants (fees = 0)
-function calcShortTermSelf(nights, avgRate, occupancy, platformFee) {
-  const grossMonthly  = nights * avgRate * (occupancy / 100);
-  const afterPlatform = grossMonthly * (1 - platformFee / 100);
-  return afterPlatform; // mgmtFee = 0
-}
-
-function calcLongTermSelf(monthlyRent, vacancy) {
-  return monthlyRent * (1 - vacancy / 100); // agentFee = 0
-}
-
-// =============================================
-// COMPARISON CELL HELPERS
-// =============================================
-function setCmpCell(id, val, totalCosts) {
-  const cel = el(id);
-  cel.textContent = fmtR(val);
-  const isMonthly = id.includes('Income');
-  if (isMonthly) {
-    cel.className = '';
-    return;
-  }
-  const cf = val - (id.includes('Annual') ? totalCosts * 12 : totalCosts);
-  // For cashflow/annual cells the value passed is already cashflow
-  cel.className = val >= 0 ? 'positive' : 'negative';
-}
-
-// =============================================
-// MAIN CALCULATE
+// MAIN CALCULATION
 // =============================================
 function calculate() {
-  const price   = v('priceNum');
-  const deposit = v('depositNum');
-  const annRate = v('rateNum');
-  const years   = v('termNum');
-  const maintPct = v('maintNum');
+  // ---- Section 1: purchase & financing ----
+  var price       = parseVal(el('priceNum').value);
+  var transfer    = parseVal(el('transferNum').value);
+  var furnishings = parseVal(el('furnishingsNum').value);
+  var deposit     = parseVal(el('depositNum').value);
+  var rate        = parseFloat(el('rateNum').value) || 0;
+  var years       = parseFloat(el('termNum').value) || 0;
 
-  // Loan amount hint
-  const loanAmt = Math.max(0, price - deposit);
-  el('loanAmountHint').textContent = fmtR(loanAmt);
+  var totalProject = price + transfer + furnishings;
+  var loan         = Math.max(0, totalProject - deposit);
+  var cashInvested = deposit + transfer + furnishings;
 
-  // Bond payment
-  const monthlyBond = calcBond(price, deposit, annRate, years);
+  var rm = rate / 100 / 12;
+  var n  = years * 12;
+  var bond = 0;
+  if (loan > 0 && n > 0) {
+    bond = rm === 0 ? loan / n : loan * rm / (1 - Math.pow(1 + rm, -n));
+  }
 
-  // Operating costs
-  const monthlyMaint = price * (maintPct / 100) / 12;
-  el('maintHint').textContent = 'Monthly equivalent: ' + fmtR(monthlyMaint);
+  el('dProject').textContent = R0(totalProject);
+  el('dLoan').textContent    = R0(loan);
+  el('dCash').textContent    = R0(cashInvested);
+  el('dBond').textContent    = R(bond);
 
-  const operatingCosts = sumCostRows() + monthlyMaint;
-  const totalMonthlyCosts = monthlyBond + operatingCosts;
+  // ---- Section 2: operating costs ----
+  var rowsTotal = 0;
+  costRows.forEach(function (r) { rowsTotal += r.amount; });
+  var maintPct = parseFloat(el('maintNum').value) || 0;
+  var maintMonthly = price * (maintPct / 100) / 12;
+  var opCostsTotal = rowsTotal + maintMonthly;
 
-  // Income
-  let netMonthlyIncome = 0;
-  let grossMonthlyIncome = 0;
-  let selfManageIncome = 0;
+  el('maintHint').textContent = R(maintMonthly) + ' / month';
+  el('opSubtotal').textContent = R(opCostsTotal);
+
+  // ---- Section 3: income ----
+  var gross, primaryDeduction, primaryLabel, mgmtFee, mgmtLabel, netSelf, netManaged, managerOn, grossPerNight, breakEvenIsOcc;
 
   if (rentalMode === 'short') {
-    const nights      = v('nightsNum');
-    const avgRate     = v('nightRateNum');
-    const occupancy   = v('occupancyNum');
-    const platformFee = v('platformFeeNum');
-    const mgmtFee     = v('mgmtFeeNum');
+    var nights     = parseFloat(el('nightsNum').value) || 0;
+    var nightRate  = parseVal(el('nightRateNum').value);
+    var occ        = (parseFloat(el('occupancyNum').value) || 0) / 100;
+    var platformPct = (parseFloat(el('platformFeeNum').value) || 0) / 100;
+    managerOn      = el('mgmtEnabled').checked;
+    var mgmtPct    = managerOn ? (parseFloat(el('mgmtFeeNum').value) || 0) / 100 : 0;
 
-    const { grossMonthly, netMonthly } = calcShortTermIncome(nights, avgRate, occupancy, platformFee, mgmtFee);
-    grossMonthlyIncome = grossMonthly;
-    netMonthlyIncome   = netMonthly;
-    selfManageIncome   = calcShortTermSelf(nights, avgRate, occupancy, platformFee);
+    gross = nights * occ * nightRate;
+    var platformFee = gross * platformPct;
+    netSelf = gross - platformFee;
+    mgmtFee = mgmtBasis === 'gross' ? gross * mgmtPct : (gross - platformFee) * mgmtPct;
+    netManaged = netSelf - mgmtFee;
+
+    primaryDeduction = platformFee;
+    primaryLabel = 'Less: Platform fees (' + trimPct(platformPct * 100) + '%)';
+    mgmtLabel = 'Less: Management fees (' + trimPct(mgmtPct * 100) + '%)';
+    grossPerNight = nights * nightRate;
+    breakEvenIsOcc = true;
   } else {
-    const rent      = v('rentNum');
-    const vacancy   = v('vacancyNum');
-    const agentFee  = v('agentFeeNum');
+    var rent      = parseVal(el('rentNum').value);
+    var vac       = (parseFloat(el('vacancyNum').value) || 0) / 100;
+    managerOn     = el('agentEnabled').checked;
+    var agentPct  = managerOn ? (parseFloat(el('agentFeeNum').value) || 0) / 100 : 0;
 
-    const { grossMonthly, netMonthly } = calcLongTermIncome(rent, vacancy, agentFee);
-    grossMonthlyIncome = grossMonthly;
-    netMonthlyIncome   = netMonthly;
-    selfManageIncome   = calcLongTermSelf(rent, vacancy);
+    gross = rent;
+    var vacancyLoss = rent * vac;
+    netSelf = rent - vacancyLoss;
+    mgmtFee = netSelf * agentPct;
+    netManaged = netSelf - mgmtFee;
+
+    primaryDeduction = vacancyLoss;
+    primaryLabel = 'Less: Vacancy (' + trimPct(vac * 100) + '%)';
+    mgmtLabel = 'Less: Rental agent fee (' + trimPct(agentPct * 100) + '%)';
+    grossPerNight = 0;
+    breakEvenIsOcc = false;
   }
 
-  // Cashflow
-  const monthlyCashflow = netMonthlyIncome - totalMonthlyCosts;
-  const annualCashflow  = monthlyCashflow * 12;
+  var totalExpenses = bond + opCostsTotal;
+  var cashSelf    = netSelf - totalExpenses;
+  var cashManaged = netManaged - totalExpenses;
 
-  // Yields
-  const grossYield = price > 0 ? (grossMonthlyIncome * 12) / price * 100 : 0;
-  const netYield   = price > 0 ? ((netMonthlyIncome - operatingCosts) * 12) / price * 100 : 0;
+  // ---- Render income statement ----
+  el('isModeNote').textContent = rentalMode === 'short' ? 'Short-term (Airbnb) letting' : 'Long-term rental';
+  el('isGross').textContent = R(gross);
+  el('isPrimaryLabel').textContent = primaryLabel;
+  el('isPrimary').textContent = paren(primaryDeduction);
+  el('isNetSelf').textContent = R(netSelf);
 
-  // Break-even
-  let breakEven = 0;
-  if (rentalMode === 'short') {
-    const nights      = v('nightsNum');
-    const avgRate     = v('nightRateNum');
-    const platformFee = v('platformFeeNum');
-    const mgmtFee     = v('mgmtFeeNum');
-    const denom = nights * avgRate * (1 - platformFee / 100) * (1 - mgmtFee / 100);
-    breakEven = denom > 0 ? (totalMonthlyCosts / denom) * 100 : 0;
+  var managerWord = rentalMode === 'short' ? 'with manager' : 'with agent';
+  el('isNetSelfLabel').textContent = 'Net Income (self-managed)';
+  el('isMgmtLabel').textContent = mgmtLabel;
+  el('isMgmt').textContent = paren(mgmtFee);
+  el('isNetManagedLabel').textContent = 'Net Income (' + managerWord + ')';
+  el('isNetManaged').textContent = R(netManaged);
+
+  // show/hide the management lines
+  var showManaged = managerOn && mgmtFee > 0;
+  el('isMgmtLine').classList.toggle('hide', !showManaged);
+  el('isNetManagedRule').classList.toggle('hide', !showManaged);
+  el('isNetManagedLine').classList.toggle('hide', !showManaged);
+  el('isCashManagedLine').classList.toggle('hide', !showManaged);
+  el('mAnnualManagedRow').style.display = showManaged ? '' : 'none';
+
+  el('isBond').textContent = paren(bond);
+
+  // expense rows (cost rows + maintenance)
+  var expHtml = '';
+  costRows.forEach(function (r) {
+    expHtml += '<div class="is-line indent"><span class="is-text">' + escapeAttr(r.label || 'Cost') + '</span><span class="is-amt">' + paren(r.amount) + '</span></div>';
+  });
+  expHtml += '<div class="is-line indent"><span class="is-text">Maintenance Reserve</span><span class="is-amt">' + paren(maintMonthly) + '</span></div>';
+  el('isExpenseRows').innerHTML = expHtml;
+
+  el('isTotalExp').textContent = paren(totalExpenses);
+
+  el('isCashSelfLabel').textContent = 'Monthly Cashflow (self-managed)';
+  el('isCashManagedLabel').textContent = 'Monthly Cashflow (' + managerWord + ')';
+  applyCashflow(el('isCashSelf'), cashSelf);
+  applyCashflow(el('isCashManaged'), cashManaged);
+
+  // ---- Key metrics ----
+  var annualSelf = cashSelf * 12;
+  var annualManaged = cashManaged * 12;
+  var annualGross = gross * 12;
+  var grossYield = price > 0 ? annualGross / price * 100 : 0;
+  var netYield = price > 0 ? annualSelf / price * 100 : 0;
+  var coc = cashInvested > 0 ? annualSelf / cashInvested * 100 : 0;
+
+  el('mAnnualSelf').textContent = R(annualSelf);
+  applyCashflow(el('mAnnualSelf'), annualSelf, true);
+  el('mAnnualManaged').textContent = R(annualManaged);
+  applyCashflow(el('mAnnualManaged'), annualManaged, true);
+  el('mGrossYield').textContent = grossYield.toFixed(1) + '%';
+  el('mNetYield').textContent = netYield.toFixed(1) + '%';
+  el('mCoC').textContent = coc.toFixed(1) + '%';
+
+  if (breakEvenIsOcc) {
+    el('mBreakEvenLabel').childNodes[0].nodeValue = 'Break-even Occupancy ';
+    var beOcc = grossPerNight > 0 ? totalExpenses / grossPerNight * 100 : 0;
+    el('mBreakEven').textContent = beOcc.toFixed(0) + '%';
   } else {
-    const vacancy  = v('vacancyNum');
-    const agentFee = v('agentFeeNum');
-    const denom = (1 - vacancy / 100) * (1 - agentFee / 100);
-    breakEven = denom > 0 ? totalMonthlyCosts / denom : 0;
+    el('mBreakEvenLabel').childNodes[0].nodeValue = 'Break-even Rent ';
+    var vac2 = (parseFloat(el('vacancyNum') ? el('vacancyNum').value : 0) || 0) / 100;
+    var beRent = (1 - vac2) > 0 ? totalExpenses / (1 - vac2) : 0;
+    el('mBreakEven').textContent = R0(beRent);
   }
 
-  // ---- Update Results Card ----
-  el('resBond').textContent        = fmtR(monthlyBond);
-  el('resTotalCosts').textContent  = fmtR(totalMonthlyCosts);
-  el('resTotalIncome').textContent = fmtR(netMonthlyIncome);
+  // ---- Banner ----
+  renderBanner(cashSelf, cashManaged, showManaged);
 
-  const cfEl = el('resCashflow');
-  cfEl.textContent = fmtR(monthlyCashflow);
-  cfEl.className = 'cashflow-value ' + (monthlyCashflow > 0 ? 'positive' : monthlyCashflow < 0 ? 'negative' : 'neutral');
+  // ---- Capital growth ----
+  renderCapital(price, loan, rate, years, annualSelf);
 
-  el('resAnnualCashflow').textContent = fmtR(annualCashflow);
-  el('resGrossYield').textContent     = fmtPct(grossYield);
-  el('resNetYield').textContent       = fmtPct(netYield);
+  // ---- store for copy ----
+  LAST = {
+    mode: rentalMode, price: price, loan: loan, bond: bond, cashInvested: cashInvested,
+    gross: gross, primaryLabel: primaryLabel, primaryDeduction: primaryDeduction,
+    netSelf: netSelf, mgmtLabel: mgmtLabel, mgmtFee: mgmtFee, netManaged: netManaged,
+    showManaged: showManaged, costRows: costRows.slice(), maintMonthly: maintMonthly,
+    totalExpenses: totalExpenses, cashSelf: cashSelf, cashManaged: cashManaged,
+    annualSelf: annualSelf, annualManaged: annualManaged,
+    grossYield: grossYield, netYield: netYield, coc: coc,
+    managerWord: managerWord
+  };
+}
 
-  if (rentalMode === 'short') {
-    el('resBreakEven').textContent = fmtPct(Math.min(breakEven, 999));
+function trimPct(x) {
+  // 17.5 -> "17.5", 20 -> "20"
+  return (Math.round(x * 100) / 100).toString();
+}
+
+function applyCashflow(node, value, lightVariant) {
+  if (value < 0) {
+    node.textContent = paren(value);
+    node.classList.remove('pos-cf'); node.classList.add('neg-cf');
   } else {
-    el('resBreakEven').textContent = fmtR(breakEven);
-  }
-
-  // ---- Cashflow Banner ----
-  const banner = el('cashflowBanner');
-  if (monthlyCashflow > 0) {
-    banner.className = 'cashflow-banner positive';
-    banner.innerHTML = '&#127881; This property generates <strong>' + fmtR(monthlyCashflow) + '/month</strong> in passive income.';
-  } else if (monthlyCashflow < 0) {
-    banner.className = 'cashflow-banner negative';
-    banner.innerHTML = '&#9888; This property costs <strong>' + fmtR(Math.abs(monthlyCashflow)) + '/month</strong> — only worth it if you expect strong capital appreciation.';
-  } else {
-    banner.className = 'cashflow-banner';
-  }
-
-  // ---- Side-by-side comparison ----
-  const selfCashflow      = selfManageIncome - totalMonthlyCosts;
-  const agentCashflow     = netMonthlyIncome - totalMonthlyCosts;
-  const selfAnnual        = selfCashflow * 12;
-  const agentAnnual       = agentCashflow * 12;
-
-  el('cmpSelfIncome').textContent   = fmtR(selfManageIncome);
-  el('cmpAgentIncome').textContent  = fmtR(netMonthlyIncome);
-
-  el('cmpSelfCashflow').textContent  = fmtR(selfCashflow);
-  el('cmpSelfCashflow').className    = selfCashflow >= 0 ? 'positive' : 'negative';
-  el('cmpAgentCashflow').textContent = fmtR(agentCashflow);
-  el('cmpAgentCashflow').className   = agentCashflow >= 0 ? 'positive' : 'negative';
-
-  el('cmpSelfAnnual').textContent  = fmtR(selfAnnual);
-  el('cmpSelfAnnual').className    = selfAnnual >= 0 ? 'positive' : 'negative';
-  el('cmpAgentAnnual').textContent = fmtR(agentAnnual);
-  el('cmpAgentAnnual').className   = agentAnnual >= 0 ? 'positive' : 'negative';
-
-  // ---- Capital Growth ----
-  if (el('growthEnabled').checked) {
-    const growthPct   = v('growthNum');
-    const growthYears = v('growthYearsNum');
-
-    const futurePrice     = price * Math.pow(1 + growthPct / 100, growthYears);
-    const capitalGain     = futurePrice - price;
-    const equityBuilt     = calcEquityBuilt(price, deposit, annRate, years, growthYears);
-    const totalCashflowPeriod = monthlyCashflow * growthYears * 12;
-    const totalWealth     = capitalGain + equityBuilt + totalCashflowPeriod;
-
-    el('capitalCardHeader').textContent = 'Capital Growth — ' + Math.round(growthYears) + '-year Projection';
-
-    el('capFuturePrice').textContent  = fmtR(futurePrice);
-    el('capGain').textContent         = fmtR(capitalGain);
-    el('capGain').className           = 'capital-value positive';
-    el('capEquity').textContent       = fmtR(equityBuilt);
-    el('capCashflow').textContent     = fmtR(totalCashflowPeriod);
-    el('capCashflow').className       = 'capital-value ' + (totalCashflowPeriod >= 0 ? 'positive' : 'negative');
-    el('capTotalWealth').textContent  = fmtR(totalWealth);
-    el('capTotalWealth').className    = 'capital-value ' + (totalWealth >= 0 ? 'positive' : 'negative');
+    node.textContent = R(value);
+    node.classList.remove('neg-cf'); node.classList.add('pos-cf');
   }
 }
 
-// =============================================
-// TOOLTIP CLICK TOGGLE (mobile)
-// =============================================
-function initTooltips() {
-  document.querySelectorAll('.tip-icon').forEach(icon => {
-    icon.addEventListener('click', e => {
-      e.stopPropagation();
-      const wrap   = icon.closest('.tip-wrap');
-      const isOpen = wrap.classList.contains('open');
-      document.querySelectorAll('.tip-wrap.open').forEach(w => w.classList.remove('open'));
-      if (!isOpen) wrap.classList.add('open');
-    });
-  });
+function renderBanner(cashSelf, cashManaged, showManaged) {
+  var b = el('cashflowBanner');
+  b.className = 'cashflow-banner';
+  if (cashSelf >= 0 && (!showManaged || cashManaged >= 0)) {
+    b.classList.add('positive');
+    b.innerHTML = '<span aria-hidden="true">🎉</span> Self-managed: this property generates <strong>' + R(cashSelf) + '</strong> per month in passive income.';
+  } else if (cashSelf >= 0 && showManaged && cashManaged < 0) {
+    b.classList.add('info');
+    b.innerHTML = '<span aria-hidden="true">ℹ️</span> This property only works financially if you self-manage. With a ' + (rentalMode === 'long' ? 'agent' : 'manager') + ' it costs <strong>' + R(Math.abs(cashManaged)) + '</strong> per month.';
+  } else {
+    b.classList.add('warning');
+    b.innerHTML = '<span aria-hidden="true">⚠️</span> This property would cost you <strong>' + R(Math.abs(cashSelf)) + '</strong> per month even when self-managed.';
+  }
+}
 
-  document.querySelectorAll('.res-tip-icon').forEach(icon => {
-    icon.addEventListener('click', e => {
-      e.stopPropagation();
-      const wrap   = icon.closest('.res-tip-wrap');
-      const isOpen = wrap.classList.contains('open');
-      document.querySelectorAll('.res-tip-wrap.open').forEach(w => w.classList.remove('open'));
-      if (!isOpen) wrap.classList.add('open');
-    });
-  });
+function renderCapital(price, loan, rate, years, annualSelf) {
+  if (!el('growthEnabled').checked) return;
+  var g = (parseFloat(el('growthNum').value) || 0) / 100;
+  var py = Math.min(parseFloat(el('growthYearsNum').value) || 0, years || 0);
+  var futurePrice = price * Math.pow(1 + g, py);
+  var gain = futurePrice - price;
 
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.tip-wrap.open, .res-tip-wrap.open')
-      .forEach(w => w.classList.remove('open'));
-  });
+  // equity built from loan amortisation over py years
+  var rm = rate / 100 / 12;
+  var n = years * 12;
+  var months = py * 12;
+  var balance = loan;
+  if (loan > 0 && n > 0 && rm > 0) {
+    var pay = loan * rm / (1 - Math.pow(1 + rm, -n));
+    balance = loan * Math.pow(1 + rm, months) - pay * (Math.pow(1 + rm, months) - 1) / rm;
+    balance = Math.max(0, balance);
+  } else if (rm === 0 && n > 0) {
+    balance = Math.max(0, loan - (loan / n) * months);
+  }
+  var equityBuilt = loan - balance;
+  var netCashflow = annualSelf * py;
+  var totalWealth = gain + equityBuilt + netCashflow;
+
+  el('capFuturePrice').textContent = R0(futurePrice);
+  el('capGain').textContent = R0(gain);
+  el('capEquity').textContent = R0(equityBuilt);
+  setSigned(el('capCashflow'), netCashflow);
+  setSigned(el('capTotalWealth'), totalWealth);
+}
+
+function setSigned(node, v) {
+  node.classList.remove('positive', 'negative');
+  node.classList.add(v < 0 ? 'negative' : 'positive');
+  node.textContent = (v < 0 ? '−' : '') + R0(Math.abs(v));
+}
+
+// =============================================
+// COPY INCOME STATEMENT (plain text)
+// =============================================
+function copyStatement(btn) {
+  var L = LAST;
+  if (!L || L.gross === undefined) { calculate(); L = LAST; }
+  var lines = [];
+  var pad = function (label, amount) {
+    var a = amount;
+    return label + '\n   ' + a;
+  };
+  lines.push('CALCVIBE — RENTAL PROPERTY INCOME STATEMENT (monthly)');
+  lines.push(L.mode === 'short' ? 'Short-term (Airbnb) letting' : 'Long-term rental');
+  lines.push('Property price: ' + R0(L.price) + '  |  Loan: ' + R0(L.loan) + '  |  Bond: ' + R(L.bond) + '/mo');
+  lines.push('');
+  lines.push('INCOME');
+  lines.push('  Gross Rental Income            ' + R(L.gross));
+  lines.push('  ' + L.primaryLabel + '   ' + paren(L.primaryDeduction));
+  lines.push('  Net Income (self-managed)      ' + R(L.netSelf));
+  if (L.showManaged) {
+    lines.push('  ' + L.mgmtLabel + '  ' + paren(L.mgmtFee));
+    lines.push('  Net Income (' + L.managerWord + ')      ' + R(L.netManaged));
+  }
+  lines.push('');
+  lines.push('OPERATING EXPENSES');
+  lines.push('  Monthly Bond Repayment         ' + paren(L.bond));
+  L.costRows.forEach(function (r) { lines.push('  ' + (r.label || 'Cost') + '    ' + paren(r.amount)); });
+  lines.push('  Maintenance Reserve            ' + paren(L.maintMonthly));
+  lines.push('  TOTAL EXPENSES                 ' + paren(L.totalExpenses));
+  lines.push('');
+  lines.push('MONTHLY CASHFLOW (self-managed)  ' + (L.cashSelf < 0 ? paren(L.cashSelf) : R(L.cashSelf)));
+  if (L.showManaged) {
+    lines.push('MONTHLY CASHFLOW (' + L.managerWord + ') ' + (L.cashManaged < 0 ? paren(L.cashManaged) : R(L.cashManaged)));
+  }
+  lines.push('');
+  lines.push('KEY METRICS');
+  lines.push('  Annual cashflow (self):  ' + (L.annualSelf < 0 ? paren(L.annualSelf) : R(L.annualSelf)));
+  if (L.showManaged) lines.push('  Annual cashflow (' + L.managerWord + '):  ' + (L.annualManaged < 0 ? paren(L.annualManaged) : R(L.annualManaged)));
+  lines.push('  Gross yield: ' + L.grossYield.toFixed(1) + '%   Net yield: ' + L.netYield.toFixed(1) + '%   Cash-on-cash: ' + L.coc.toFixed(1) + '%');
+  lines.push('');
+  lines.push('Estimate only — not financial advice. calcvibe.co.za');
+  CalcVibe.copyText(lines.join('\n'), btn);
 }
 
 // =============================================
 // INIT
 // =============================================
-document.addEventListener('focus', function(e) {
-  if (e.target.classList.contains('cost-row-amount')) {
-    e.target.value = String(parseVal(e.target.value) || '');
-  }
-}, true);
-document.addEventListener('blur', function(e) {
-  if (e.target.classList.contains('cost-row-amount')) {
-    e.target.value = fmtVal(parseVal(e.target.value));
-    calculate();
-  }
-}, true);
-initCostRows();
-initTooltips();
-// Make every numeric field shareable via the URL
+renderCostRows();
+// make every numeric input shareable (cost-row amounts handled in renderCostRows)
 document.querySelectorAll('.field-num').forEach(function (e) { e.setAttribute('data-share', ''); });
-// Restore mode from a shared link, otherwise default to short-term
-setMode(new URLSearchParams(location.search).get('shareMode') === 'long' ? 'long' : 'short');
+
+// restore toggles from shared link before first calc
+(function restoreFromUrl() {
+  var p = new URLSearchParams(location.search);
+  if (p.get('shareMode') === 'long') { setMode('long'); } else { setMode('short'); }
+  if (p.get('shareBasis') === 'gross') { setBasis('gross'); } else { setBasis('afterPlatform'); }
+  var mg = p.get('shareMgmt');
+  if (mg === '0') {
+    if (el('mgmtEnabled').checked) { el('mgmtEnabled').checked = false; onMgmtToggle(); }
+    if (el('agentEnabled').checked) { el('agentEnabled').checked = false; onAgentToggle(); }
+  }
+  if (p.get('growthEnabled') === 'true' || p.get('growthEnabled') === '1') {
+    el('growthEnabled').checked = true; onGrowthToggle();
+  }
+})();
+
 calculate();
-window.addEventListener('resize', calculate);
 </script>
 </body>
 </html>
