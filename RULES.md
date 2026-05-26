@@ -62,3 +62,17 @@ Before pushing any new calculator:
 - [ ] Added to index.html with correct badge
 - [ ] Added to sitemap.xml
 - [ ] Disclaimer at bottom: "For estimation purposes only"
+
+## UI Components
+
+### Tooltips / Info Popups
+- All tooltip and info popup elements must have z-index: 9999 minimum
+- Tooltips must never be clipped by overflow:hidden on parent containers
+- If a tooltip is inside a container with a stacking context (transform,
+  opacity, overflow:hidden), the tooltip element must be appended to
+  <body> on activation via JavaScript and positioned absolutely using
+  getBoundingClientRect()
+- Test tooltips inside dark panels and sticky headers — these are the
+  most common failure points
+- This rule applies to ALL calculators, not just the one where the
+  bug was found

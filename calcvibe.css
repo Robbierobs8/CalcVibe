@@ -68,3 +68,21 @@ input:focus-visible,
 .footer-disclaimer { color: #6b6b7a; }
 .result-label { color: rgba(255, 255, 255, 0.72); }
 .about-text { color: rgba(255, 255, 255, 0.7); }
+
+/* ---- Tooltips / info popups (RULES.md > UI Components) ----
+   Info popups must clear all surrounding content and never be clipped by the
+   card/panel they sit in. z-index alone is not enough: the real cause is
+   overflow:hidden on the surrounding cards, which clips a popup that extends
+   beyond the card edge. So we (a) raise the popup above everything and
+   (b) stop the containing cards/accordions clipping an open popup. */
+.tip-box,
+.res-tip-box,
+.chart-tooltip { z-index: 9999; }
+
+/* Panels that hold info popups must not clip them. */
+.results-card { overflow: visible; }
+
+/* Accordions keep overflow:hidden while collapsed (so they can animate closed),
+   but must reveal popups once open. */
+.accordion.open,
+.accordion.open .accordion-body { overflow: visible; }
