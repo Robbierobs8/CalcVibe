@@ -63,6 +63,13 @@ Before pushing any new calculator:
 - [ ] Added to sitemap.xml
 - [ ] Disclaimer at bottom: "For estimation purposes only"
 
+## SEO Requirements for New Calculators
+Every new calculator page must include:
+- A unique `<title>` tag: "[Calculator Name] | CalcVibe"
+- A `<meta name="description">` of ~150 characters describing what the calculator does and who it's for
+- `<meta name="keywords">` including the calculator topic + "South Africa" + the relevant legislation or authority (e.g. SARS, BCEA, UIF)
+- A short 2-3 sentence introductory paragraph (`<p class="calc-intro">`) inside the `.page-header` div, below the `.page-sub` line, explaining the calculator's purpose — written naturally for users, not keyword-stuffed
+
 ## UI Components
 
 ### Tooltips / Info Popups

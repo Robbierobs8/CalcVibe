@@ -29,6 +29,16 @@ input:focus-visible,
   outline-offset: 2px;
 }
 
+/* ---- SEO intro paragraph below page heading ---- */
+.calc-intro {
+  max-width: 600px;
+  margin: 1rem auto 0;
+  color: var(--ink-light);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
 /* ---- Persistent helper text under inputs (RULES.md: tooltips on every field) ---- */
 .input-help {
   display: block;
