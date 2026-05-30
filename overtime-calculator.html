@@ -284,6 +284,46 @@
     color: #6ee9a0;
   }
 
+  .result-row.has-note { align-items: flex-start; }
+
+  .result-note {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.38);
+    font-weight: 300;
+    margin-top: 3px;
+  }
+
+  .sunday-toggle {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--accent-light);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sunday-toggle.visible { display: flex; }
+
+  .sunday-toggle label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 0;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .sunday-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+
   /* EXPLAINER */
   .explainer {
     background: var(--white);
@@ -463,7 +503,7 @@
   <div class="eyebrow">Labour · BCEA</div>
   <h1>Overtime Calculator</h1>
   <p class="page-sub">Calculate your overtime pay based on South African BCEA rules.</p>
-  <p class="calc-intro">South African labour law under the BCEA entitles employees earning below the annual threshold to premium pay for overtime hours. This calculator applies the correct BCEA multipliers — 1.5× for weekday and Saturday overtime, 2× for Sundays and public holidays — to your hourly rate. Use it to verify your payslip or estimate your earnings before agreeing to extra shifts.</p>
+  <p class="calc-intro">South African labour law under the BCEA entitles employees earning below the annual threshold to premium pay for overtime hours. This calculator applies the correct BCEA multipliers — 1.5× for weekday and Saturday overtime, 2× for public holidays, and 1.5× or 2× for Sundays depending on whether Sunday is a normal working day — to your hourly rate. Use it to verify your payslip or estimate your earnings before agreeing to extra shifts.</p>
 </div>
 
 <main id="main">
@@ -504,10 +544,15 @@
         <label for="overtimeType">Overtime Type</label>
         <select id="overtimeType" data-share onchange="calculate()" aria-describedby="overtimeType-help">
           <option value="weekday">Weekday (Mon–Sat) — 1.5×</option>
-          <option value="sunday">Sunday — 2×</option>
+          <option value="sunday">Sunday</option>
           <option value="holiday">Public Holiday — 2×</option>
         </select>
-        <span class="input-help" id="overtimeType-help">Weekday and Saturday overtime is paid at 1.5×; Sundays and public holidays at 2×.</span>
+        <span class="input-help" id="overtimeType-help">Weekday and Saturday overtime is paid at 1.5×; public holidays at 2×. Sunday rate depends on whether it is a normal working day.</span>
+      </div>
+
+      <div class="sunday-toggle" id="sundayToggleField">
+        <input type="checkbox" id="sundayNormalDay" onchange="calculate()">
+        <label for="sundayNormalDay">Sunday is a normal working day for this employee (e.g. hospitality, retail, shift work)</label>
       </div>
 
       <div class="results" aria-live="polite" aria-atomic="true">
@@ -515,8 +560,11 @@
           <span class="result-label">Normal Hourly Rate</span>
           <span class="result-value" id="rHourlyRate">R 103.45</span>
         </div>
-        <div class="result-row">
-          <span class="result-label">Overtime Multiplier</span>
+        <div class="result-row has-note">
+          <div>
+            <div class="result-label">Overtime Multiplier</div>
+            <div class="result-note" id="rSundayNote" style="display:none;"></div>
+          </div>
           <span class="result-value" id="rMultiplier">1.5×</span>
         </div>
         <div class="result-row highlight">
@@ -552,7 +600,8 @@
         <li>Overtime is limited to <strong>10 hours per week</strong> and a maximum of <strong>3 hours per day</strong>.</li>
         <li>Overtime must be by <strong>agreement</strong> between employer and employee.</li>
         <li>Weekday and Saturday overtime is paid at <strong>1.5× the normal rate</strong>.</li>
-        <li>Sundays and public holidays are paid at <strong>2× the normal rate</strong>.</li>
+        <li>Sundays are paid at a minimum of <strong>1.5×</strong> if Sunday is a normal working day, or <strong>2×</strong> if the employee does not normally work on Sundays.</li>
+        <li>Public holidays are paid at <strong>2× the normal rate</strong>.</li>
         <li>Maximum working hours including overtime must not exceed <strong>12 hours per day</strong>.</li>
         <li>Compressed working week agreements may differ — consult your employment contract.</li>
       </ul>
@@ -594,18 +643,30 @@
   }
 
   function calculate() {
-    const monthlySalary  = CalcVibe.parseVal(document.getElementById('monthlySalary').value);
-    const normalHours    = parseFloat(document.getElementById('normalHours').value)    || 45;
-    const overtimeHours  = parseFloat(document.getElementById('overtimeHours').value)  || 0;
-    const overtimeType   = document.getElementById('overtimeType').value;
+    const monthlySalary   = CalcVibe.parseVal(document.getElementById('monthlySalary').value);
+    const normalHours     = parseFloat(document.getElementById('normalHours').value)   || 45;
+    const overtimeHours   = parseFloat(document.getElementById('overtimeHours').value) || 0;
+    const overtimeType    = document.getElementById('overtimeType').value;
+    const sundayNormalDay = document.getElementById('sundayNormalDay').checked;
+
+    // Show/hide Sunday toggle
+    document.getElementById('sundayToggleField').classList.toggle('visible', overtimeType === 'sunday');
 
     // Monthly hours based on 52-week year
     const monthlyHours = normalHours * 52 / 12;
     const hourlyRate   = monthlySalary / monthlyHours;
 
-    const multiplier   = (overtimeType === 'weekday') ? 1.5 : 2.0;
-    const overtimeRate = hourlyRate * multiplier;
-    const totalOT      = overtimeRate * overtimeHours;
+    let multiplier;
+    if (overtimeType === 'weekday') {
+      multiplier = 1.5;
+    } else if (overtimeType === 'sunday') {
+      multiplier = sundayNormalDay ? 1.5 : 2.0;
+    } else {
+      multiplier = 2.0;
+    }
+
+    const overtimeRate  = hourlyRate * multiplier;
+    const totalOT       = overtimeRate * overtimeHours;
     const monthlyWithOT = monthlySalary + totalOT;
 
     document.getElementById('rHourlyRate').textContent    = fmt(hourlyRate);
@@ -613,6 +674,16 @@
     document.getElementById('rOvertimeRate').textContent  = fmt(overtimeRate);
     document.getElementById('rTotalOT').textContent       = fmt(totalOT);
     document.getElementById('rMonthlyWithOT').textContent = fmt(monthlyWithOT);
+
+    const noteEl = document.getElementById('rSundayNote');
+    if (overtimeType === 'sunday') {
+      noteEl.style.display = '';
+      noteEl.textContent = sundayNormalDay
+        ? 'Sunday is a normal working day — minimum 1.5× applies under BCEA.'
+        : 'Sunday is not a normal working day — 2× applies under BCEA.';
+    } else {
+      noteEl.style.display = 'none';
+    }
   }
 
   fmt = function (n) { return CalcVibe.fmtR(n); };
