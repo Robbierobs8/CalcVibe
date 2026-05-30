@@ -586,6 +586,118 @@
   .result-inflation .result-label { color: rgba(255,255,255,0.45); font-style: italic; }
   .result-inflation .result-value { font-size: 0.9rem; color: rgba(255,255,255,0.6); }
 
+  /* ---- Drawdown schedule table ---- */
+  .schedule-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.3s both;
+  }
+  .schedule-header {
+    padding: 1.25rem 1.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .schedule-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .schedule-card-sub {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    font-weight: 300;
+  }
+  .schedule-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    min-width: 560px;
+  }
+  .schedule-table thead tr { background: var(--ink); }
+  .schedule-table th {
+    padding: 0.55rem 0.85rem;
+    text-align: right;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+  }
+  .schedule-table th:first-child,
+  .schedule-table th:nth-child(2) { text-align: center; }
+  .schedule-table td {
+    padding: 0.48rem 0.85rem;
+    text-align: right;
+    color: var(--ink);
+    font-weight: 400;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .schedule-table td:first-child,
+  .schedule-table td:nth-child(2) {
+    text-align: center;
+    font-weight: 500;
+    color: var(--ink-light);
+  }
+  .schedule-table tbody tr:last-child td { border-bottom: none; }
+  .schedule-table .col-closing { font-weight: 600; }
+  .row-growing  { background: rgba(26, 107, 60, 0.06); }
+  .row-depleting { background: rgba(232, 160, 32, 0.09); }
+  .schedule-note {
+    padding: 0.85rem 1.75rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 500;
+    border-top: 1px solid var(--border);
+    background: var(--accent-light);
+  }
+
+  /* ---- FIRE info box ---- */
+  .fire-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.5s ease 0.4s both;
+  }
+  .fire-box-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.85rem;
+  }
+  .fire-box p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+  }
+  .fire-box p:last-of-type { margin-bottom: 0; }
+  .fire-disclaimer {
+    margin-top: 1.1rem;
+    padding: 0.85rem 1rem;
+    background: #fff8ee;
+    border: 1px solid #f0d89a;
+    border-left: 3px solid var(--accent2);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: #7a5800;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
   @media (max-width: 480px) {
     .related-grid { grid-template-columns: 1fr; }
     .field-row { grid-template-columns: 1fr; }
@@ -857,6 +969,45 @@
     </div>
   </div>
 
+  <!-- Drawdown schedule -->
+  <div class="schedule-card" id="scheduleCard" style="display:none">
+    <div class="schedule-header">
+      <div class="schedule-card-title">Retirement Drawdown Schedule</div>
+      <div class="schedule-card-sub">Year-by-year projection starting from retirement, based on your current inputs</div>
+    </div>
+    <div class="schedule-wrap">
+      <table class="schedule-table" aria-label="Retirement drawdown schedule">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Year</th>
+            <th>Opening Balance</th>
+            <th>Annual Growth</th>
+            <th>Annual Drawdown</th>
+            <th>Monthly Drawdown</th>
+            <th>Closing Balance</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleTbody"></tbody>
+      </table>
+    </div>
+    <p class="schedule-note" id="scheduleNote" style="display:none">
+      Your fund is on track to grow in perpetuity at this drawdown rate.
+    </p>
+  </div>
+
+  <!-- FIRE info box -->
+  <div class="fire-box">
+    <div class="fire-box-title">Understanding Drawdown &amp; FIRE Principles</div>
+    <p>FIRE stands for <strong>Financial Independence, Retire Early</strong> — a movement built around saving aggressively during your working years and withdrawing conservatively in retirement. The core idea is that if your investment returns consistently outpace your withdrawals, your fund can last indefinitely.</p>
+    <p>A drawdown rate of <strong>4% per year</strong> — commonly called the 4% rule — means withdrawing 4% of your fund's total value annually. At this rate, historical market data suggests a balanced portfolio can sustain withdrawals for 30 years or more. More conservative rates of <strong>3% to 3.5%</strong> provide a greater buffer, extending the fund's lifespan and offering more room for unexpected expenses or poor market years.</p>
+    <p>One of the most significant risks in early retirement is <strong>sequence-of-returns risk</strong>: a string of poor investment years right after you retire can permanently damage your fund, even if long-term average returns eventually recover. Drawing down less in the early years — especially during market downturns — helps guard against this.</p>
+    <p>The 4% rule originates from the <strong>1998 Trinity Study</strong>, which analysed US stock and bond portfolios across rolling 30-year periods. While it is widely used as a starting point, it was based on US market data and may not perfectly reflect South African market conditions, rand volatility, or local fund fees — all of which can meaningfully affect long-term outcomes.</p>
+    <div class="fire-disclaimer">
+      This calculator is for educational and illustrative purposes only and does not constitute financial advice. Projections are based on the inputs you provide and assume constant returns — real-world returns will vary. Please consult a qualified, FSCA-registered financial adviser before making any retirement planning decisions.
+    </div>
+  </div>
+
   <div class="related">
     <div class="related-title">Related Calculators</div>
     <div class="related-grid">
@@ -904,6 +1055,38 @@
     calculate();
   }
 
+  function buildSchedule(nominalFV, annReturn, monthlyIncome, retirementAge) {
+    var tbody        = document.getElementById('scheduleTbody');
+    var note         = document.getElementById('scheduleNote');
+    var balance      = nominalFV;
+    var annDrawdown  = monthlyIncome * 12;
+    var annRate      = annReturn / 100;
+    var neverDepletes = true;
+    var html         = '';
+
+    for (var y = 1; y <= 30; y++) {
+      var opening = balance;
+      var growth  = opening * annRate;
+      var closing = opening + growth - annDrawdown;
+      if (closing <= 0) { closing = 0; neverDepletes = false; }
+      var rowClass = closing > opening ? 'row-growing' : (closing < opening ? 'row-depleting' : '');
+      html += '<tr class="' + rowClass + '">'
+        + '<td>' + (retirementAge + y - 1) + '</td>'
+        + '<td>' + y + '</td>'
+        + '<td>' + CalcVibe.fmtR(opening, 0) + '</td>'
+        + '<td class="col-growth">' + CalcVibe.fmtR(growth, 0) + '</td>'
+        + '<td class="col-drawdown">' + CalcVibe.fmtR(annDrawdown, 0) + '</td>'
+        + '<td>' + CalcVibe.fmtR(monthlyIncome, 0) + '</td>'
+        + '<td class="col-closing">' + CalcVibe.fmtR(closing, 0) + '</td>'
+        + '</tr>';
+      balance = closing;
+      if (!neverDepletes) break;
+    }
+
+    tbody.innerHTML = html;
+    note.style.display = neverDepletes ? '' : 'none';
+  }
+
   function calculate() {
     var currentAge    = parseFloat(document.getElementById('currentAge').value)    || 0;
     var retirementAge = parseFloat(document.getElementById('retirementAge').value) || 0;
@@ -929,6 +1112,7 @@
       document.getElementById('resIncome').textContent     = CalcVibe.fmtR(0, 0);
       document.getElementById('resRealIncome').textContent = CalcVibe.fmtR(0, 0);
       document.getElementById('resDuration').textContent   = '—';
+      document.getElementById('scheduleCard').style.display = 'none';
       return;
     }
 
@@ -992,6 +1176,9 @@
 
     document.getElementById('subDuration').textContent = 'Withdrawing ' + CalcVibe.fmtR(monthlyIncome, 0) + ' per month';
     document.getElementById('resDuration').textContent = durationText;
+
+    document.getElementById('scheduleCard').style.display = '';
+    buildSchedule(nominalFV, annReturn, monthlyIncome, retirementAge);
   }
 
   calculate();
