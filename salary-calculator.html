@@ -362,6 +362,38 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.75rem;
+    cursor: pointer;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -553,20 +585,31 @@
     </div>
   </div>
 
-  <!-- Explainer -->
-  <div class="explainer">
-    <h2>How your take-home pay is calculated</h2>
-    <p><strong>PAYE (Pay As You Earn)</strong> is income tax withheld by your employer each month. It is calculated by annualising your taxable monthly income, applying the SARS 2025/2026 sliding-scale brackets, subtracting applicable rebates and medical credits, then dividing by 12.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How Your Salary Deductions Work in South Africa</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>Gross pay vs net take-home pay</h2>
+        <p>Your <strong>gross salary</strong> is what your employer pays before any deductions. Your <strong>net salary</strong> (take-home pay) is what lands in your bank account after PAYE tax and UIF are deducted. The gap between the two is often larger than people expect.</p>
 
-    <div class="formula-box">Net Pay = Gross − PAYE (after credits) − UIF</div>
+        <div class="formula-box">Net Pay = Gross − PAYE (after credits) − UIF</div>
 
-    <p><strong>UIF (Unemployment Insurance Fund)</strong> is 1% of your gross monthly salary, capped at <span style="font-weight:500;color:var(--ink)">R177.12 per month</span> (i.e., the cap applies once your gross exceeds R17,712/month). Your employer contributes a further 1% — that does not come off your pay.</p>
+        <p><strong>PAYE (Pay As You Earn)</strong> is income tax withheld by your employer each month. It is calculated by annualising your taxable monthly income, applying the SARS 2025/2026 sliding-scale brackets, subtracting applicable rebates and medical credits, then dividing by 12.</p>
 
-    <p><strong>Retirement fund contributions</strong> (pension, provident, or retirement annuity) reduce your taxable income by the contribution amount, up to a SARS maximum of 27.5% of the greater of remuneration or taxable income. Entering a percentage here lowers your PAYE accordingly.</p>
+        <p><strong>UIF (Unemployment Insurance Fund)</strong> is 1% of your gross monthly salary, capped at R177.12 per month (the cap applies once your gross exceeds R17,712/month). Your employer contributes a further 1% — that does not come off your pay. UIF entitles you to claim a benefit if you become unemployed, ill, or go on maternity leave.</p>
 
-    <p><strong>Medical Aid Tax Credits</strong> are applied against your monthly PAYE. They are non-refundable — your PAYE is reduced to zero at most; the credit cannot produce a cash refund.</p>
+        <p><strong>Retirement fund contributions</strong> (pension, provident, or retirement annuity) reduce your taxable income by the contribution amount, up to a SARS maximum of 27.5% of your remuneration or taxable income, capped at R350,000 per year. Entering a contribution percentage here lowers your PAYE accordingly — it is one of the most effective ways to reduce your tax bill.</p>
 
-    <p>SDL (Skills Development Levy) is paid entirely by the employer and is not deducted from your salary. This calculator provides an estimate — your actual payslip may differ due to company-specific policies, benefits, or additional deductions.</p>
+        <p><strong>Medical Aid Tax Credits</strong> are applied against your monthly PAYE. They reduce what you owe — they are non-refundable, meaning your PAYE is reduced to zero at most.</p>
+
+        <p><strong>SDL (Skills Development Levy)</strong> is 1% of payroll, paid entirely by your employer to SETA (sector training bodies). It does not appear on your payslip as a deduction from your salary — it is an employer cost on top of your remuneration.</p>
+
+        <p>Your actual payslip may differ from this estimate due to company-specific policies, additional benefits, or other negotiated deductions.</p>
+      </div>
+    </div>
   </div>
 
   <!-- Related calculators -->

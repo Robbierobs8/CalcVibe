@@ -350,6 +350,38 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.75rem;
+    cursor: pointer;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -531,24 +563,34 @@
     </div>
   </div>
 
-  <div class="explainer">
-    <h2>How retrenchment severance works in South Africa</h2>
-    <p>Under <strong>Labour Relations Act (LRA) Section 41</strong>, if you are retrenched for operational requirements, your employer must pay you a minimum of <strong>one week's remuneration for every completed year of continuous service</strong>.</p>
-
-    <div class="formula-box">
-      Severance Pay = <span>Completed Years of Service</span> × <span>(Monthly Salary × 12 ÷ 52)</span>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How Retrenchment Works in South Africa</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How retrenchment severance works in South Africa</h2>
+        <p>Under <strong>Labour Relations Act (LRA) Section 41</strong>, if you are retrenched for operational requirements, your employer must pay you a minimum of <strong>one week's remuneration for every completed year of continuous service</strong>.</p>
 
-    <p>Key things to know:</p>
-    <ul>
-      <li>This is the <strong>legal minimum</strong> — many employers offer more as part of a negotiated package.</li>
-      <li>Operational requirement (Section 189) retrenchments qualify. Misconduct or poor performance dismissals do <strong>not</strong>.</li>
-      <li>If you have less than one completed year of service, no minimum severance applies — but you are still entitled to notice pay.</li>
-      <li>Notice pay is calculated separately and is in addition to severance.</li>
-      <li>The total package may be partially tax-exempt under retirement lump sum tax tables — consult a tax professional for your specific situation.</li>
-    </ul>
+        <div class="formula-box">
+          Severance Pay = <span>Completed Years of Service</span> × <span>(Monthly Salary × 12 ÷ 52)</span>
+        </div>
 
-    <p>Your retrenchment package may also include: <strong>pro-rata bonus</strong>, <strong>leave payout</strong>, and any <strong>unpaid salary</strong> owed to you.</p>
+        <p>Key things to know:</p>
+        <ul>
+          <li>This is the <strong>legal minimum</strong> — many employers offer more as part of a negotiated package.</li>
+          <li>Operational requirement (Section 189) retrenchments qualify. Misconduct or poor performance dismissals do <strong>not</strong>.</li>
+          <li>If you have less than one completed year of service, no minimum severance applies — but you are still entitled to notice pay.</li>
+          <li>Notice pay is calculated separately and is in addition to severance.</li>
+          <li>The total package may be partially tax-exempt under retirement lump sum tax tables — consult a tax professional for your specific situation.</li>
+        </ul>
+
+        <p>Your retrenchment package may also include: <strong>pro-rata bonus</strong>, <strong>leave payout</strong>, and any <strong>unpaid salary</strong> owed to you.</p>
+
+        <p><strong>UIF after retrenchment:</strong> Retrenchment is a qualifying event for UIF benefits. You can claim for up to 238 days, subject to your UIF contribution history. Apply at your nearest Labour Centre or online via the Department of Employment and Labour as soon as possible after your last day — delays can affect your claim period.</p>
+      </div>
+    </div>
   </div>
 
   <div class="related">

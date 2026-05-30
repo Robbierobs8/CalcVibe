@@ -335,6 +335,38 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.75rem;
+    cursor: pointer;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -505,19 +537,29 @@
     </div>
   </div>
 
-  <div class="explainer">
-    <h2>How leave payout works in South Africa</h2>
-    <p>Under the <strong>Basic Conditions of Employment Act (BCEA) Section 20</strong>, all employees are entitled to at least 21 consecutive days of annual leave per leave cycle (or 15 working days for employees who work a 5-day week).</p>
-
-    <p>Leave accrues at approximately <strong>1.25 days per month</strong> for a 5-day week worker. When your employment ends, your employer is legally required to pay out any outstanding leave you have not yet taken.</p>
-
-    <div class="formula-box">
-      Leave Payout = <span>(Monthly Salary ÷ Working Days per Month)</span> × Leave Days Owed
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How Leave Payout Works in South Africa</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How leave payout works in South Africa</h2>
+        <p>Under the <strong>Basic Conditions of Employment Act (BCEA) Section 20</strong>, all employees are entitled to at least 21 consecutive days of annual leave per leave cycle (or 15 working days for employees who work a 5-day week).</p>
 
-    <p>The daily rate is calculated by dividing your monthly salary by the average number of working days in a month — <strong>21.67 days</strong> for a 5-day week and <strong>26 days</strong> for a 6-day week.</p>
+        <p>Leave accrues at approximately <strong>1.25 days per month</strong> for a 5-day week worker. When your employment ends, your employer is legally required to pay out any outstanding leave you have not yet taken. This applies when you resign, are retrenched, are dismissed, or your fixed-term contract expires.</p>
 
-    <p><strong>Tax note:</strong> Leave payouts are treated as income and taxed accordingly. The 25% shown here is a rough flat estimate only — your actual tax will depend on your total annual income and which tax bracket you fall into. Consult a payroll professional or use the SARS tax tables for a precise figure.</p>
+        <div class="formula-box">
+          Leave Payout = <span>(Monthly Salary ÷ Working Days per Month)</span> × Leave Days Owed
+        </div>
+
+        <p>The daily rate is calculated by dividing your monthly salary by the average number of working days in a month — <strong>21.67 days</strong> for a 5-day week and <strong>26 days</strong> for a 6-day week.</p>
+
+        <p>Note that the BCEA does not allow employers to refuse to pay out accrued leave on termination, nor can they require you to forfeit leave. Leave must be taken or paid out — it cannot simply lapse.</p>
+
+        <p><strong>Tax note:</strong> Leave payouts are treated as income and taxed accordingly. The 25% shown here is a rough flat estimate only — your actual tax will depend on your total annual income and which tax bracket you fall into. Consult a payroll professional or use the SARS tax tables for a precise figure.</p>
+      </div>
+    </div>
   </div>
 
   <div class="related">

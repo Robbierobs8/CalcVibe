@@ -355,6 +355,38 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* ACCORDION */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.35s both;
+  }
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.75rem;
+    cursor: pointer;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+  .accordion-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform 0.25s; color: var(--ink-light); }
+  .accordion.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, padding 0.25s ease; }
+  .accordion.open .accordion-body { padding: 0 1.5rem 1.5rem; max-height: 9000px; }
+  .accordion-body .explainer { border: none; padding: 0; margin-top: 0; background: transparent; border-radius: 0; animation: none; }
+
   /* RELATED */
   .related {
     margin-top: 1.5rem;
@@ -547,17 +579,38 @@
   </div>
 
   <!-- Explainer -->
-  <div class="explainer">
-    <h2>How South African income tax works</h2>
-    <p>SARS uses a <strong>sliding scale</strong> — different portions of your income are taxed at progressively higher rates. Only the income within each bracket is taxed at that bracket's rate, not your entire income.</p>
+  <div class="accordion" id="accLearn">
+    <div class="accordion-header" onclick="toggleAccordion('accLearn')">
+      <span class="accordion-title">How Income Tax Works in South Africa</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div class="explainer">
+        <h2>How South African income tax works</h2>
+        <p>SARS uses a <strong>progressive sliding scale</strong> — different portions of your income are taxed at progressively higher rates. Only the income within each bracket is taxed at that bracket's rate, not your entire income.</p>
 
-    <p><strong>Tax rebates</strong> are fixed amounts subtracted directly from your tax liability, not your income. Every taxpayer under 75 receives the <strong>Primary Rebate (R17,235)</strong>. If you are 65 or older you also receive the <strong>Secondary Rebate (R9,444)</strong>. At 75 or older the <strong>Tertiary Rebate (R3,145)</strong> applies as well.</p>
+        <p><strong>2025/2026 Tax Brackets:</strong></p>
+        <ul style="font-size:0.85rem;color:var(--ink-light);font-weight:300;line-height:1.7;padding-left:1.2rem;margin-bottom:0.75rem;">
+          <li>R0 – R237,100: 18%</li>
+          <li>R237,101 – R370,500: 26% on the amount above R237,100, plus R42,678</li>
+          <li>R370,501 – R512,800: 31% on the amount above R370,500, plus R77,362</li>
+          <li>R512,801 – R673,000: 36% on the amount above R512,800, plus R121,475</li>
+          <li>R673,001 – R857,900: 39% on the amount above R673,000, plus R179,147</li>
+          <li>R857,901 – R1,817,000: 41% on the amount above R857,900, plus R251,258</li>
+          <li>R1,817,001+: 45% on the amount above R1,817,000, plus R644,489</li>
+        </ul>
 
-    <div class="formula-box">Annual Tax = <span>Tax on brackets</span> − Rebate(s) − Medical Credit &nbsp;(minimum R 0)</div>
+        <p><strong>Tax rebates</strong> are fixed amounts subtracted directly from your tax liability, not your income. Every taxpayer under 65 receives the <strong>Primary Rebate (R17,235)</strong>. If you are 65 or older you also receive the <strong>Secondary Rebate (R9,444)</strong>. At 75 or older the <strong>Tertiary Rebate (R3,145)</strong> applies as well.</p>
 
-    <p><strong>Medical Aid Tax Credits</strong> reduce your tax liability by R383 per month for the first two beneficiaries (you and one dependant) and R258 per month for each additional member. The credit is non-refundable — it can only reduce your tax to zero.</p>
+        <div class="formula-box">Annual Tax = <span>Tax on brackets</span> − Rebate(s) − Medical Credit &nbsp;(minimum R 0)</div>
 
-    <p>This calculator does not account for retirement annuity deductions, pension fund contributions, or other allowable deductions that may further reduce your taxable income. For complex tax situations consult a registered tax practitioner.</p>
+        <p><strong>Medical Aid Tax Credits</strong> reduce your tax liability by R383 per month for the first two beneficiaries (you and one dependant) and R258 per month for each additional member. The credit is non-refundable — it can only reduce your tax to zero.</p>
+
+        <p><strong>Marginal rate vs effective rate:</strong> Your <em>marginal rate</em> is the rate applied to your last rand of income — the highest bracket you reach. Your <em>effective rate</em> is your total tax divided by your gross income. The effective rate is always lower than the marginal rate because lower income portions are taxed at lower rates. For example, a R600,000 annual income has a marginal rate of 36% but an effective rate of around 22%.</p>
+
+        <p>This calculator does not account for retirement annuity deductions, pension fund contributions, or other allowable deductions that may further reduce your taxable income. For complex tax situations consult a registered tax practitioner.</p>
+      </div>
+    </div>
   </div>
 
   <!-- Related calculators -->
