@@ -293,6 +293,15 @@
 
   .result-value.deduct { color: #ff8a8a; }
 
+  .result-note {
+    display: none;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.38);
+    font-weight: 300;
+    margin-top: 2px;
+  }
+  .result-note.visible { display: block; }
+
   .result-row.total .result-label {
     font-size: 0.82rem;
     font-weight: 600;
@@ -531,6 +540,7 @@
         </div>
         <div class="result-row">
           <span class="result-label">UIF on Bonus (1%)</span>
+          <span class="result-note" id="uifCeilingNote">UIF ceiling already reached on your monthly salary.</span>
           <span class="result-value deduct" id="uifOnBonus">− R 0.00</span>
         </div>
         <div class="result-row total">
@@ -659,6 +669,7 @@
     document.getElementById('taxOnBonus').textContent = '− ' + fmt(paye);
     document.getElementById('uifOnBonus').textContent = '− ' + fmt(uif);
     document.getElementById('netBonus').textContent   = fmt(net);
+    document.getElementById('uifCeilingNote').classList.toggle('visible', annual >= UIF_ANNUAL_CEILING && bonus > 0);
   }
 
   calculate();
