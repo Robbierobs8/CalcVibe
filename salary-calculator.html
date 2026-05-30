@@ -610,9 +610,9 @@
   function calcMonthlyMedCredit(members) {
     const m = parseInt(members, 10);
     if (m === 0) return 0;
-    if (m === 1) return 364;
-    if (m === 2) return 364 * 2;
-    return 364 * 2 + 246 * (m - 2);
+    if (m === 1) return 383;
+    if (m === 2) return 383 * 2;
+    return 383 * 2 + 258 * (m - 2);
   }
 
   function fmt(n) { return CalcVibe.fmtR(n); }

@@ -555,7 +555,7 @@
 
     <div class="formula-box">Annual Tax = <span>Tax on brackets</span> − Rebate(s) − Medical Credit &nbsp;(minimum R 0)</div>
 
-    <p><strong>Medical Aid Tax Credits</strong> reduce your tax liability by R364 per month for the first two beneficiaries (you and one dependant) and R246 per month for each additional member. The credit is non-refundable — it can only reduce your tax to zero.</p>
+    <p><strong>Medical Aid Tax Credits</strong> reduce your tax liability by R383 per month for the first two beneficiaries (you and one dependant) and R258 per month for each additional member. The credit is non-refundable — it can only reduce your tax to zero.</p>
 
     <p>This calculator does not account for retirement annuity deductions, pension fund contributions, or other allowable deductions that may further reduce your taxable income. For complex tax situations consult a registered tax practitioner.</p>
   </div>
@@ -630,9 +630,9 @@
   function calcMedicalCredit(members) {
     const m = parseInt(members, 10);
     if (m === 0) return 0;
-    if (m === 1) return 364 * 12;
-    if (m === 2) return 364 * 2 * 12;
-    return (364 * 2 + 246 * (m - 2)) * 12;
+    if (m === 1) return 383 * 12;
+    if (m === 2) return 383 * 2 * 12;
+    return (383 * 2 + 258 * (m - 2)) * 12;
   }
 
   function fmt(n) {
