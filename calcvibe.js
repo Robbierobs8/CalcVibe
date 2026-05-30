@@ -48,7 +48,8 @@
         el.value = v ? String(v) : '';
       });
       el.addEventListener('blur', function () {
-        el.value = el.value.trim() === '' ? '' : fmtVal(parseVal(el.value));
+        var raw = el.value.trim();
+        el.value = raw === '' ? '' : String(parseVal(raw));
         runCalculate();
       });
       el.addEventListener('input', runCalculate);
@@ -129,7 +130,7 @@
       if (el.type === 'checkbox') {
         el.checked = (val === '1' || val === 'true');
       } else {
-        el.value = el.classList.contains('js-money') ? fmtVal(parseVal(val)) : val;
+        el.value = el.classList.contains('js-money') ? String(parseVal(val)) : val;
       }
       // Fire the page's own handlers so sliders, tooltips, and calc stay in sync
       var evt = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input';
