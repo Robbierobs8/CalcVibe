@@ -292,6 +292,44 @@
     color: #6ee9a0;
   }
 
+  .result-hero {
+    text-align: center;
+    padding: 1rem 0 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 0.25rem;
+  }
+
+  .result-hero-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-hero-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #6ee9a0;
+    line-height: 1.1;
+  }
+
+  .result-hero-sub {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.35);
+    font-weight: 300;
+    margin-top: 0.4rem;
+  }
+
+  .result-irr-note {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.35);
+    font-weight: 300;
+    margin-top: 2px;
+  }
+
+  .result-row.has-note { align-items: flex-start; }
+
   /* EXPLAINER */
   .explainer {
     background: var(--white);
@@ -519,29 +557,29 @@
             <span class="input-prefix" style="left:14px; font-size:0.85rem; color:var(--ink-light);">yrs</span>
             <input type="number" id="yearsEmployed" value="3" min="0.25" step="0.25" style="padding-left:3rem;" data-share oninput="calculate()" aria-describedby="yearsEmployed-help">
           </div>
-          <div class="field-note" id="yearsEmployed-help">You earn 1 day of benefit per 4 days worked. At least 13 weeks of contributions are required to claim.</div>
+          <div class="field-note" id="yearsEmployed-help">The longer you've been employed, the more months of UIF you can claim. At least 13 weeks of contributions are required.</div>
         </div>
 
         <div class="results" id="benefitResults" aria-live="polite" aria-atomic="true">
-          <div class="result-row">
-            <span class="result-label">Daily Earnings</span>
-            <span class="result-value" id="rDailyEarnings">R 500.00</span>
+          <div class="result-hero">
+            <div class="result-hero-label">Estimated Monthly UIF Payment</div>
+            <div class="result-hero-value" id="rMonthlyBenefit">—</div>
+            <div class="result-hero-sub">Daily benefit: <span id="rDailyBenefit">—</span> × 21.67 days</div>
           </div>
           <div class="result-row">
-            <span class="result-label">Income Replacement Rate</span>
-            <span class="result-value" id="rIRR">—</span>
-          </div>
-          <div class="result-row highlight">
-            <span class="result-label">Daily UIF Benefit</span>
-            <span class="result-value" id="rDailyBenefit">—</span>
+            <span class="result-label">How long your UIF will last</span>
+            <span class="result-value" id="rBenefitMonths">—</span>
           </div>
           <div class="result-row">
-            <span class="result-label">Maximum Benefit Period</span>
-            <span class="result-value" id="rBenefitDays">—</span>
-          </div>
-          <div class="result-row">
-            <span class="result-label">Estimated Total Benefit</span>
+            <span class="result-label">Total UIF payout</span>
             <span class="result-value" id="rTotalBenefit">—</span>
+          </div>
+          <div class="result-row has-note">
+            <div>
+              <div class="result-label">Income Replacement Rate</div>
+              <div class="result-irr-note" id="rIRRNote">—</div>
+            </div>
+            <span class="result-value" id="rIRR">—</span>
           </div>
         </div>
 
@@ -636,13 +674,16 @@
     const IRR = Math.min(0.58, Math.max(0.38, (29.2 + (7173.92 / (dailyEarnings + 204))) / 100));
     const dailyBenefit = dailyEarnings * IRR;
     const benefitDays = Math.min(Math.floor(yearsEmployed * 365 / 4), 238);
+    const monthlyBenefit = dailyBenefit * 21.67;
+    const benefitMonths = Math.round(benefitDays / 21.67);
     const totalBenefit = dailyBenefit * benefitDays;
 
-    document.getElementById('rDailyEarnings').textContent = fmt(dailyEarnings);
-    document.getElementById('rIRR').textContent = (IRR * 100).toFixed(1) + '%';
+    document.getElementById('rMonthlyBenefit').textContent = fmt(monthlyBenefit);
     document.getElementById('rDailyBenefit').textContent = fmt(dailyBenefit);
-    document.getElementById('rBenefitDays').textContent = benefitDays + ' days';
+    document.getElementById('rBenefitMonths').textContent = benefitMonths + ' months';
     document.getElementById('rTotalBenefit').textContent = fmt(totalBenefit);
+    document.getElementById('rIRR').textContent = (IRR * 100).toFixed(1) + '%';
+    document.getElementById('rIRRNote').textContent = 'UIF replaces approximately ' + Math.round(IRR * 100) + '% of your salary.';
   }
 
   function calculate() {
