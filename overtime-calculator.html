@@ -324,6 +324,74 @@
     flex-shrink: 0;
   }
 
+  /* DAY PICKER */
+  .day-picker-wrap {
+    background: var(--accent-light);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .day-picker-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .day-picker {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .day-chip { display: inline-flex; position: relative; }
+
+  .day-chip input[type="checkbox"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .day-chip span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .day-chip input[type="checkbox"]:checked + span {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+  }
+
+  /* OT SECTION */
+  .ot-section {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1rem 0.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ot-section-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.85rem;
+  }
+
   /* EXPLAINER */
   .explainer {
     background: var(--white);
@@ -510,9 +578,28 @@
   <div class="calc-card">
     <div class="calc-body">
 
-      <div class="info-row">
-        <span class="info-row-label"><span aria-hidden="true">🇿🇦</span> BCEA Standard Hours</span>
-        <span class="info-row-value">45 hrs / week</span>
+      <div class="field">
+        <label for="rosterType">I normally work</label>
+        <select id="rosterType" data-share onchange="calculate()">
+          <option value="mon-fri">Monday to Friday (5 days)</option>
+          <option value="mon-sat">Monday to Saturday (6 days)</option>
+          <option value="mon-sun">Monday to Sunday (7 days)</option>
+          <option value="custom">Custom roster (shift worker)</option>
+        </select>
+      </div>
+
+      <div class="day-picker-wrap" id="customDayPicker" style="display:none">
+        <div class="day-picker-label">Select your normal working days:</div>
+        <div class="day-picker">
+          <label class="day-chip"><input type="checkbox" id="dayMon" checked onchange="calculate()"><span>Mon</span></label>
+          <label class="day-chip"><input type="checkbox" id="dayTue" checked onchange="calculate()"><span>Tue</span></label>
+          <label class="day-chip"><input type="checkbox" id="dayWed" checked onchange="calculate()"><span>Wed</span></label>
+          <label class="day-chip"><input type="checkbox" id="dayThu" checked onchange="calculate()"><span>Thu</span></label>
+          <label class="day-chip"><input type="checkbox" id="dayFri" checked onchange="calculate()"><span>Fri</span></label>
+          <label class="day-chip"><input type="checkbox" id="daySat" onchange="calculate()"><span>Sat</span></label>
+          <label class="day-chip"><input type="checkbox" id="daySun" onchange="calculate()"><span>Sun</span></label>
+        </div>
+        <div class="field-note" style="margin-top:0.6rem;">Tick the days that are part of your normal schedule.</div>
       </div>
 
       <div class="field">
@@ -532,52 +619,82 @@
         <span class="input-help" id="normalHours-help">Your standard weekly hours. The BCEA maximum is 45.</span>
       </div>
 
-      <div class="field">
-        <label for="overtimeHours">Overtime Hours This Week</label>
-        <div class="input-wrap">
-          <input type="number" id="overtimeHours" value="5" min="0" max="15" step="0.5" class="no-prefix" data-share oninput="calculate()" aria-describedby="overtimeHours-help">
+      <div class="ot-section">
+        <div class="ot-section-label">This week I also worked</div>
+
+        <div class="field">
+          <label for="otWeekday">Extra weekday hours (Mon–Fri)</label>
+          <div class="input-wrap">
+            <input type="number" id="otWeekday" value="0" min="0" max="15" step="0.5" class="no-prefix" data-share oninput="calculate()">
+          </div>
+          <span class="input-help">Paid at 1.5× your normal hourly rate under BCEA.</span>
         </div>
-        <span class="input-help" id="overtimeHours-help">Hours worked beyond your normal week. The BCEA caps overtime at 10 hours per week.</span>
-      </div>
 
-      <div class="field">
-        <label for="overtimeType">Overtime Type</label>
-        <select id="overtimeType" data-share onchange="calculate()" aria-describedby="overtimeType-help">
-          <option value="weekday">Weekday (Mon–Sat) — 1.5×</option>
-          <option value="sunday">Sunday</option>
-          <option value="holiday">Public Holiday — 2×</option>
-        </select>
-        <span class="input-help" id="overtimeType-help">Weekday and Saturday overtime is paid at 1.5×; public holidays at 2×. Sunday rate depends on whether it is a normal working day.</span>
-      </div>
+        <div class="field">
+          <label for="otSaturday">Extra Saturday hours</label>
+          <div class="input-wrap">
+            <input type="number" id="otSaturday" value="0" min="0" max="15" step="0.5" class="no-prefix" data-share oninput="calculate()">
+          </div>
+          <span class="input-help">Paid at 1.5× under BCEA — same rate as weekday overtime.</span>
+        </div>
 
-      <div class="sunday-toggle" id="sundayToggleField">
-        <input type="checkbox" id="sundayNormalDay" onchange="calculate()">
-        <label for="sundayNormalDay">Sunday is a normal working day for this employee (e.g. hospitality, retail, shift work)</label>
+        <div class="field">
+          <label for="otSunday">Sunday hours worked</label>
+          <div class="input-wrap">
+            <input type="number" id="otSunday" value="0" min="0" max="15" step="0.5" class="no-prefix" data-share oninput="calculate()">
+          </div>
+          <span class="input-help" id="otSundayHelp">Paid at 2× (Sunday is not a normal working day on your roster).</span>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="otHoliday">Public holiday hours worked</label>
+          <div class="input-wrap">
+            <input type="number" id="otHoliday" value="0" min="0" max="15" step="0.5" class="no-prefix" data-share oninput="calculate()">
+          </div>
+          <span class="input-help">Always paid at 2× under BCEA.</span>
+        </div>
       </div>
 
       <div class="results" aria-live="polite" aria-atomic="true">
         <div class="result-row">
           <span class="result-label">Normal Hourly Rate</span>
-          <span class="result-value" id="rHourlyRate">R 103.45</span>
+          <span class="result-value" id="rHourlyRate">—</span>
         </div>
-        <div class="result-row has-note">
+        <div class="result-row has-note" id="rowWeekday" style="display:none">
           <div>
-            <div class="result-label">Overtime Multiplier</div>
-            <div class="result-note" id="rSundayNote" style="display:none;"></div>
+            <div class="result-label">Weekday overtime</div>
+            <div class="result-note" id="noteWeekday"></div>
           </div>
-          <span class="result-value" id="rMultiplier">1.5×</span>
+          <span class="result-value" id="rWeekdayPay">—</span>
+        </div>
+        <div class="result-row has-note" id="rowSaturday" style="display:none">
+          <div>
+            <div class="result-label">Saturday overtime</div>
+            <div class="result-note" id="noteSaturday"></div>
+          </div>
+          <span class="result-value" id="rSaturdayPay">—</span>
+        </div>
+        <div class="result-row has-note" id="rowSunday" style="display:none">
+          <div>
+            <div class="result-label">Sunday</div>
+            <div class="result-note" id="noteSunday"></div>
+          </div>
+          <span class="result-value" id="rSundayPay">—</span>
+        </div>
+        <div class="result-row has-note" id="rowHoliday" style="display:none">
+          <div>
+            <div class="result-label">Public holiday</div>
+            <div class="result-note" id="noteHoliday"></div>
+          </div>
+          <span class="result-value" id="rHolidayPay">—</span>
         </div>
         <div class="result-row highlight">
-          <span class="result-label">Overtime Rate Per Hour</span>
-          <span class="result-value" id="rOvertimeRate">R 155.17</span>
-        </div>
-        <div class="result-row">
           <span class="result-label">Total Overtime Pay</span>
-          <span class="result-value" id="rTotalOT">R 775.86</span>
+          <span class="result-value" id="rTotalOT">—</span>
         </div>
         <div class="result-row">
           <span class="result-label">Estimated Monthly Gross (with OT)</span>
-          <span class="result-value" id="rMonthlyWithOT">R 20,775.86</span>
+          <span class="result-value" id="rMonthlyWithOT">—</span>
         </div>
       </div>
 
@@ -642,48 +759,56 @@
     return 'R ' + n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  function sundayIsNormal() {
+    const roster = document.getElementById('rosterType').value;
+    if (roster === 'mon-sun') return true;
+    if (roster === 'custom') return document.getElementById('daySun').checked;
+    return false;
+  }
+
   function calculate() {
-    const monthlySalary   = CalcVibe.parseVal(document.getElementById('monthlySalary').value);
-    const normalHours     = parseFloat(document.getElementById('normalHours').value)   || 45;
-    const overtimeHours   = parseFloat(document.getElementById('overtimeHours').value) || 0;
-    const overtimeType    = document.getElementById('overtimeType').value;
-    const sundayNormalDay = document.getElementById('sundayNormalDay').checked;
+    const roster        = document.getElementById('rosterType').value;
+    const monthlySalary = CalcVibe.parseVal(document.getElementById('monthlySalary').value);
+    const normalHours   = parseFloat(document.getElementById('normalHours').value)  || 45;
+    const otWeekday     = parseFloat(document.getElementById('otWeekday').value)    || 0;
+    const otSaturday    = parseFloat(document.getElementById('otSaturday').value)   || 0;
+    const otSunday      = parseFloat(document.getElementById('otSunday').value)     || 0;
+    const otHoliday     = parseFloat(document.getElementById('otHoliday').value)    || 0;
 
-    // Show/hide Sunday toggle
-    document.getElementById('sundayToggleField').classList.toggle('visible', overtimeType === 'sunday');
+    document.getElementById('customDayPicker').style.display = roster === 'custom' ? '' : 'none';
 
-    // Monthly hours based on 52-week year
-    const monthlyHours = normalHours * 52 / 12;
-    const hourlyRate   = monthlySalary / monthlyHours;
+    const monthlyHours  = normalHours * 52 / 12;
+    const hourlyRate    = monthlySalary / monthlyHours;
+    const sunNormal     = sundayIsNormal();
+    const sunMultiplier = sunNormal ? 1.5 : 2.0;
 
-    let multiplier;
-    if (overtimeType === 'weekday') {
-      multiplier = 1.5;
-    } else if (overtimeType === 'sunday') {
-      multiplier = sundayNormalDay ? 1.5 : 2.0;
-    } else {
-      multiplier = 2.0;
-    }
-
-    const overtimeRate  = hourlyRate * multiplier;
-    const totalOT       = overtimeRate * overtimeHours;
-    const monthlyWithOT = monthlySalary + totalOT;
+    const weekdayPay  = otWeekday  * hourlyRate * 1.5;
+    const saturdayPay = otSaturday * hourlyRate * 1.5;
+    const sundayPay   = otSunday   * hourlyRate * sunMultiplier;
+    const holidayPay  = otHoliday  * hourlyRate * 2.0;
+    const totalOT     = weekdayPay + saturdayPay + sundayPay + holidayPay;
 
     document.getElementById('rHourlyRate').textContent    = fmt(hourlyRate);
-    document.getElementById('rMultiplier').textContent    = multiplier.toFixed(1) + '×';
-    document.getElementById('rOvertimeRate').textContent  = fmt(overtimeRate);
     document.getElementById('rTotalOT').textContent       = fmt(totalOT);
-    document.getElementById('rMonthlyWithOT').textContent = fmt(monthlyWithOT);
+    document.getElementById('rMonthlyWithOT').textContent = fmt(monthlySalary + totalOT);
 
-    const noteEl = document.getElementById('rSundayNote');
-    if (overtimeType === 'sunday') {
-      noteEl.style.display = '';
-      noteEl.textContent = sundayNormalDay
-        ? 'Sunday is a normal working day — minimum 1.5× applies under BCEA.'
-        : 'Sunday is not a normal working day — 2× applies under BCEA.';
-    } else {
-      noteEl.style.display = 'none';
+    document.getElementById('otSundayHelp').textContent = sunNormal
+      ? 'Sunday is a normal working day on your roster — minimum 1.5× applies under BCEA.'
+      : 'Sunday is not a normal working day on your roster — 2× applies under BCEA.';
+
+    function showRow(rowId, noteId, valueId, hours, multiplier, pay) {
+      const show = hours > 0;
+      document.getElementById(rowId).style.display = show ? '' : 'none';
+      if (show) {
+        document.getElementById(noteId).textContent = hours + 'h × ' + fmt(hourlyRate) + ' × ' + multiplier.toFixed(1) + '×';
+        document.getElementById(valueId).textContent = fmt(pay);
+      }
     }
+
+    showRow('rowWeekday',  'noteWeekday',  'rWeekdayPay',  otWeekday,  1.5,           weekdayPay);
+    showRow('rowSaturday', 'noteSaturday', 'rSaturdayPay', otSaturday, 1.5,           saturdayPay);
+    showRow('rowSunday',   'noteSunday',   'rSundayPay',   otSunday,   sunMultiplier, sundayPay);
+    showRow('rowHoliday',  'noteHoliday',  'rHolidayPay',  otHoliday,  2.0,           holidayPay);
   }
 
   fmt = function (n) { return CalcVibe.fmtR(n); };
