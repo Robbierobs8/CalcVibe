@@ -162,7 +162,7 @@
     pointer-events: none;
   }
 
-  input[type="number"] {
+  input[type="number"], input.js-money {
     width: 100%;
     padding: 0.85rem 1rem 0.85rem 2.2rem;
     font-family: 'Epilogue', sans-serif;
@@ -180,7 +180,7 @@
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-  input[type="number"]:focus {
+  input[type="number"]:focus, input.js-money:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
     background: var(--white);
@@ -448,7 +448,7 @@
         <label for="monthlySalary">Monthly Gross Salary (R)</label>
         <div class="input-wrap">
           <span class="input-prefix">R</span>
-          <input type="text" class="js-money" id="monthlySalary" value="20 000" data-share aria-describedby="monthlySalary-help">
+          <input type="text" class="js-money" id="monthlySalary" value="20000" data-share aria-describedby="monthlySalary-help">
         </div>
         <span class="input-help" id="monthlySalary-help">Your normal monthly salary before deductions.</span>
       </div>
