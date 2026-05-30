@@ -295,6 +295,15 @@
   }
 
   .result-value.deduct { color: #ff8a8a; }
+
+  .result-note {
+    display: none;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.38);
+    font-weight: 300;
+    margin-top: 2px;
+  }
+  .result-note.visible { display: block; }
   .result-value.credit { color: #6ee9a0; }
 
   .result-row.total .result-label {
@@ -524,6 +533,7 @@
         </div>
         <div class="result-row">
           <span class="result-label">UIF (1%, capped at R177.12)</span>
+          <span class="result-note" id="uifCeilingNote">UIF ceiling already reached on your monthly salary.</span>
           <span class="result-value deduct" id="resUIF">− R 0</span>
         </div>
         <div class="result-row" id="rowMedCredit">
@@ -652,6 +662,7 @@
     document.getElementById('resTaxableMonthly').textContent = fmt(taxableMonthly);
     document.getElementById('resPAYE').textContent = fmtDeduct(monthlyPAYE_afterCredit);
     document.getElementById('resUIF').textContent = fmtDeduct(uif);
+    document.getElementById('uifCeilingNote').classList.toggle('visible', monthlyGross >= 17712);
     document.getElementById('resMedCredit').textContent = fmtCredit(monthlyMedCredit);
     document.getElementById('resNetPay').textContent = fmt(Math.max(0, netPay));
 
