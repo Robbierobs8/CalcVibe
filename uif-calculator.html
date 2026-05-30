@@ -485,10 +485,10 @@
 <main id="main">
   <div class="calc-card">
     <div class="mode-toggle" role="group" aria-label="UIF view">
-      <button type="button" class="mode-btn active" id="btnContributions" aria-pressed="true" onclick="setMode('contributions')">
+      <button type="button" class="mode-btn" id="btnContributions" aria-pressed="false" onclick="setMode('contributions')">
         <span aria-hidden="true">💼</span> Contributions
       </button>
-      <button type="button" class="mode-btn" id="btnBenefits" aria-pressed="false" onclick="setMode('benefits')">
+      <button type="button" class="mode-btn active" id="btnBenefits" aria-pressed="true" onclick="setMode('benefits')">
         <span aria-hidden="true">🛡️</span> Benefits
       </button>
     </div>
@@ -496,7 +496,7 @@
     <div class="calc-body">
 
       <!-- CONTRIBUTIONS MODE -->
-      <div id="panelContributions">
+      <div id="panelContributions" style="display:none">
         <div class="info-row">
           <span class="info-row-label"><span aria-hidden="true">🇿🇦</span> UIF Remuneration Ceiling</span>
           <span class="info-row-value">R17,712 / month</span>
@@ -541,7 +541,7 @@
       </div>
 
       <!-- BENEFITS MODE -->
-      <div id="panelBenefits" style="display:none">
+      <div id="panelBenefits">
         <div class="field">
           <label for="benefitSalary">Monthly Salary (R)</label>
           <div class="input-wrap">
@@ -634,7 +634,7 @@
 <script src="/calcvibe.js"></script>
 <script>
   const UIF_CEILING = 17712;
-  let mode = 'contributions';
+  let mode = 'benefits';
 
   function setMode(m) {
     mode = m;
