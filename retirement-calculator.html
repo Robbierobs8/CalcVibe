@@ -512,6 +512,80 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* Drawdown mode segmented control */
+  .field-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .field-label-row label { margin-bottom: 0; }
+
+  .seg-ctrl {
+    display: flex;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .seg-btn {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    background: var(--bg);
+    border: none;
+    padding: 0.22rem 0.7rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.5;
+  }
+  .seg-btn + .seg-btn { border-left: 1.5px solid var(--border); }
+  .seg-btn.active { background: var(--accent); color: #fff; }
+
+  /* Inflation toggle pill */
+  .inflation-toggle-row { margin-bottom: 1.25rem; }
+  .toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 0.45rem 1rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+  }
+  .toggle-pill:hover { border-color: var(--accent); }
+  .toggle-pill.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .toggle-pill-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-pill.active .toggle-pill-dot { background: var(--accent); }
+
+  /* Result sub-labels */
+  .result-sub {
+    display: block;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.38);
+    font-weight: 300;
+    margin-top: 0.1rem;
+    line-height: 1.4;
+  }
+  .result-inflation .result-label { color: rgba(255,255,255,0.45); font-style: italic; }
+  .result-inflation .result-value { font-size: 0.9rem; color: rgba(255,255,255,0.6); }
+
   @media (max-width: 480px) {
     .related-grid { grid-template-columns: 1fr; }
     .field-row { grid-template-columns: 1fr; }
@@ -593,22 +667,55 @@
           <span class="input-help" id="annualReturn-help">Average yearly growth you expect after fees.</span>
         </div>
         <div class="field">
-          <label for="inflation">Expected Inflation</label>
+          <div class="field-label-row">
+            <label for="drawdownRate">Drawdown in Retirement</label>
+            <div class="seg-ctrl" aria-label="Drawdown mode">
+              <button type="button" class="seg-btn active" id="btnDrawdownPct" onclick="setDrawdownMode('pct')" aria-pressed="true">%</button>
+              <button type="button" class="seg-btn" id="btnDrawdownRand" onclick="setDrawdownMode('rand')" aria-pressed="false">R</button>
+            </div>
+          </div>
+          <div class="input-wrap" id="drawdownWrap">
+            <input type="number" id="drawdownRate" class="no-prefix" value="4" min="0.1" max="100" step="0.5" data-share oninput="calculate()" aria-describedby="drawdown-help">
+            <span class="input-suffix">%</span>
+          </div>
+          <div class="input-wrap" id="drawdownRandWrap" style="display:none">
+            <span class="input-prefix">R</span>
+            <input type="text" class="js-money" id="drawdownRand" value="10000" data-share aria-describedby="drawdown-help">
+          </div>
+          <span class="input-help" id="drawdown-help">In % mode: income as a share of your fund. In R mode: enter a fixed monthly amount to see how long the fund lasts.</span>
+        </div>
+      </div>
+
+      <div class="inflation-toggle-row">
+        <button type="button" class="toggle-pill" id="inflationToggle" onclick="toggleInflation()" aria-pressed="false">
+          <span class="toggle-pill-dot"></span>
+          Account for inflation
+        </button>
+      </div>
+      <div id="inflationSection" style="display:none">
+        <div class="field">
+          <label for="inflation">Expected Inflation Rate</label>
           <div class="input-wrap">
             <input type="number" id="inflation" class="no-prefix" value="5.0" min="0" max="20" step="0.5" data-share oninput="calculate()" aria-describedby="inflation-help">
             <span class="input-suffix">%</span>
           </div>
-          <div class="field-hint" id="inflation-help">SA 10-year average CPI: ~5.0% (2015–2024, Stats SA). Adjust if you expect inflation to differ.</div>
+          <span class="input-help" id="inflation-help">SA 10-year average CPI: ~5.0% (2015–2024, Stats SA).</span>
         </div>
       </div>
 
       <div class="results" aria-live="polite" aria-atomic="true">
         <div class="result-row highlight">
-          <span class="result-label">Projected Fund Value (nominal)</span>
+          <div>
+            <span class="result-label">What your savings could grow to</span>
+            <span class="result-sub" id="subNominal">Based on your contributions growing over time</span>
+          </div>
           <span class="result-value" id="resNominal">R 0</span>
         </div>
-        <div class="result-row">
-          <span class="result-label">Real Value (inflation-adjusted)</span>
+        <div class="result-row result-inflation" id="rowRealFV" style="display:none">
+          <div>
+            <span class="result-label">What that's worth in today's money</span>
+            <span class="result-sub" id="subReal">After accounting for inflation</span>
+          </div>
           <span class="result-value" id="resReal">R 0</span>
         </div>
         <div class="result-row">
@@ -616,8 +723,18 @@
           <span class="result-value" id="resYears">0 years</span>
         </div>
         <div class="result-row">
-          <span class="result-label">Est. Monthly Income (4% drawdown)</span>
+          <div>
+            <span class="result-label" id="labelIncome">Estimated monthly income in retirement</span>
+            <span class="result-sub" id="subIncome">Drawing 4% per year from your fund</span>
+          </div>
           <span class="result-value" id="resIncome">R 0</span>
+        </div>
+        <div class="result-row result-inflation" id="rowRealIncome" style="display:none">
+          <div>
+            <span class="result-label">In today's money</span>
+            <span class="result-sub">The same income adjusted for inflation</span>
+          </div>
+          <span class="result-value" id="resRealIncome">R 0</span>
         </div>
       </div>
 
@@ -755,51 +872,115 @@
 
 <script src="/calcvibe.js"></script>
 <script>
-  function fmt(n) {
-    return 'R ' + Math.round(n).toLocaleString('en-ZA');
+  var drawdownMode = 'pct';
+  var inflationOn  = false;
+
+  function setDrawdownMode(mode) {
+    drawdownMode = mode;
+    document.getElementById('btnDrawdownPct').classList.toggle('active', mode === 'pct');
+    document.getElementById('btnDrawdownPct').setAttribute('aria-pressed', mode === 'pct' ? 'true' : 'false');
+    document.getElementById('btnDrawdownRand').classList.toggle('active', mode === 'rand');
+    document.getElementById('btnDrawdownRand').setAttribute('aria-pressed', mode === 'rand' ? 'true' : 'false');
+    document.getElementById('drawdownWrap').style.display     = mode === 'pct'  ? '' : 'none';
+    document.getElementById('drawdownRandWrap').style.display = mode === 'rand' ? '' : 'none';
+    document.getElementById('rowRealIncome').style.display    = (inflationOn && mode === 'pct') ? '' : 'none';
+    calculate();
+  }
+
+  function toggleInflation() {
+    inflationOn = !inflationOn;
+    var btn = document.getElementById('inflationToggle');
+    btn.classList.toggle('active', inflationOn);
+    btn.setAttribute('aria-pressed', inflationOn ? 'true' : 'false');
+    document.getElementById('inflationSection').style.display = inflationOn ? '' : 'none';
+    document.getElementById('rowRealFV').style.display        = inflationOn ? '' : 'none';
+    document.getElementById('rowRealIncome').style.display    = (inflationOn && drawdownMode === 'pct') ? '' : 'none';
+    calculate();
   }
 
   function calculate() {
-    const currentAge    = parseFloat(document.getElementById('currentAge').value)    || 0;
-    const retirementAge = parseFloat(document.getElementById('retirementAge').value) || 0;
-    const PV            = CalcVibe.parseVal(document.getElementById('currentSavings').value);
-    const PMT           = CalcVibe.parseVal(document.getElementById('monthlyContrib').value);
-    const annReturn     = parseFloat(document.getElementById('annualReturn').value)   || 0;
-    const annInflation  = parseFloat(document.getElementById('inflation').value)      || 0;
+    var currentAge    = parseFloat(document.getElementById('currentAge').value)    || 0;
+    var retirementAge = parseFloat(document.getElementById('retirementAge').value) || 0;
+    var PV            = CalcVibe.parseVal(document.getElementById('currentSavings').value);
+    var PMT           = CalcVibe.parseVal(document.getElementById('monthlyContrib').value);
+    var annReturn     = parseFloat(document.getElementById('annualReturn').value)   || 0;
+    var annInflation  = inflationOn ? (parseFloat(document.getElementById('inflation').value) || 0) : 0;
+    var drawdownPct   = parseFloat(document.getElementById('drawdownRate').value)   || 4;
+    var drawdownRand  = CalcVibe.parseVal(document.getElementById('drawdownRand').value) || 10000;
 
-    const years = Math.max(0, retirementAge - currentAge);
-    const n     = years * 12;           // months
-    const r     = annReturn / 100 / 12; // monthly nominal rate
+    var years = Math.max(0, retirementAge - currentAge);
+    var n     = years * 12;
+    var r     = annReturn / 100 / 12;
 
-    document.getElementById('resYears').textContent = years + (years === 1 ? ' year' : ' years');
+    document.getElementById('resYears').textContent   = years + (years === 1 ? ' year' : ' years');
+    document.getElementById('subNominal').textContent = annReturn > 0
+      ? 'Based on ' + annReturn + '% annual growth over ' + years + ' years'
+      : 'Based on your contributions over ' + years + ' years';
 
     if (years <= 0) {
-      document.getElementById('resNominal').textContent = fmt(0);
-      document.getElementById('resReal').textContent    = fmt(0);
-      document.getElementById('resIncome').textContent  = fmt(0);
+      document.getElementById('resNominal').textContent    = CalcVibe.fmtR(0, 0);
+      document.getElementById('resReal').textContent       = CalcVibe.fmtR(0, 0);
+      document.getElementById('resIncome').textContent     = drawdownMode === 'pct' ? CalcVibe.fmtR(0, 0) : '—';
+      document.getElementById('resRealIncome').textContent = CalcVibe.fmtR(0, 0);
       return;
     }
 
-    let nominalFV;
+    var nominalFV;
     if (r === 0) {
-      // Zero return edge case: simple sum
       nominalFV = PV + PMT * n;
     } else {
-      const growth = Math.pow(1 + r, n);
+      var growth = Math.pow(1 + r, n);
       nominalFV = PV * growth + PMT * ((growth - 1) / r);
     }
 
-    const realFV        = nominalFV / Math.pow(1 + annInflation / 100, years);
-    const monthlyIncome = realFV * 0.04 / 12;
+    var realFV = inflationOn ? nominalFV / Math.pow(1 + annInflation / 100, years) : nominalFV;
 
-    document.getElementById('resNominal').textContent = fmt(nominalFV);
-    document.getElementById('resReal').textContent    = fmt(realFV);
-    document.getElementById('resIncome').textContent  = fmt(monthlyIncome);
+    document.getElementById('resNominal').textContent = CalcVibe.fmtR(nominalFV, 0);
+
+    if (inflationOn) {
+      document.getElementById('resReal').textContent  = CalcVibe.fmtR(realFV, 0);
+      document.getElementById('subReal').textContent  = 'After ' + annInflation + '% inflation over ' + years + ' years';
+    }
+
+    if (drawdownMode === 'pct') {
+      var monthlyIncome     = nominalFV * drawdownPct / 100 / 12;
+      var monthlyIncomeReal = realFV    * drawdownPct / 100 / 12;
+      document.getElementById('labelIncome').textContent = 'Estimated monthly income in retirement';
+      document.getElementById('subIncome').textContent   = 'Drawing ' + drawdownPct + '% per year from your fund';
+      document.getElementById('resIncome').textContent   = CalcVibe.fmtR(monthlyIncome, 0);
+      if (inflationOn) {
+        document.getElementById('resRealIncome').textContent = CalcVibe.fmtR(monthlyIncomeReal, 0);
+      }
+    } else {
+      var W = drawdownRand;
+      var months;
+      if (W <= 0) {
+        months = Infinity;
+      } else if (r <= 0) {
+        months = nominalFV / W;
+      } else {
+        var ratio = r * nominalFV / W;
+        months = ratio >= 1 ? Infinity : -Math.log(1 - ratio) / Math.log(1 + r);
+      }
+
+      var durationText;
+      if (!isFinite(months)) {
+        durationText = 'Fund never depletes';
+      } else {
+        var dYears = Math.floor(months / 12);
+        var dMons  = Math.round(months % 12);
+        if (dMons === 12) { dYears++; dMons = 0; }
+        durationText = dYears > 0 ? dYears + ' yr' + (dYears !== 1 ? 's' : '') : '';
+        if (dMons > 0) durationText += (durationText ? ' ' : '') + dMons + ' mo';
+        if (!durationText) durationText = '< 1 month';
+      }
+
+      document.getElementById('labelIncome').textContent = 'How long your fund will last';
+      document.getElementById('subIncome').textContent   = 'Withdrawing ' + CalcVibe.fmtR(W, 0) + ' per month';
+      document.getElementById('resIncome').textContent   = durationText;
+    }
   }
 
-  fmt = function (n) { return CalcVibe.fmtR(n, 0); };
-
-  // Init
   calculate();
 </script>
 </body>
