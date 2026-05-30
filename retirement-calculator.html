@@ -724,7 +724,7 @@
         </div>
         <div class="result-row">
           <div>
-            <span class="result-label" id="labelIncome">Estimated monthly income in retirement</span>
+            <span class="result-label">Estimated monthly income in retirement</span>
             <span class="result-sub" id="subIncome">Drawing 4% per year from your fund</span>
           </div>
           <span class="result-value" id="resIncome">R 0</span>
@@ -735,6 +735,13 @@
             <span class="result-sub">The same income adjusted for inflation</span>
           </div>
           <span class="result-value" id="resRealIncome">R 0</span>
+        </div>
+        <div class="result-row">
+          <div>
+            <span class="result-label">How long your fund will last</span>
+            <span class="result-sub" id="subDuration">At this monthly drawdown rate</span>
+          </div>
+          <span class="result-value" id="resDuration">—</span>
         </div>
       </div>
 
@@ -883,7 +890,6 @@
     document.getElementById('btnDrawdownRand').setAttribute('aria-pressed', mode === 'rand' ? 'true' : 'false');
     document.getElementById('drawdownWrap').style.display     = mode === 'pct'  ? '' : 'none';
     document.getElementById('drawdownRandWrap').style.display = mode === 'rand' ? '' : 'none';
-    document.getElementById('rowRealIncome').style.display    = (inflationOn && mode === 'pct') ? '' : 'none';
     calculate();
   }
 
@@ -893,8 +899,8 @@
     btn.classList.toggle('active', inflationOn);
     btn.setAttribute('aria-pressed', inflationOn ? 'true' : 'false');
     document.getElementById('inflationSection').style.display = inflationOn ? '' : 'none';
-    document.getElementById('rowRealFV').style.display        = inflationOn ? '' : 'none';
-    document.getElementById('rowRealIncome').style.display    = (inflationOn && drawdownMode === 'pct') ? '' : 'none';
+    document.getElementById('rowRealFV').style.display     = inflationOn ? '' : 'none';
+    document.getElementById('rowRealIncome').style.display = inflationOn ? '' : 'none';
     calculate();
   }
 
@@ -920,8 +926,9 @@
     if (years <= 0) {
       document.getElementById('resNominal').textContent    = CalcVibe.fmtR(0, 0);
       document.getElementById('resReal').textContent       = CalcVibe.fmtR(0, 0);
-      document.getElementById('resIncome').textContent     = drawdownMode === 'pct' ? CalcVibe.fmtR(0, 0) : '—';
+      document.getElementById('resIncome').textContent     = CalcVibe.fmtR(0, 0);
       document.getElementById('resRealIncome').textContent = CalcVibe.fmtR(0, 0);
+      document.getElementById('resDuration').textContent   = '—';
       return;
     }
 
@@ -938,47 +945,53 @@
     document.getElementById('resNominal').textContent = CalcVibe.fmtR(nominalFV, 0);
 
     if (inflationOn) {
-      document.getElementById('resReal').textContent  = CalcVibe.fmtR(realFV, 0);
-      document.getElementById('subReal').textContent  = 'After ' + annInflation + '% inflation over ' + years + ' years';
+      document.getElementById('resReal').textContent = CalcVibe.fmtR(realFV, 0);
+      document.getElementById('subReal').textContent = 'After ' + annInflation + '% inflation over ' + years + ' years';
     }
 
-    if (drawdownMode === 'pct') {
-      var monthlyIncome     = nominalFV * drawdownPct / 100 / 12;
-      var monthlyIncomeReal = realFV    * drawdownPct / 100 / 12;
-      document.getElementById('labelIncome').textContent = 'Estimated monthly income in retirement';
-      document.getElementById('subIncome').textContent   = 'Drawing ' + drawdownPct + '% per year from your fund';
-      document.getElementById('resIncome').textContent   = CalcVibe.fmtR(monthlyIncome, 0);
-      if (inflationOn) {
-        document.getElementById('resRealIncome').textContent = CalcVibe.fmtR(monthlyIncomeReal, 0);
-      }
+    // Monthly income — % mode derives from fund; R mode uses the entered amount directly
+    var monthlyIncome = drawdownMode === 'pct'
+      ? nominalFV * drawdownPct / 100 / 12
+      : drawdownRand;
+
+    document.getElementById('subIncome').textContent = drawdownMode === 'pct'
+      ? 'Drawing ' + drawdownPct + '% per year from your fund'
+      : 'Fixed monthly withdrawal amount';
+    document.getElementById('resIncome').textContent = CalcVibe.fmtR(monthlyIncome, 0);
+
+    if (inflationOn) {
+      var monthlyIncomeReal = drawdownMode === 'pct'
+        ? realFV * drawdownPct / 100 / 12
+        : monthlyIncome / Math.pow(1 + annInflation / 100, years);
+      document.getElementById('resRealIncome').textContent = CalcVibe.fmtR(monthlyIncomeReal, 0);
+    }
+
+    // Duration — how long will the fund last at this monthly drawdown?
+    var W = monthlyIncome;
+    var months;
+    if (W <= 0) {
+      months = Infinity;
+    } else if (r <= 0) {
+      months = nominalFV / W;
     } else {
-      var W = drawdownRand;
-      var months;
-      if (W <= 0) {
-        months = Infinity;
-      } else if (r <= 0) {
-        months = nominalFV / W;
-      } else {
-        var ratio = r * nominalFV / W;
-        months = ratio >= 1 ? Infinity : -Math.log(1 - ratio) / Math.log(1 + r);
-      }
-
-      var durationText;
-      if (!isFinite(months)) {
-        durationText = 'Fund never depletes';
-      } else {
-        var dYears = Math.floor(months / 12);
-        var dMons  = Math.round(months % 12);
-        if (dMons === 12) { dYears++; dMons = 0; }
-        durationText = dYears > 0 ? dYears + ' yr' + (dYears !== 1 ? 's' : '') : '';
-        if (dMons > 0) durationText += (durationText ? ' ' : '') + dMons + ' mo';
-        if (!durationText) durationText = '< 1 month';
-      }
-
-      document.getElementById('labelIncome').textContent = 'How long your fund will last';
-      document.getElementById('subIncome').textContent   = 'Withdrawing ' + CalcVibe.fmtR(W, 0) + ' per month';
-      document.getElementById('resIncome').textContent   = durationText;
+      var ratio = r * nominalFV / W;
+      months = ratio >= 1 ? Infinity : -Math.log(1 - ratio) / Math.log(1 + r);
     }
+
+    var durationText;
+    if (!isFinite(months)) {
+      durationText = 'Fund never depletes';
+    } else {
+      var dYears = Math.floor(months / 12);
+      var dMons  = Math.round(months % 12);
+      if (dMons === 12) { dYears++; dMons = 0; }
+      durationText = dYears > 0 ? dYears + ' yr' + (dYears !== 1 ? 's' : '') : '';
+      if (dMons > 0) durationText += (durationText ? ' ' : '') + dMons + ' mo';
+      if (!durationText) durationText = '< 1 month';
+    }
+
+    document.getElementById('subDuration').textContent = 'Withdrawing ' + CalcVibe.fmtR(monthlyIncome, 0) + ' per month';
+    document.getElementById('resDuration').textContent = durationText;
   }
 
   calculate();
