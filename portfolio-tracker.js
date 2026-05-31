@@ -4,11 +4,13 @@
 
 /* ─── SHARED ─────────────────────────────────────────────── */
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-var CRYPTO_IDX = [4, 6, 7, 8]; // row indices within bAssetInputs: Revix/Altify, Luno, Binance, BTC
+var CRYPTO_IDX = [8, 9]; // row indices within bAssetInputs: Crypto Exchange 1, Crypto Exchange 2
 var ASSET_LABELS = [
-  'FNB','Allan Gray','Sygnia','Easy Equities',
-  'Revix / Altify','Discovery Cash','Luno','Binance','BTC',
-  'Taya Sygnia Cash','Taya Sygnia TFSA','10x Investments','Liberty RA'
+  'Savings Account 1','Savings Account 2','Money Market Fund',
+  'Tax Free Investment 1','Tax Free Investment 2','Retirement Annuity',
+  'Direct Investment 1','Direct Investment 2',
+  'Crypto Exchange 1','Crypto Exchange 2',
+  'Offshore Investment','Other Investment'
 ];
 
 function parseVal(s) {
