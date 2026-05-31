@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>Portfolio &amp; Savings Tracker South Africa | CalcVibe</title>
+<meta name="description" content="Track your South African investment portfolio and monthly savings across Allan Gray, Sygnia, Easy Equities, crypto and more. Monitor growth and progress toward your savings goals.">
+<meta name="keywords" content="portfolio tracker South Africa, savings tracker, investment tracking, Allan Gray, Easy Equities, Sygnia, crypto portfolio South Africa">
+<meta name="google-site-verification" content="ITemKsIPzdlNXNDdivHryQ_udybfx9siLruXTNzNjY8" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --white: #ffffff;
+    --ink: #1a1a2e;
+    --ink-light: #5a5a72;
+    --accent: #1a6b3c;
+    --accent-light: #e8f5ee;
+    --accent2: #e8a020;
+    --border: #e2e0d8;
+    --shadow: 0 2px 12px rgba(26,26,46,0.07);
+    --shadow-hover: 0 8px 32px rgba(26,26,46,0.13);
+    --pos: #1a6b3c;
+    --neg: #c0392b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .page-sub {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    animation: fadeUp 0.4s ease 0.2s both;
+    margin-bottom: 0.5rem;
+  }
+
+  .calc-intro {
+    color: var(--ink-light);
+    font-size: 0.85rem;
+    font-weight: 300;
+    max-width: 540px;
+    margin: 0.5rem auto 0;
+    animation: fadeUp 0.4s ease 0.25s both;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  .calc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  /* ── TAB NAV ── */
+  .tab-nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab-btn {
+    padding: 1rem 0.75rem;
+    border: none;
+    background: none;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-right: 1px solid var(--border);
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  .tab-btn:hover:not(.active) { background: var(--bg); }
+
+  /* ── PANELS ── */
+  .tab-panel { display: none; padding: 1.75rem; }
+  .tab-panel.active { display: block; }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .year-select {
+    padding: 0.45rem 0.85rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .year-select:focus { border-color: var(--accent); }
+
+  /* ── GOALS TAB ── */
+  .goal-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .goal-number {
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .goal-text-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .goal-text-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+    background: var(--white);
+  }
+  .goal-text-input::placeholder { color: #b8b6cc; }
+
+  /* ── QUANTITATIVE GOAL CARDS ── */
+  .goals-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .qgoal-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .qgoal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .qgoal-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .qgoal-target-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    flex-shrink: 0;
+  }
+
+  .qgoal-target-input {
+    width: 110px;
+    padding: 0.35rem 0.65rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--white);
+    border: 1.5px solid rgba(26,107,60,0.35);
+    border-radius: 8px;
+    outline: none;
+    text-align: right;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+  .qgoal-target-input::-webkit-outer-spin-button,
+  .qgoal-target-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .qgoal-target-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+  }
+
+  .qgoal-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .progress-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+  .progress-fill.bar-warn { background: var(--accent2); }
+  .progress-fill.bar-done { background: #27ae60; }
+
+  .qgoal-sub {
+    font-size: 0.7rem;
+    color: var(--ink-light);
+    font-style: italic;
+  }
+
+  /* ── STATUS CHIP ── */
+  .status-chip {
+    flex-shrink: 0;
+    min-width: 122px;
+    padding: 0.38rem 0.85rem;
+    border: none;
+    border-radius: 20px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.4;
+  }
+  .status-not-started { background: #eeedf5; color: #5a5a72; }
+  .status-in-progress { background: #fef3e2; color: #9a6200; }
+  .status-done        { background: var(--accent-light); color: var(--accent); }
+
+  /* ── SAVINGS GOAL BAR ── */
+  .savings-goal-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: var(--accent-light);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .savings-goal-bar .goal-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .savings-goal-bar label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .goal-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .goal-prefix {
+    position: absolute;
+    left: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent);
+    pointer-events: none;
+  }
+
+  .goal-amount-input {
+    padding: 0.38rem 0.6rem 0.38rem 1.75rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--white);
+    border: 1.5px solid rgba(26,107,60,0.3);
+    border-radius: 8px;
+    outline: none;
+    width: 130px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  .goal-amount-input::-webkit-outer-spin-button,
+  .goal-amount-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .goal-amount-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,60,0.15);
+  }
+
+  /* ── TABLES ── */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1.75rem;
+    padding: 0 1.75rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  /* Savings table: account col + 12 months + total = min 1000px */
+  .tbl-savings { min-width: 1020px; }
+  /* Balances table: asset col + 12 months + 2 derived = min 1060px */
+  .tbl-balances { min-width: 1060px; }
+
+  thead th {
+    background: var(--bg);
+    color: var(--ink-light);
+    font-weight: 600;
+    font-size: 0.69rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.5rem;
+    text-align: right;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+
+  thead th:first-child {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--bg);
+    min-width: 190px;
+    padding-left: 1.75rem;
+  }
+
+  tbody td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    vertical-align: middle;
+    color: var(--ink);
+  }
+
+  tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+    white-space: nowrap;
+    position: sticky;
+    left: 0;
+    background: var(--white);
+    z-index: 1;
+    padding-left: 1.75rem;
+  }
+
+  tbody tr:hover td { background: #fafaf7; }
+  tbody tr:hover td:first-child { background: #fafaf7; }
+
+  .cell-input {
+    width: 78px;
+    padding: 0.28rem 0.4rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 6px;
+    text-align: right;
+    transition: border-color 0.15s, background 0.15s;
+    -moz-appearance: textfield;
+  }
+  .cell-input::-webkit-outer-spin-button,
+  .cell-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .cell-input:focus {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    outline: none;
+  }
+  .cell-input::placeholder { color: #cccad8; font-weight: 300; }
+
+  .note-input {
+    width: 100%;
+    min-width: 78px;
+    padding: 0.25rem 0.35rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.7rem;
+    color: var(--ink-light);
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 40px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .note-input:focus {
+    border-color: var(--border);
+    background: var(--white);
+    outline: none;
+  }
+
+  /* Special rows */
+  tr.row-spacer td { border-bottom: 2px solid var(--border); padding: 0; line-height: 0; height: 2px; }
+  tr.row-spacer td:first-child { background: var(--white); }
+
+  tr.row-total td {
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-bottom: none;
+  }
+  tr.row-total td:first-child { background: var(--ink); color: rgba(255,255,255,0.85); }
+  tbody tr.row-total:hover td,
+  tbody tr.row-total:hover td:first-child { background: var(--ink); }
+
+  tr.row-goal td {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.82rem;
+    border-bottom: 1px solid rgba(26,107,60,0.15);
+  }
+  tr.row-goal td:first-child { background: var(--accent-light); color: var(--accent); }
+  tbody tr.row-goal:hover td,
+  tbody tr.row-goal:hover td:first-child { background: var(--accent-light); }
+
+  tr.row-variance td {
+    color: var(--ink-light);
+    font-size: 0.78rem;
+    font-style: italic;
+  }
+  tr.row-variance td:first-child { background: var(--white); }
+
+  tr.row-meta td {
+    background: var(--bg);
+    color: var(--ink-light);
+    font-size: 0.78rem;
+  }
+  tr.row-meta td:first-child { background: var(--bg); }
+  tbody tr.row-meta:hover td,
+  tbody tr.row-meta:hover td:first-child { background: #eeece6; }
+
+  tr.row-notes td {
+    background: #fdfcf8;
+    vertical-align: top;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+  }
+  tr.row-notes td:first-child {
+    background: #fdfcf8;
+    color: var(--ink-light);
+    font-style: italic;
+    font-size: 0.78rem;
+    font-weight: 400;
+  }
+
+  /* computed / placeholder cells */
+  .computed {
+    color: var(--ink-light);
+    font-style: italic;
+    font-size: 0.75rem;
+  }
+
+  /* ── FOOTER ── */
+  .last-updated {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    font-family: 'Epilogue', sans-serif;
+    padding: 0.75rem 2rem 0;
+  }
+
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-text { font-size: 0.75rem; color: var(--ink-light); font-weight: 300; }
+
+  .footer-disclaimer {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    padding: 0.38rem 0.85rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--ink-light);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .action-btn:hover        { border-color: var(--accent); color: var(--accent); }
+  .action-btn-danger:hover { border-color: #c0392b; color: #c0392b; }
+
+  /* ── CHARTS ── */
+  .charts-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+
+  .chart-row {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .chart-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+  }
+
+  .chart-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 1rem; }
+    main { padding: 1.5rem 1rem 4rem; }
+    .tab-btn { font-size: 0.78rem; padding: 0.8rem 0.35rem; gap: 0.2rem; }
+    .tab-btn .tab-emoji { display: none; }
+    .savings-goal-bar { gap: 0.75rem; }
+    .chart-row { grid-template-columns: 1fr; }
+    .panel-actions { gap: 0.35rem; }
+    .action-btn { font-size: 0.7rem; padding: 0.3rem 0.6rem; }
+  }
+</style>
+<link rel="stylesheet" href="/calcvibe.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to tracker</a>
+
+<nav>
+  <a href="/index.html" class="logo">CalcVibe<span class="logo-dot"></span></a>
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span>›</span>
+    <span>Portfolio Tracker</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Personal Finance · South Africa</div>
+  <h1>Portfolio &amp; Savings Tracker</h1>
+  <p class="page-sub">Track your investments and savings across all your platforms, month by month.</p>
+  <p class="calc-intro">Set your annual goals, log monthly contributions across your investment accounts, and monitor your total portfolio value over time — all saved privately in your browser.</p>
+</div>
+
+<main id="main">
+  <div class="calc-card">
+
+    <!-- ══ TAB NAV ══ -->
+    <div class="tab-nav" role="tablist" aria-label="Tracker sections">
+      <button type="button" class="tab-btn active" id="btn-goals"
+              role="tab" aria-selected="true" aria-controls="panel-goals"
+              onclick="switchTab('goals')">
+        <span class="tab-emoji" aria-hidden="true">🎯</span> Goals
+      </button>
+      <button type="button" class="tab-btn" id="btn-savings"
+              role="tab" aria-selected="false" aria-controls="panel-savings"
+              onclick="switchTab('savings')">
+        <span class="tab-emoji" aria-hidden="true">💰</span> Monthly Savings
+      </button>
+      <button type="button" class="tab-btn" id="btn-balances"
+              role="tab" aria-selected="false" aria-controls="panel-balances"
+              onclick="switchTab('balances')">
+        <span class="tab-emoji" aria-hidden="true">📊</span> Portfolio Balances
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 1 — GOALS
+    ══════════════════════════════════════ -->
+    <div class="tab-panel active" id="panel-goals" role="tabpanel" aria-labelledby="btn-goals">
+      <div class="panel-header">
+        <div class="panel-title">Annual Goals</div>
+        <select class="year-select" id="goals-year" aria-label="Select year">
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+        </select>
+      </div>
+
+      <!-- ── Quantitative goals ── -->
+      <div class="goals-section-label">Quantitative Goals</div>
+
+      <div class="qgoal-card">
+        <div class="qgoal-header">
+          <div class="qgoal-title">Monthly Savings Target</div>
+          <div class="qgoal-target-row">
+            <span aria-hidden="true">R</span>
+            <input type="text" id="goal-savings-target" class="qgoal-target-input"
+                   placeholder="25 000" aria-label="Monthly savings target in Rand">
+            <span aria-hidden="true">/month</span>
+          </div>
+        </div>
+        <div class="qgoal-stats">
+          <span id="goal-savings-actual">No savings data yet</span>
+          <span id="goal-savings-pct-text">Set a target above</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuenow="0"
+             aria-valuemin="0" aria-valuemax="100" aria-label="Savings goal progress">
+          <div class="progress-fill" id="goal-savings-bar"></div>
+        </div>
+        <div class="qgoal-sub">Annual target: <strong id="goal-savings-annual">—</strong> &nbsp;·&nbsp; Pulled from Monthly Savings tab</div>
+      </div>
+
+      <div class="qgoal-card">
+        <div class="qgoal-header">
+          <div class="qgoal-title">Annual Portfolio Growth Target</div>
+          <div class="qgoal-target-row">
+            <input type="text" id="goal-growth-target" class="qgoal-target-input"
+                   placeholder="20" style="width:80px"
+                   aria-label="Annual portfolio growth target as a percentage">
+            <span aria-hidden="true">% growth target</span>
+          </div>
+        </div>
+        <div class="qgoal-stats">
+          <span id="goal-growth-actual">No balance data yet</span>
+          <span id="goal-growth-pct-text">Set a target above</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuenow="0"
+             aria-valuemin="0" aria-valuemax="100" aria-label="Portfolio growth goal progress">
+          <div class="progress-fill" id="goal-growth-bar"></div>
+        </div>
+        <div class="qgoal-sub">Pulled from Portfolio Balances tab &nbsp;·&nbsp; Jan value → most recent month with data</div>
+      </div>
+
+      <!-- ── Qualitative goals ── -->
+      <div class="goals-section-label" style="margin-top:1.5rem">Qualitative Goals</div>
+
+      <div class="goal-item">
+        <div class="goal-number" aria-hidden="true">1</div>
+        <input type="text" class="goal-text-input" id="qual-goal-1"
+               placeholder="e.g. Grow portfolio by 20%" aria-label="Qualitative goal 1">
+        <button type="button" class="status-chip status-not-started" id="status-1"
+                data-state="not-started" onclick="cycleStatus(1)"
+                aria-label="Goal 1 status: Not Started. Click to change.">&#9675; Not Started</button>
+      </div>
+      <div class="goal-item">
+        <div class="goal-number" aria-hidden="true">2</div>
+        <input type="text" class="goal-text-input" id="qual-goal-2"
+               placeholder="e.g. Increase crypto exposure" aria-label="Qualitative goal 2">
+        <button type="button" class="status-chip status-not-started" id="status-2"
+                data-state="not-started" onclick="cycleStatus(2)"
+                aria-label="Goal 2 status: Not Started. Click to change.">&#9675; Not Started</button>
+      </div>
+      <div class="goal-item">
+        <div class="goal-number" aria-hidden="true">3</div>
+        <input type="text" class="goal-text-input" id="qual-goal-3"
+               placeholder="e.g. Automate savings with debit orders" aria-label="Qualitative goal 3">
+        <button type="button" class="status-chip status-not-started" id="status-3"
+                data-state="not-started" onclick="cycleStatus(3)"
+                aria-label="Goal 3 status: Not Started. Click to change.">&#9675; Not Started</button>
+      </div>
+      <div class="goal-item">
+        <div class="goal-number" aria-hidden="true">4</div>
+        <input type="text" class="goal-text-input" id="qual-goal-4"
+               placeholder="Add a goal…" aria-label="Qualitative goal 4">
+        <button type="button" class="status-chip status-not-started" id="status-4"
+                data-state="not-started" onclick="cycleStatus(4)"
+                aria-label="Goal 4 status: Not Started. Click to change.">&#9675; Not Started</button>
+      </div>
+      <div class="goal-item">
+        <div class="goal-number" aria-hidden="true">5</div>
+        <input type="text" class="goal-text-input" id="qual-goal-5"
+               placeholder="Add a goal…" aria-label="Qualitative goal 5">
+        <button type="button" class="status-chip status-not-started" id="status-5"
+                data-state="not-started" onclick="cycleStatus(5)"
+                aria-label="Goal 5 status: Not Started. Click to change.">&#9675; Not Started</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 2 — MONTHLY SAVINGS
+    ══════════════════════════════════════ -->
+    <div class="tab-panel" id="panel-savings" role="tabpanel" aria-labelledby="btn-savings">
+      <div class="panel-header">
+        <div class="panel-title">Monthly Savings</div>
+        <div class="panel-actions">
+          <select class="year-select" id="savings-year" aria-label="Select year">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+          <button type="button" class="action-btn" onclick="exportSavingsCSV()">Export CSV</button>
+          <button type="button" class="action-btn action-btn-danger" onclick="resetSavingsYear()">Reset Year</button>
+        </div>
+      </div>
+
+      <div class="savings-goal-bar">
+        <div class="goal-field">
+          <label for="monthly-goal">Monthly goal</label>
+          <div class="goal-input-wrap">
+            <span class="goal-prefix">R</span>
+            <input type="text" class="goal-amount-input" id="monthly-goal"
+                   placeholder="25 000" aria-label="Monthly savings goal">
+          </div>
+        </div>
+        <div class="goal-field">
+          <label for="annual-goal">Annual target</label>
+          <div class="goal-input-wrap">
+            <span class="goal-prefix">R</span>
+            <input type="text" class="goal-amount-input" id="annual-goal"
+                   placeholder="300 000" aria-label="Annual savings target">
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="tbl-savings" aria-label="Monthly savings contributions">
+          <thead>
+            <tr>
+              <th scope="col">Account / Platform</th>
+              <th scope="col">Jan</th>
+              <th scope="col">Feb</th>
+              <th scope="col">Mar</th>
+              <th scope="col">Apr</th>
+              <th scope="col">May</th>
+              <th scope="col">Jun</th>
+              <th scope="col">Jul</th>
+              <th scope="col">Aug</th>
+              <th scope="col">Sep</th>
+              <th scope="col">Oct</th>
+              <th scope="col">Nov</th>
+              <th scope="col">Dec</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td>Allan Gray Global Equity</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Global Equity Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Allan Gray Offshore (AU &amp; USA)</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Offshore Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Allan Gray Money Market / Bond</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Money Market Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Discovery Cash</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Sygnia Direct (SYGD28174)</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28174 Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Sygnia Direct (SYGD28774)</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Direct SYGD28774 Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Sygnia Tax Free (SYGTFS19765)</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Tax Free Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Taya — Sygnia Tax Free</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Tax Free Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Taya — Sygnia Bond/Cash</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Bond Cash Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Easy Equities</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Easy Equities Tax Free</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities Tax Free Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Revix</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Luno</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Binance</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <!-- Spacer before summary rows -->
+            <tr class="row-spacer"><td colspan="14"></td></tr>
+
+            <tr class="row-withdrawals">
+              <td style="color:var(--ink-light);font-size:0.78rem;font-style:italic;">Withdrawals</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Withdrawals Dec"></td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-total">
+              <td>Total Saved</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-goal">
+              <td>Monthly Goal</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-variance">
+              <td>Variance</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-notes">
+              <td>Notes</td>
+              <td><textarea class="note-input" rows="2" aria-label="January notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="February notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="March notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="April notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="May notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="June notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="July notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="August notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="September notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="October notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="November notes"></textarea></td>
+              <td><textarea class="note-input" rows="2" aria-label="December notes"></textarea></td>
+              <td></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 3 — PORTFOLIO BALANCES
+    ══════════════════════════════════════ -->
+    <div class="tab-panel" id="panel-balances" role="tabpanel" aria-labelledby="btn-balances">
+      <div class="panel-header">
+        <div class="panel-title">Portfolio Balances</div>
+        <div class="panel-actions">
+          <select class="year-select" id="balances-year" aria-label="Select year">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+          <button type="button" class="action-btn" onclick="exportBalancesCSV()">Export CSV</button>
+          <button type="button" class="action-btn action-btn-danger" onclick="resetBalancesYear()">Reset Year</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="tbl-balances" aria-label="Portfolio balances at start of each month">
+          <thead>
+            <tr>
+              <th scope="col">Asset / Account</th>
+              <th scope="col">Jan</th>
+              <th scope="col">Feb</th>
+              <th scope="col">Mar</th>
+              <th scope="col">Apr</th>
+              <th scope="col">May</th>
+              <th scope="col">Jun</th>
+              <th scope="col">Jul</th>
+              <th scope="col">Aug</th>
+              <th scope="col">Sep</th>
+              <th scope="col">Oct</th>
+              <th scope="col">Nov</th>
+              <th scope="col">Dec</th>
+              <th scope="col">YTD Change</th>
+              <th scope="col">YTD %</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td>FNB</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="FNB Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Allan Gray</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Allan Gray Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Sygnia</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Sygnia Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Easy Equities</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Easy Equities balance Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Revix / Altify</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Revix Altify Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Discovery Cash Savings</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Discovery Cash Savings Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Luno</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Luno balance Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Binance</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Binance balance Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>BTC</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC balance Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Taya — Sygnia Cash</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia Cash Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Taya — Sygnia TFSA</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Taya Sygnia TFSA Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>10x Investments</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="10x Investments Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr>
+              <td>Liberty RA (Taya)</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="Liberty RA Taya Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <!-- Summary rows -->
+            <tr class="row-spacer"><td colspan="15"></td></tr>
+
+            <tr class="row-total">
+              <td>Total Portfolio</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-variance">
+              <td>Change from Jan</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-variance">
+              <td>MoM Change (R)</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-variance">
+              <td>MoM Change (%)</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-spacer"><td colspan="15"></td></tr>
+
+            <!-- User-entered market data rows -->
+            <tr class="row-meta">
+              <td>Crypto % of Total</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-meta">
+              <td># of BTC</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC quantity Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-meta">
+              <td>BTC Price (USD)</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="BTC price USD Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-meta">
+              <td>USD / ZAR</td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Jan"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Feb"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Mar"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Apr"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate May"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Jun"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Jul"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Aug"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Sep"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Oct"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Nov"></td>
+              <td><input type="text" class="cell-input" placeholder="—" aria-label="USD ZAR rate Dec"></td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-meta">
+              <td>% Growth from Jan</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+            <tr class="row-meta">
+              <td>True Wealth (USD)</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+              <td class="computed">—</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div><!-- /.table-wrapper -->
+
+      <div class="charts-section">
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Portfolio Value</div>
+            <canvas id="chart-portfolio"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Month-on-Month Change (%)</div>
+            <canvas id="chart-mom"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Asset Allocation — Latest Month</div>
+          <canvas id="chart-alloc"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.calc-card -->
+</main>
+
+<div class="last-updated">Data is saved locally in your browser · CalcVibe does not store or transmit your financial information</div>
+
+<footer>
+  <div class="footer-logo">CalcVibe</div>
+  <div class="footer-text">Free South African financial &amp; labour calculators</div>
+  <div class="footer-disclaimer">For personal tracking purposes only. CalcVibe does not provide financial advice. Always consult a qualified financial adviser for investment decisions.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="/calcvibe.js"></script>
+<script src="/portfolio-tracker.js"></script>
+
+</body>
+</html>
