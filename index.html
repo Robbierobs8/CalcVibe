@@ -387,6 +387,24 @@
   }
   .nav-mission:hover, .nav-mission:focus-visible { opacity: 1; color: var(--accent); }
 
+  .nav-tracker-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .nav-badge-wip {
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #9a6200;
+    background: #fef3e2;
+    border-radius: 20px;
+    padding: 1px 6px;
+    line-height: 1.4;
+  }
+
   .mission-overlay {
     position: fixed;
     inset: 0;
@@ -475,7 +493,10 @@
       CalcVibe<span class="logo-dot"></span>
     </a>
     <button type="button" class="nav-mission" id="missionOpen" aria-haspopup="dialog" aria-controls="missionModal" onclick="openMission()">Our Mission</button>
-    <a href="/portfolio-tracker.html" class="nav-mission">Portfolio Tracker</a>
+    <div class="nav-tracker-wrap">
+      <a href="/portfolio-tracker.html" class="nav-mission">Portfolio Tracker</a>
+      <span class="nav-badge-wip">Under Construction</span>
+    </div>
   </div>
   <span class="nav-tag"><span aria-hidden="true">🇿🇦</span> South Africa</span>
 </nav>
