@@ -477,6 +477,7 @@
   .legend {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .legend-item {
@@ -718,49 +719,12 @@
     th, td { padding-left: 1rem; padding-right: 1rem; }
   }
 
-  /* INFLATION ACCORDION */
-  .accordion-inflation { border-color: var(--accent); margin-top: 1.25rem; margin-bottom: 1.25rem; }
-  .accordion-inflation .accordion-title { color: var(--accent); }
-  .accordion-inflation .accordion-chevron { color: var(--accent); }
-  .accordion-inflation .accordion-header { background: var(--accent-light); }
-  .accordion-inflation .accordion-header:hover { background: #d5ecdf; }
-
-  .inflation-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    background: var(--ink);
-    border-radius: 10px;
-    padding: 1.1rem 1.25rem;
-    margin-top: 1rem;
-  }
-
-  @media (max-width: 420px) {
-    .inflation-stats { grid-template-columns: 1fr; }
-  }
-
-  .inflation-stat-label {
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
-    margin-bottom: 0.3rem;
-  }
-
-  .inflation-stat-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: rgba(255,255,255,0.85);
-  }
-
-  .inflation-note {
-    font-size: 0.75rem;
-    color: var(--ink-light);
+  .stat-real {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
     font-weight: 300;
-    margin-top: 0.75rem;
-    line-height: 1.55;
+    margin-top: 0.35rem;
+    line-height: 1.3;
   }
 </style>
 <link rel="stylesheet" href="/calcvibe.css">
@@ -864,6 +828,19 @@
           <option value="start">Start of period</option>
         </select>
       </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span class="label-with-tip">Annual Inflation Rate <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Used to show purchasing-power-adjusted figures beneath each result. SA's CPI target is 4.5%; long-run averages have been 5–6%. Set to 0 to hide real-value figures.</span></span></span>
+          <div class="field-num-wrap">
+            <input type="number" class="field-num" id="inflationRateNum" value="4.0" min="0" max="30" step="0.5" style="width:40px"
+              oninput="syncInflationSlider(); calculateInflation()">
+            <span class="field-unit">%</span>
+          </div>
+        </div>
+        <input type="range" id="inflationRate" min="0" max="20" step="0.5" value="4"
+          oninput="syncInflationNum(); calculateInflation()">
+      </div>
     </div>
 
   </div>
@@ -874,14 +851,17 @@
       <div class="stat">
         <div class="stat-label">Final Balance</div>
         <div class="stat-value highlight" id="finalBalance">—</div>
+        <div class="stat-real" id="finalBalanceReal"></div>
       </div>
       <div class="stat">
         <div class="stat-label">Total Contributed</div>
         <div class="stat-value" id="totalContrib">—</div>
+        <div class="stat-real" id="totalContribReal"></div>
       </div>
       <div class="stat">
         <div class="stat-label">Interest Earned</div>
         <div class="stat-value gain" id="interestEarned">—</div>
+        <div class="stat-real" id="interestEarnedReal"></div>
       </div>
     </div>
 
@@ -897,6 +877,10 @@
             <div class="legend-dot" style="background:#e8a020"></div>
             Amount Contributed
           </div>
+          <div class="legend-item">
+            <div style="width:16px;height:2px;background:repeating-linear-gradient(90deg,#7c6af7 0,#7c6af7 4px,transparent 4px,transparent 7px);flex-shrink:0;margin-top:3px"></div>
+            Real Value (inflation-adj.)
+          </div>
         </div>
       </div>
       <div class="chart-wrap">
@@ -909,39 +893,6 @@
   <div class="result-actions" style="max-width:900px;margin:1.25rem auto 0;padding:0 1.5rem">
     <button type="button" class="btn-action" onclick="CalcVibe.copyResult('finalBalance', this)">Copy final balance</button>
     <button type="button" class="btn-action" onclick="CalcVibe.copyShareLink(this)">Share link</button>
-  </div>
-
-  <!-- Inflation adjustment -->
-  <div class="accordion accordion-inflation" id="accInflation">
-    <div class="accordion-header" onclick="toggleInflation()">
-      <span class="accordion-title">+ Adjust for Inflation</span>
-      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="accordion-body">
-      <div class="field" style="margin-bottom:0">
-        <div class="field-label">
-          <span class="label-with-tip">Annual Inflation Rate <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">South Africa's CPI inflation target is 4.5%. Long-run averages have been 5–6%. Use a rate that reflects your expectations.</span></span></span>
-          <div class="field-num-wrap">
-            <input type="number" class="field-num" id="inflationRateNum" value="4.0" min="0" max="30" step="0.5" style="width:40px"
-              oninput="syncInflationSlider(); calculateInflation()">
-            <span class="field-unit">%</span>
-          </div>
-        </div>
-        <input type="range" id="inflationRate" min="0" max="20" step="0.5" value="4"
-          oninput="syncInflationNum(); calculateInflation()">
-      </div>
-      <div class="inflation-stats">
-        <div>
-          <div class="inflation-stat-label">Real Value (Today's Terms)</div>
-          <div class="inflation-stat-value" id="realValue">—</div>
-        </div>
-        <div>
-          <div class="inflation-stat-label">Inflation Erosion</div>
-          <div class="inflation-stat-value" style="color:#fbbf4a" id="inflationErosion">—</div>
-        </div>
-      </div>
-      <p class="inflation-note">Your final balance in today's purchasing power — assuming <span id="inflationRateNote">4.0</span>% annual inflation over <span id="inflationYearsNote">—</span> years.</p>
-    </div>
   </div>
 
   <!-- Year-by-year table -->
@@ -1055,7 +1006,7 @@
       document.getElementById('totalContrib').textContent   = '—';
       document.getElementById('interestEarned').textContent = '—';
       document.getElementById('tableBody').innerHTML = '';
-      drawChart([]);
+      chartData = [];
       lastFinalBalance = 0;
       calculateInflation();
       return;
@@ -1087,7 +1038,6 @@
 
     chartData = data;
     lastFinalBalance = final.balance;
-    drawChart(data);
 
     const annualContrib = mo * 12;
     let crossoverFound = false;
@@ -1126,6 +1076,8 @@
     const cH  = H - pad.top  - pad.bottom;
 
     ctx.clearRect(0, 0, W, H);
+
+    const inflRate = Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0);
 
     const maxVal = data[data.length - 1].balance;
     const count  = data.length;
@@ -1194,6 +1146,7 @@
     ctx.strokeStyle = '#1a6b3c';
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
+    ctx.setLineDash([]);
     ctx.stroke();
 
     // Line — contributed
@@ -1201,7 +1154,24 @@
     data.forEach((d, i) => (i === 0 ? ctx.moveTo : ctx.lineTo).call(ctx, xS(i), yS(d.contributed)));
     ctx.strokeStyle = '#e8a020';
     ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([]);
     ctx.stroke();
+
+    // Dashed line — real value (inflation-adjusted)
+    if (inflRate > 0) {
+      ctx.beginPath();
+      data.forEach((d, i) => {
+        const rv = d.balance / Math.pow(1 + inflRate / 100, d.year);
+        (i === 0 ? ctx.moveTo : ctx.lineTo).call(ctx, xS(i), yS(rv));
+      });
+      ctx.strokeStyle = '#7c6af7';
+      ctx.lineWidth = 1.5;
+      ctx.lineJoin = 'round';
+      ctx.setLineDash([5, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
   }
 
   // ---- INFLATION ----
@@ -1213,27 +1183,27 @@
     document.getElementById('inflationRateNum').value = parseFloat(document.getElementById('inflationRate').value).toFixed(1);
   }
 
-  function toggleInflation() {
-    toggleAccordion('accInflation');
-    calculateInflation();
-  }
-
   function calculateInflation() {
-    const acc = document.getElementById('accInflation');
-    if (!acc || !acc.classList.contains('open')) return;
-    if (!lastFinalBalance) {
-      document.getElementById('realValue').textContent = '—';
-      document.getElementById('inflationErosion').textContent = '—';
-      return;
-    }
     const inflRate = Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0);
     const years = Math.min(1000, Math.max(1, parseInt(document.getElementById('yearsNum').value) || 1));
-    const realVal = lastFinalBalance / Math.pow(1 + inflRate / 100, years);
-    const erosion = lastFinalBalance - realVal;
-    document.getElementById('realValue').textContent = fmtR(realVal);
-    document.getElementById('inflationErosion').textContent = fmtR(erosion);
-    document.getElementById('inflationRateNote').textContent = inflRate.toFixed(1);
-    document.getElementById('inflationYearsNote').textContent = years;
+    const show = inflRate > 0 && lastFinalBalance > 0;
+
+    if (show) {
+      const factor = Math.pow(1 + inflRate / 100, years);
+      const lastContrib = chartData.length ? chartData[chartData.length - 1].contributed : 0;
+      const realBalance  = lastFinalBalance / factor;
+      const realContrib  = lastContrib / factor;
+      const realInterest = Math.max(0, realBalance - realContrib);
+      document.getElementById('finalBalanceReal').textContent  = fmtR(realBalance)  + " in today's money";
+      document.getElementById('totalContribReal').textContent  = fmtR(realContrib)  + " in today's money";
+      document.getElementById('interestEarnedReal').textContent = fmtR(realInterest) + " in today's money";
+    } else {
+      document.getElementById('finalBalanceReal').textContent  = '';
+      document.getElementById('totalContribReal').textContent  = '';
+      document.getElementById('interestEarnedReal').textContent = '';
+    }
+
+    drawChart(chartData);
   }
 
   // ---- FREQUENCY TOOLTIP ----
@@ -1271,11 +1241,14 @@
     ));
     const d = chartData[idx];
 
+    const ttInflRate = Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0);
+    const ttRealVal  = ttInflRate > 0 ? d.balance / Math.pow(1 + ttInflRate / 100, d.year) : 0;
     tooltip.innerHTML = `
       <div class="ct-year">Year ${d.year}</div>
       <div class="ct-row"><div class="ct-dot" style="background:#6ee9a0"></div><span class="ct-label">Balance</span><span class="ct-val">${fmtR(d.balance)}</span></div>
       <div class="ct-row"><div class="ct-dot" style="background:#e8a020"></div><span class="ct-label">Contributed</span><span class="ct-val">${fmtR(d.contributed)}</span></div>
       <div class="ct-row"><div class="ct-dot" style="background:#1a6b3c"></div><span class="ct-label">Interest</span><span class="ct-val">${fmtR(Math.max(0, d.interest))}</span></div>
+      ${ttInflRate > 0 ? `<div class="ct-row"><div class="ct-dot" style="background:#7c6af7"></div><span class="ct-label">Real Value</span><span class="ct-val">${fmtR(ttRealVal)}</span></div>` : ''}
     `;
     tooltip.style.display = 'block';
 
