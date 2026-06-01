@@ -720,12 +720,44 @@
   }
 
   .stat-real {
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.4);
-    font-weight: 300;
-    margin-top: 0.35rem;
-    line-height: 1.3;
+    font-size: 0.9rem;
+    color: var(--accent2);
+    font-weight: 500;
+    margin-top: 0.45rem;
+    line-height: 1.35;
   }
+
+  /* Inflation toggle pill */
+  .inflation-toggle-row { margin-bottom: 1.1rem; }
+  .toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 0.45rem 1rem;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+  }
+  .toggle-pill:hover { border-color: var(--accent); }
+  .toggle-pill.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .toggle-pill-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-pill.active .toggle-pill-dot { background: var(--accent); }
 </style>
 <link rel="stylesheet" href="/calcvibe.css">
 </head>
@@ -829,17 +861,25 @@
         </select>
       </div>
 
-      <div class="field">
-        <div class="field-label">
-          <span class="label-with-tip">Annual Inflation Rate <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">Used to show purchasing-power-adjusted figures beneath each result. SA's CPI target is 4.5%; long-run averages have been 5–6%. Set to 0 to hide real-value figures.</span></span></span>
-          <div class="field-num-wrap">
-            <input type="number" class="field-num" id="inflationRateNum" value="4.0" min="0" max="30" step="0.5" style="width:40px"
-              oninput="syncInflationSlider(); calculateInflation()">
-            <span class="field-unit">%</span>
+      <div class="inflation-toggle-row">
+        <button type="button" class="toggle-pill" id="inflationToggle" onclick="toggleInflation()" aria-pressed="false">
+          <span class="toggle-pill-dot"></span>
+          Account for inflation
+        </button>
+      </div>
+      <div id="inflationSection" style="display:none">
+        <div class="field">
+          <div class="field-label">
+            <span class="label-with-tip">Annual Inflation Rate <span class="tip-wrap"><span class="tip-icon">i</span><span class="tip-box">SA's CPI target is 4.5%; long-run averages have been 5–6%.</span></span></span>
+            <div class="field-num-wrap">
+              <input type="number" class="field-num" id="inflationRateNum" value="4.0" min="0" max="30" step="0.5" style="width:40px"
+                oninput="syncInflationSlider(); calculateInflation()">
+              <span class="field-unit">%</span>
+            </div>
           </div>
+          <input type="range" id="inflationRate" min="0" max="20" step="0.5" value="4"
+            oninput="syncInflationNum(); calculateInflation()">
         </div>
-        <input type="range" id="inflationRate" min="0" max="20" step="0.5" value="4"
-          oninput="syncInflationNum(); calculateInflation()">
       </div>
     </div>
 
@@ -856,12 +896,10 @@
       <div class="stat">
         <div class="stat-label">Total Contributed</div>
         <div class="stat-value" id="totalContrib">—</div>
-        <div class="stat-real" id="totalContribReal"></div>
       </div>
       <div class="stat">
         <div class="stat-label">Interest Earned</div>
         <div class="stat-value gain" id="interestEarned">—</div>
-        <div class="stat-real" id="interestEarnedReal"></div>
       </div>
     </div>
 
@@ -877,7 +915,7 @@
             <div class="legend-dot" style="background:#e8a020"></div>
             Amount Contributed
           </div>
-          <div class="legend-item">
+          <div class="legend-item" id="legendRealValue" style="display:none">
             <div style="width:16px;height:2px;background:repeating-linear-gradient(90deg,#7c6af7 0,#7c6af7 4px,transparent 4px,transparent 7px);flex-shrink:0;margin-top:3px"></div>
             Real Value (inflation-adj.)
           </div>
@@ -908,6 +946,7 @@
             <th>Annual Interest</th>
             <th>Total Interest</th>
             <th>Balance</th>
+            <th id="thRealBalance" style="display:none">Real Balance (Today's Money)</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -963,6 +1002,7 @@
 <script>
   let chartData = [];
   let lastFinalBalance = 0;
+  let inflationOn = false;
 
   function fmtVal(n) {
     const num = Math.round(parseFloat(n) || 0);
@@ -1038,14 +1078,23 @@
 
     chartData = data;
     lastFinalBalance = final.balance;
+    calculateInflation();
+  }
 
+  function buildTable() {
+    const mo = Math.max(0, parseVal(document.getElementById('monthlyNum').value));
     const annualContrib = mo * 12;
+    const inflRate = inflationOn ? Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0) : 0;
+
+    document.getElementById('thRealBalance').style.display = inflationOn ? '' : 'none';
+
     let crossoverFound = false;
-    document.getElementById('tableBody').innerHTML = data.map((d, i) => {
-      const prevCumInterest = i > 0 ? data[i - 1].interest : 0;
+    document.getElementById('tableBody').innerHTML = chartData.map((d, i) => {
+      const prevCumInterest = i > 0 ? chartData[i - 1].interest : 0;
       const annualInterest  = Math.max(0, d.interest - prevCumInterest);
       const isCrossover = !crossoverFound && annualContrib > 0 && annualInterest > annualContrib;
       if (isCrossover) crossoverFound = true;
+      const realBalance = inflRate > 0 ? d.balance / Math.pow(1 + inflRate / 100, d.year) : 0;
       return `<tr${isCrossover ? ' class="crossover-row"' : ''}>
         <td>Year ${d.year}${isCrossover ? '<span class="crossover-msg">🎉 Your money is now making more than you put in!</span>' : ''}</td>
         <td>${fmtR(annualContrib)}</td>
@@ -1053,10 +1102,9 @@
         <td class="td-gain">${fmtR(annualInterest)}</td>
         <td class="td-gain">${fmtR(Math.max(0, d.interest))}</td>
         <td class="td-total">${fmtR(d.balance)}</td>
+        ${inflationOn ? `<td class="td-total">${inflRate > 0 ? fmtR(realBalance) : '—'}</td>` : ''}
       </tr>`;
     }).join('');
-
-    calculateInflation();
   }
 
   function drawChart(data) {
@@ -1077,7 +1125,7 @@
 
     ctx.clearRect(0, 0, W, H);
 
-    const inflRate = Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0);
+    const inflRate = inflationOn ? Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0) : 0;
 
     const maxVal = data[data.length - 1].balance;
     const count  = data.length;
@@ -1183,26 +1231,28 @@
     document.getElementById('inflationRateNum').value = parseFloat(document.getElementById('inflationRate').value).toFixed(1);
   }
 
-  function calculateInflation() {
-    const inflRate = Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0);
-    const years = Math.min(1000, Math.max(1, parseInt(document.getElementById('yearsNum').value) || 1));
-    const show = inflRate > 0 && lastFinalBalance > 0;
+  function toggleInflation() {
+    inflationOn = !inflationOn;
+    const btn = document.getElementById('inflationToggle');
+    btn.classList.toggle('active', inflationOn);
+    btn.setAttribute('aria-pressed', inflationOn ? 'true' : 'false');
+    document.getElementById('inflationSection').style.display = inflationOn ? '' : 'none';
+    calculateInflation();
+  }
 
-    if (show) {
-      const factor = Math.pow(1 + inflRate / 100, years);
-      const lastContrib = chartData.length ? chartData[chartData.length - 1].contributed : 0;
-      const realBalance  = lastFinalBalance / factor;
-      const realContrib  = lastContrib / factor;
-      const realInterest = Math.max(0, realBalance - realContrib);
-      document.getElementById('finalBalanceReal').textContent  = fmtR(realBalance)  + " in today's money";
-      document.getElementById('totalContribReal').textContent  = fmtR(realContrib)  + " in today's money";
-      document.getElementById('interestEarnedReal').textContent = fmtR(realInterest) + " in today's money";
+  function calculateInflation() {
+    const inflRate = inflationOn ? Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0) : 0;
+    const years = Math.min(1000, Math.max(1, parseInt(document.getElementById('yearsNum').value) || 1));
+
+    if (inflationOn && inflRate > 0 && lastFinalBalance > 0) {
+      const realBalance = lastFinalBalance / Math.pow(1 + inflRate / 100, years);
+      document.getElementById('finalBalanceReal').textContent = fmtR(realBalance) + " in today's money (inflation-adjusted)";
     } else {
-      document.getElementById('finalBalanceReal').textContent  = '';
-      document.getElementById('totalContribReal').textContent  = '';
-      document.getElementById('interestEarnedReal').textContent = '';
+      document.getElementById('finalBalanceReal').textContent = '';
     }
 
+    document.getElementById('legendRealValue').style.display = inflationOn ? '' : 'none';
+    buildTable();
     drawChart(chartData);
   }
 
@@ -1241,7 +1291,7 @@
     ));
     const d = chartData[idx];
 
-    const ttInflRate = Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0);
+    const ttInflRate = inflationOn ? Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0) : 0;
     const ttRealVal  = ttInflRate > 0 ? d.balance / Math.pow(1 + ttInflRate / 100, d.year) : 0;
     tooltip.innerHTML = `
       <div class="ct-year">Year ${d.year}</div>
