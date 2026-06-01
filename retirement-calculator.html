@@ -702,13 +702,13 @@
   }
   .schedule-table tbody tr:last-child td { border-bottom: none; }
   .schedule-table .col-closing { font-weight: 600; }
-  .schedule-table th.col-real-closing { color: var(--accent2); }
-  .schedule-table td.col-real-closing { color: var(--accent2); font-weight: 600; }
-  .schedule-table .td-real-sub {
-    font-size: 0.7rem;
+  .schedule-table th.col-real-closing,
+  .schedule-table th.col-real-monthly { color: var(--accent2); }
+  .schedule-table td.col-real-closing,
+  .schedule-table td.col-real-monthly {
     color: var(--accent2);
-    font-weight: 400;
-    margin-top: 0.18rem;
+    font-weight: 600;
+    text-shadow: 0 0 1px rgba(0,0,0,0.35);
   }
   .row-growing  { background: rgba(26, 107, 60, 0.06); }
   .row-depleting { background: rgba(232, 160, 32, 0.09); }
@@ -1041,6 +1041,7 @@
             <th>Annual Growth</th>
             <th>Annual Drawdown</th>
             <th>Monthly Drawdown</th>
+            <th id="thRealMonthly" class="col-real-monthly" style="display:none">Monthly (Today's Money)</th>
             <th>Closing Balance</th>
             <th id="thRealClosing" class="col-real-closing" style="display:none">Real Balance (Today's Money)</th>
           </tr>
@@ -1110,6 +1111,7 @@
     document.getElementById('resultColHeader').style.display   = inflationOn ? '' : 'none';
     document.getElementById('resReal').style.display           = inflationOn ? '' : 'none';
     document.getElementById('resRealIncome').style.display     = inflationOn ? '' : 'none';
+    document.getElementById('thRealMonthly').style.display     = inflationOn ? '' : 'none';
     document.getElementById('thRealClosing').style.display     = inflationOn ? '' : 'none';
     calculate();
   }
@@ -1131,13 +1133,13 @@
       if (closing <= 0) { closing = 0; neverDepletes = false; }
       var rowClass = closing > opening ? 'row-growing' : (closing < opening ? 'row-depleting' : '');
       var totalYears  = yearsToRetirement + y;
+      var realMonthlyCell = '';
       var realClosingCell = '';
-      var realMonthlySub  = '';
       if (inflationOn) {
+        var realMonthly = inflRate > 0 ? monthlyIncome / Math.pow(1 + inflRate, totalYears) : monthlyIncome;
+        realMonthlyCell = '<td class="col-real-monthly">' + CalcVibe.fmtR(realMonthly, 0) + '</td>';
         var realClosing = inflRate > 0 ? closing / Math.pow(1 + inflRate, totalYears) : closing;
         realClosingCell = '<td class="col-real-closing">' + (closing > 0 ? CalcVibe.fmtR(realClosing, 0) : '—') + '</td>';
-        var realMonthly = inflRate > 0 ? monthlyIncome / Math.pow(1 + inflRate, totalYears) : monthlyIncome;
-        realMonthlySub  = '<div class="td-real-sub">' + CalcVibe.fmtR(realMonthly, 0) + ' today</div>';
       }
       html += '<tr class="' + rowClass + '">'
         + '<td>' + (retirementAge + y - 1) + '</td>'
@@ -1145,7 +1147,8 @@
         + '<td>' + CalcVibe.fmtR(opening, 0) + '</td>'
         + '<td class="col-growth">' + CalcVibe.fmtR(growth, 0) + '</td>'
         + '<td class="col-drawdown">' + CalcVibe.fmtR(annDrawdown, 0) + '</td>'
-        + '<td>' + CalcVibe.fmtR(monthlyIncome, 0) + realMonthlySub + '</td>'
+        + '<td>' + CalcVibe.fmtR(monthlyIncome, 0) + '</td>'
+        + realMonthlyCell
         + '<td class="col-closing">' + CalcVibe.fmtR(closing, 0) + '</td>'
         + realClosingCell
         + '</tr>';
