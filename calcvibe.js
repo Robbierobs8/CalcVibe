@@ -49,7 +49,7 @@
       });
       el.addEventListener('blur', function () {
         var raw = el.value.trim();
-        el.value = raw === '' ? '' : String(parseVal(raw));
+        el.value = raw === '' ? '' : fmtVal(parseVal(raw));
         runCalculate();
       });
       el.addEventListener('input', runCalculate);
@@ -130,7 +130,7 @@
       if (el.type === 'checkbox') {
         el.checked = (val === '1' || val === 'true');
       } else {
-        el.value = el.classList.contains('js-money') ? String(parseVal(val)) : val;
+        el.value = el.classList.contains('js-money') ? fmtVal(parseVal(val)) : val;
       }
       // Fire the page's own handlers so sliders, tooltips, and calc stay in sync
       var evt = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input';
