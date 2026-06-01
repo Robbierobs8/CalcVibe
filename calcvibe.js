@@ -43,6 +43,9 @@
     Array.prototype.forEach.call(fields, function (el) {
       el.setAttribute('inputmode', 'numeric');
       el.setAttribute('autocomplete', 'off');
+      // Format whatever value is already in the field on page load
+      var initRaw = el.value.trim();
+      if (initRaw !== '') el.value = fmtVal(parseVal(initRaw));
       el.addEventListener('focus', function () {
         var v = parseVal(el.value);
         el.value = v ? String(v) : '';
