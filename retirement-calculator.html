@@ -282,6 +282,51 @@
     color: #6ee9a0;
   }
 
+  /* Two-column inflation layout */
+  .result-col-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    padding: 0.3rem 0 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    margin-bottom: 0.1rem;
+  }
+  .result-col-lbl {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    min-width: 110px;
+    text-align: right;
+  }
+  .result-col-lbl.nominal { color: rgba(255,255,255,0.4); }
+  .result-col-lbl.real    { color: var(--accent2); }
+
+  .result-values-col {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0;
+  }
+  .result-values-col .result-value {
+    min-width: 110px;
+    text-align: right;
+  }
+  .result-real-value {
+    min-width: 110px;
+    text-align: right;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent2);
+  }
+  .result-row.highlight .result-real-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
   /* EXPLAINER */
   .explainer {
     background: var(--white);
@@ -817,19 +862,19 @@
       </div>
 
       <div class="results" aria-live="polite" aria-atomic="true">
+        <div class="result-col-header" id="resultColHeader" style="display:none">
+          <span class="result-col-lbl nominal">Nominal Value</span>
+          <span class="result-col-lbl real">In Today's Money</span>
+        </div>
         <div class="result-row highlight">
           <div>
             <span class="result-label">What your savings could grow to</span>
             <span class="result-sub" id="subNominal">Based on your contributions growing over time</span>
           </div>
-          <span class="result-value" id="resNominal">R 0</span>
-        </div>
-        <div class="result-row result-inflation" id="rowRealFV" style="display:none">
-          <div>
-            <span class="result-label">What that's worth in today's money</span>
-            <span class="result-sub" id="subReal">After accounting for inflation</span>
+          <div class="result-values-col">
+            <span class="result-value" id="resNominal">R 0</span>
+            <span class="result-real-value" id="resReal" style="display:none">R 0</span>
           </div>
-          <span class="result-value" id="resReal">R 0</span>
         </div>
         <div class="result-row">
           <span class="result-label">Years to Retirement</span>
@@ -840,14 +885,10 @@
             <span class="result-label">Estimated monthly income in retirement</span>
             <span class="result-sub" id="subIncome">Drawing 4% per year from your fund</span>
           </div>
-          <span class="result-value" id="resIncome">R 0</span>
-        </div>
-        <div class="result-row result-inflation" id="rowRealIncome" style="display:none">
-          <div>
-            <span class="result-label">In today's money</span>
-            <span class="result-sub">The same income adjusted for inflation</span>
+          <div class="result-values-col">
+            <span class="result-value" id="resIncome">R 0</span>
+            <span class="result-real-value" id="resRealIncome" style="display:none">R 0</span>
           </div>
-          <span class="result-value" id="resRealIncome">R 0</span>
         </div>
         <div class="result-row">
           <div>
@@ -1050,9 +1091,10 @@
     var btn = document.getElementById('inflationToggle');
     btn.classList.toggle('active', inflationOn);
     btn.setAttribute('aria-pressed', inflationOn ? 'true' : 'false');
-    document.getElementById('inflationSection').style.display = inflationOn ? '' : 'none';
-    document.getElementById('rowRealFV').style.display     = inflationOn ? '' : 'none';
-    document.getElementById('rowRealIncome').style.display = inflationOn ? '' : 'none';
+    document.getElementById('inflationSection').style.display  = inflationOn ? '' : 'none';
+    document.getElementById('resultColHeader').style.display   = inflationOn ? '' : 'none';
+    document.getElementById('resReal').style.display           = inflationOn ? '' : 'none';
+    document.getElementById('resRealIncome').style.display     = inflationOn ? '' : 'none';
     calculate();
   }
 
@@ -1131,7 +1173,6 @@
 
     if (inflationOn) {
       document.getElementById('resReal').textContent = CalcVibe.fmtR(realFV, 0);
-      document.getElementById('subReal').textContent = 'After ' + annInflation + '% inflation over ' + years + ' years';
     }
 
     // Monthly income — % mode derives from fund; R mode uses the entered amount directly
