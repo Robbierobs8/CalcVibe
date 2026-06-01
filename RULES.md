@@ -70,6 +70,22 @@ Every new calculator page must include:
 - `<meta name="keywords">` including the calculator topic + "South Africa" + the relevant legislation or authority (e.g. SARS, BCEA, UIF)
 - A short 2-3 sentence introductory paragraph (`<p class="calc-intro">`) inside the `.page-header` div, below the `.page-sub` line, explaining the calculator's purpose — written naturally for users, not keyword-stuffed
 
+## Number Input Formatting
+All number input fields across the site must display values with space-separated thousands
+(e.g. "4 200 000" not "4200000"). The displayed value must be formatted with spaces while
+the underlying value used for calculations remains a plain number. This must be consistent
+across all calculators.
+
+Reference implementation: Compound Interest Calculator (`compound-interest-calculator.html`).
+Key pattern:
+- Use `type="text" inputmode="numeric"` (not `type="number"`) for money/large-number inputs
+- On `oninput`: call `onNumInput()` which reads the raw value, updates the slider, and triggers `calculate()`
+- On `onfocus`: strip formatting — `this.value = String(parseVal(this.value) || '')`
+- On `onblur`: reformat — `this.value = fmtVal(parseVal(this.value)); calculate()`
+- `fmtVal(n)` formats with space thousands: `n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')`
+- `parseVal(s)` strips spaces/commas before parsing: `parseFloat(String(s).replace(/[ \s,]/g, '')) || 0`
+- Do NOT use `type="number"` for inputs that display formatted values — browsers strip non-numeric characters
+
 ## UI Components
 
 ### Tooltips / Info Popups
