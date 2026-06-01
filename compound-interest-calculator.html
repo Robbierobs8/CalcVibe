@@ -727,6 +727,15 @@
     line-height: 1.35;
   }
 
+  .td-real-val {
+    font-size: 0.72rem;
+    color: var(--accent2);
+    font-weight: 400;
+    font-family: 'Epilogue', sans-serif;
+    margin-top: 0.2rem;
+    white-space: nowrap;
+  }
+
   /* Inflation toggle pill */
   .inflation-toggle-row { margin-bottom: 1.1rem; }
   .toggle-pill {
@@ -946,7 +955,6 @@
             <th>Annual Interest</th>
             <th>Total Interest</th>
             <th>Balance</th>
-            <th id="thRealBalance" style="display:none">Real Balance (Today's Money)</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -1086,8 +1094,6 @@
     const annualContrib = mo * 12;
     const inflRate = inflationOn ? Math.max(0, parseFloat(document.getElementById('inflationRateNum').value) || 0) : 0;
 
-    document.getElementById('thRealBalance').style.display = inflationOn ? '' : 'none';
-
     let crossoverFound = false;
     document.getElementById('tableBody').innerHTML = chartData.map((d, i) => {
       const prevCumInterest = i > 0 ? chartData[i - 1].interest : 0;
@@ -1095,14 +1101,14 @@
       const isCrossover = !crossoverFound && annualContrib > 0 && annualInterest > annualContrib;
       if (isCrossover) crossoverFound = true;
       const realBalance = inflRate > 0 ? d.balance / Math.pow(1 + inflRate / 100, d.year) : 0;
+      const realSub = inflationOn && inflRate > 0 ? `<div class="td-real-val">${fmtR(realBalance)} today</div>` : '';
       return `<tr${isCrossover ? ' class="crossover-row"' : ''}>
         <td>Year ${d.year}${isCrossover ? '<span class="crossover-msg">🎉 Your money is now making more than you put in!</span>' : ''}</td>
         <td>${fmtR(annualContrib)}</td>
         <td>${fmtR(d.contributed)}</td>
         <td class="td-gain">${fmtR(annualInterest)}</td>
         <td class="td-gain">${fmtR(Math.max(0, d.interest))}</td>
-        <td class="td-total">${fmtR(d.balance)}</td>
-        ${inflationOn ? `<td class="td-total">${inflRate > 0 ? fmtR(realBalance) : '—'}</td>` : ''}
+        <td class="td-total">${fmtR(d.balance)}${realSub}</td>
       </tr>`;
     }).join('');
   }
