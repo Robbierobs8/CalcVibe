@@ -704,6 +704,12 @@
   .schedule-table .col-closing { font-weight: 600; }
   .schedule-table th.col-real-closing { color: var(--accent2); }
   .schedule-table td.col-real-closing { color: var(--accent2); font-weight: 600; }
+  .schedule-table .td-real-sub {
+    font-size: 0.7rem;
+    color: var(--accent2);
+    font-weight: 400;
+    margin-top: 0.18rem;
+  }
   .row-growing  { background: rgba(26, 107, 60, 0.06); }
   .row-depleting { background: rgba(232, 160, 32, 0.09); }
   .schedule-note {
@@ -1124,11 +1130,14 @@
       var closing = opening + growth - annDrawdown;
       if (closing <= 0) { closing = 0; neverDepletes = false; }
       var rowClass = closing > opening ? 'row-growing' : (closing < opening ? 'row-depleting' : '');
+      var totalYears  = yearsToRetirement + y;
       var realClosingCell = '';
+      var realMonthlySub  = '';
       if (inflationOn) {
-        var totalYears  = yearsToRetirement + y;
         var realClosing = inflRate > 0 ? closing / Math.pow(1 + inflRate, totalYears) : closing;
         realClosingCell = '<td class="col-real-closing">' + (closing > 0 ? CalcVibe.fmtR(realClosing, 0) : '—') + '</td>';
+        var realMonthly = inflRate > 0 ? monthlyIncome / Math.pow(1 + inflRate, totalYears) : monthlyIncome;
+        realMonthlySub  = '<div class="td-real-sub">' + CalcVibe.fmtR(realMonthly, 0) + ' today</div>';
       }
       html += '<tr class="' + rowClass + '">'
         + '<td>' + (retirementAge + y - 1) + '</td>'
@@ -1136,7 +1145,7 @@
         + '<td>' + CalcVibe.fmtR(opening, 0) + '</td>'
         + '<td class="col-growth">' + CalcVibe.fmtR(growth, 0) + '</td>'
         + '<td class="col-drawdown">' + CalcVibe.fmtR(annDrawdown, 0) + '</td>'
-        + '<td>' + CalcVibe.fmtR(monthlyIncome, 0) + '</td>'
+        + '<td>' + CalcVibe.fmtR(monthlyIncome, 0) + realMonthlySub + '</td>'
         + '<td class="col-closing">' + CalcVibe.fmtR(closing, 0) + '</td>'
         + realClosingCell
         + '</tr>';
