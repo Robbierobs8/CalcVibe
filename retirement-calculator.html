@@ -146,6 +146,13 @@
 
   .field-row .field { margin-bottom: 0; }
 
+  /* Match label height to field-label-row (which is taller due to seg-ctrl buttons) */
+  .field-row .field > label {
+    min-height: 1.8rem;
+    display: flex;
+    align-items: center;
+  }
+
   label {
     display: block;
     font-size: 0.8rem;
