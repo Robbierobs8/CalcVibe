@@ -673,27 +673,31 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 0.8rem;
-    min-width: 560px;
+    table-layout: fixed;
   }
   .schedule-table thead tr { background: var(--ink); }
   .schedule-table th {
-    padding: 0.55rem 0.85rem;
+    padding: 0.55rem 0.45rem;
     text-align: right;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.04em;
     color: rgba(255,255,255,0.75);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .schedule-table th:first-child,
   .schedule-table th:nth-child(2) { text-align: center; }
   .schedule-table td {
-    padding: 0.48rem 0.85rem;
+    padding: 0.48rem 0.45rem;
     text-align: right;
     color: var(--ink);
     font-weight: 400;
     border-bottom: 1px solid var(--border);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .schedule-table td:first-child,
   .schedule-table td:nth-child(2) {
