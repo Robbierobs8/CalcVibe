@@ -648,6 +648,10 @@
     box-shadow: var(--shadow);
     margin-top: 1.5rem;
     animation: fadeUp 0.5s ease 0.3s both;
+    /* Break out of the 680px main container, centre up to 1100px */
+    --sched-w: min(1100px, 100vw - 3rem);
+    width: var(--sched-w);
+    margin-left: calc((var(--sched-w) - 100%) / -2);
   }
   .schedule-header {
     padding: 1.25rem 1.75rem 1rem;
