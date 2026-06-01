@@ -702,6 +702,8 @@
   }
   .schedule-table tbody tr:last-child td { border-bottom: none; }
   .schedule-table .col-closing { font-weight: 600; }
+  .schedule-table th.col-real-closing { color: var(--accent2); }
+  .schedule-table td.col-real-closing { color: var(--accent2); font-weight: 600; }
   .row-growing  { background: rgba(26, 107, 60, 0.06); }
   .row-depleting { background: rgba(232, 160, 32, 0.09); }
   .schedule-note {
@@ -1034,6 +1036,7 @@
             <th>Annual Drawdown</th>
             <th>Monthly Drawdown</th>
             <th>Closing Balance</th>
+            <th id="thRealClosing" class="col-real-closing" style="display:none">Real Balance (Today's Money)</th>
           </tr>
         </thead>
         <tbody id="scheduleTbody"></tbody>
@@ -1101,10 +1104,11 @@
     document.getElementById('resultColHeader').style.display   = inflationOn ? '' : 'none';
     document.getElementById('resReal').style.display           = inflationOn ? '' : 'none';
     document.getElementById('resRealIncome').style.display     = inflationOn ? '' : 'none';
+    document.getElementById('thRealClosing').style.display     = inflationOn ? '' : 'none';
     calculate();
   }
 
-  function buildSchedule(nominalFV, annReturn, monthlyIncome, retirementAge) {
+  function buildSchedule(nominalFV, annReturn, monthlyIncome, retirementAge, yearsToRetirement, annInflation) {
     var tbody        = document.getElementById('scheduleTbody');
     var note         = document.getElementById('scheduleNote');
     var balance      = nominalFV;
@@ -1112,6 +1116,7 @@
     var annRate      = annReturn / 100;
     var neverDepletes = true;
     var html         = '';
+    var inflRate     = (inflationOn && annInflation > 0) ? annInflation / 100 : 0;
 
     for (var y = 1; y <= 30; y++) {
       var opening = balance;
@@ -1119,6 +1124,12 @@
       var closing = opening + growth - annDrawdown;
       if (closing <= 0) { closing = 0; neverDepletes = false; }
       var rowClass = closing > opening ? 'row-growing' : (closing < opening ? 'row-depleting' : '');
+      var realClosingCell = '';
+      if (inflationOn) {
+        var totalYears  = yearsToRetirement + y;
+        var realClosing = inflRate > 0 ? closing / Math.pow(1 + inflRate, totalYears) : closing;
+        realClosingCell = '<td class="col-real-closing">' + (closing > 0 ? CalcVibe.fmtR(realClosing, 0) : '—') + '</td>';
+      }
       html += '<tr class="' + rowClass + '">'
         + '<td>' + (retirementAge + y - 1) + '</td>'
         + '<td>' + y + '</td>'
@@ -1127,6 +1138,7 @@
         + '<td class="col-drawdown">' + CalcVibe.fmtR(annDrawdown, 0) + '</td>'
         + '<td>' + CalcVibe.fmtR(monthlyIncome, 0) + '</td>'
         + '<td class="col-closing">' + CalcVibe.fmtR(closing, 0) + '</td>'
+        + realClosingCell
         + '</tr>';
       balance = closing;
       if (!neverDepletes) break;
@@ -1226,7 +1238,7 @@
     document.getElementById('resDuration').textContent = durationText;
 
     document.getElementById('scheduleCard').style.display = '';
-    buildSchedule(nominalFV, annReturn, monthlyIncome, retirementAge);
+    buildSchedule(nominalFV, annReturn, monthlyIncome, retirementAge, years, annInflation);
   }
 
   calculate();
