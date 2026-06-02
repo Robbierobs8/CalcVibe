@@ -544,35 +544,33 @@
   table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 0.8rem;
   }
 
-  thead { position: sticky; top: 0; background: var(--bg); z-index: 1; }
+  thead { position: sticky; top: 0; background: var(--ink); z-index: 1; }
 
   th {
     font-size: 0.68rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    padding: 0.6rem 0.9rem;
-    text-align: right;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+    padding: 0.55rem 0.5rem;
+    text-align: center;
     white-space: nowrap;
   }
 
-  th:first-child { text-align: left; }
-
   td {
-    padding: 0.5rem 0.9rem;
-    text-align: right;
-    border-top: 1px solid var(--border);
-    font-size: 0.82rem;
+    padding: 0.48rem 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
     color: var(--ink);
     white-space: nowrap;
   }
 
-  td:first-child { text-align: left; color: var(--ink-light); font-size: 0.78rem; }
+  tbody tr:last-child td { border-bottom: none; }
 
-  tr:hover td { background: var(--accent-light); }
+  tbody tr:hover td { background: var(--accent-light); }
 
   .td-gain  { color: var(--accent); font-weight: 500; }
   .td-total { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--ink); }

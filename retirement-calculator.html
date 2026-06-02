@@ -374,6 +374,36 @@
 
   .formula-box span { color: var(--accent); font-weight: 600; }
 
+  /* Explainer tables — shared dark-header style */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.75rem 0; }
+  .explainer table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  .explainer table thead tr { background: var(--ink); }
+  .explainer table th {
+    padding: 0.55rem 0.75rem;
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+  }
+  .explainer table th:first-child { text-align: left; }
+  .explainer table td {
+    padding: 0.48rem 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .explainer table td:first-child { text-align: left; color: var(--ink-light); }
+  .explainer table tbody tr:last-child td { border-bottom: none; }
+  .explainer table tbody tr:hover td { background: var(--accent-light); }
+
   /* ACCORDION */
   .accordion {
     background: var(--white);
@@ -944,24 +974,26 @@
         <h2>Retirement Annuities, Pension Funds, Provident Funds and TFSAs</h2>
         <p>This calculator is designed for <strong>Retirement Annuities (RAs), Pension Funds, and Provident Funds</strong> — three retirement vehicles regulated under the Pension Funds Act and Income Tax Act.</p>
         <p>They are fundamentally different from <strong>Tax-Free Savings Accounts (TFSAs)</strong>, which are a separate investment product:</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th>RA / Pension / Provident</th>
-              <th>Tax-Free Savings Account (TFSA)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Contributions tax-deductible?</td><td>Yes (capped at 27.5% of income / R350,000 per year)</td><td>No</td></tr>
-            <tr><td>Growth taxed?</td><td>No</td><td>No</td></tr>
-            <tr><td>Withdrawals taxed?</td><td>Yes (per SARS retirement tables or marginal rate)</td><td>No — completely tax-free</td></tr>
-            <tr><td>Annual contribution limit</td><td>27.5% of taxable income or R350,000 (whichever is lower)</td><td>R36,000</td></tr>
-            <tr><td>Lifetime contribution limit</td><td>None</td><td>R500,000</td></tr>
-            <tr><td>Access before retirement</td><td>Limited (Two-Pot savings component only)</td><td>Anytime, any amount</td></tr>
-            <tr><td>Compulsory annuity at retirement</td><td>Generally yes (see below)</td><td>No</td></tr>
-          </tbody>
-        </table>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>RA / Pension / Provident</th>
+                <th>Tax-Free Savings Account (TFSA)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Contributions tax-deductible?</td><td>Yes (capped at 27.5% of income / R350,000 per year)</td><td>No</td></tr>
+              <tr><td>Growth taxed?</td><td>No</td><td>No</td></tr>
+              <tr><td>Withdrawals taxed?</td><td>Yes (per SARS retirement tables or marginal rate)</td><td>No — completely tax-free</td></tr>
+              <tr><td>Annual contribution limit</td><td>27.5% of taxable income or R350,000 (whichever is lower)</td><td>R36,000</td></tr>
+              <tr><td>Lifetime contribution limit</td><td>None</td><td>R500,000</td></tr>
+              <tr><td>Access before retirement</td><td>Limited (Two-Pot savings component only)</td><td>Anytime, any amount</td></tr>
+              <tr><td>Compulsory annuity at retirement</td><td>Generally yes (see below)</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
 
         <h2>South African retirement tax rules (2025/2026 tax year)</h2>
         <p><strong>Section 11F contribution deduction</strong></p>
@@ -986,20 +1018,22 @@
 
         <h2>SARS retirement lump sum tax table (2025/2026)</h2>
         <p>The tax-free portion of your retirement lump sum is a <strong>cumulative lifetime threshold</strong>. It aggregates all previous retirement lump sums, severance benefits, and pre-retirement withdrawals from the Two-Pot savings component.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Lump sum amount</th>
-              <th>Tax</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>R0 – R550,000</td><td>0% (tax-free)</td></tr>
-            <tr><td>R550,001 – R770,000</td><td>18% on amount above R550,000</td></tr>
-            <tr><td>R770,001 – R1,155,000</td><td>R39,600 + 27% on amount above R770,000</td></tr>
-            <tr><td>Above R1,155,000</td><td>R143,550 + 36% on amount above R1,155,000</td></tr>
-          </tbody>
-        </table>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Lump sum amount</th>
+                <th>Tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>R0 – R550,000</td><td>0% (tax-free)</td></tr>
+              <tr><td>R550,001 – R770,000</td><td>18% on amount above R550,000</td></tr>
+              <tr><td>R770,001 – R1,155,000</td><td>R39,600 + 27% on amount above R770,000</td></tr>
+              <tr><td>Above R1,155,000</td><td>R143,550 + 36% on amount above R1,155,000</td></tr>
+            </tbody>
+          </table>
+        </div>
 
         <h2>Living annuity vs Guaranteed annuity</h2>
         <p>The two-thirds compulsory annuity portion at retirement is used to purchase one of the following:</p>
