@@ -7,145 +7,216 @@
 
   var _supa     = null;
   var _user     = null;
-  var _isSignup = false;
+  var _mode     = 'signin';
+  var _dropOpen = false;
 
   function supa() {
     if (!_supa && window.supabase) _supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     return _supa;
   }
 
-  /* ── NAV BUTTON ─────────────────────────────────────────── */
-  function injectBtn() {
+  function truncate(str, n) {
+    return str.length > n ? str.slice(0, n) + '…' : str;
+  }
+
+  /* ── NAV WIDGET ─────────────────────────────────────────── */
+  function injectNav() {
     var nav = document.querySelector('nav');
     if (!nav) return;
-    var btn       = document.createElement('button');
-    btn.id        = 'cv-auth-btn';
-    btn.type      = 'button';
-    btn.className = 'cv-auth-navbtn';
-    btn.textContent = 'Sign In';
-    btn.addEventListener('click', openModal);
-    nav.appendChild(btn);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'cva-wrap';
+
+    /* signed-out: plain "Sign in" pill */
+    var signinBtn       = document.createElement('button');
+    signinBtn.id        = 'cva-signin-btn';
+    signinBtn.type      = 'button';
+    signinBtn.className = 'cva-signin-btn';
+    signinBtn.textContent = 'Sign in';
+    signinBtn.addEventListener('click', openModal);
+
+    /* signed-in: avatar + email + chevron */
+    var accountBtn       = document.createElement('button');
+    accountBtn.id        = 'cva-account-btn';
+    accountBtn.type      = 'button';
+    accountBtn.className = 'cva-account-btn';
+    accountBtn.hidden    = true;
+    accountBtn.innerHTML =
+      '<span class="cva-avatar" id="cva-avatar">U</span>' +
+      '<span class="cva-email-short" id="cva-email-short"></span>' +
+      '<span class="cva-chevron" aria-hidden="true">&#9662;</span>';
+    accountBtn.addEventListener('click', toggleDrop);
+
+    /* dropdown */
+    var drop = document.createElement('div');
+    drop.id        = 'cva-drop';
+    drop.className = 'cva-drop';
+    drop.hidden    = true;
+    drop.innerHTML =
+      '<div class="cva-drop-email" id="cva-drop-email"></div>' +
+      '<div class="cva-drop-sync"><span class="cva-sync-dot"></span>Data synced</div>' +
+      '<div class="cva-drop-divider"></div>' +
+      '<button type="button" class="cva-drop-signout" id="cva-signout-btn">Sign out</button>';
+    drop.querySelector('#cva-signout-btn').addEventListener('click', handleLogout);
+
+    wrap.appendChild(signinBtn);
+    wrap.appendChild(accountBtn);
+    wrap.appendChild(drop);
+    nav.appendChild(wrap);
+
+    document.addEventListener('click', function (e) {
+      if (_dropOpen && !wrap.contains(e.target)) closeDrop();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDrop();
+    });
+  }
+
+  function toggleDrop() { _dropOpen ? closeDrop() : openDrop(); }
+
+  function openDrop() {
+    _dropOpen = true;
+    document.getElementById('cva-drop').hidden = false;
+    document.getElementById('cva-account-btn').classList.add('cva-account-btn--open');
+  }
+
+  function closeDrop() {
+    _dropOpen = false;
+    var d = document.getElementById('cva-drop');
+    if (d) d.hidden = true;
+    var b = document.getElementById('cva-account-btn');
+    if (b) b.classList.remove('cva-account-btn--open');
+  }
+
+  function updateNav() {
+    var signinBtn  = document.getElementById('cva-signin-btn');
+    var accountBtn = document.getElementById('cva-account-btn');
+    if (!signinBtn) return;
+    if (_user) {
+      signinBtn.hidden  = true;
+      accountBtn.hidden = false;
+      document.getElementById('cva-avatar').textContent     = _user.email[0].toUpperCase();
+      document.getElementById('cva-email-short').textContent = truncate(_user.email.split('@')[0], 20);
+      document.getElementById('cva-drop-email').textContent  = _user.email;
+    } else {
+      signinBtn.hidden  = false;
+      accountBtn.hidden = true;
+      closeDrop();
+    }
   }
 
   /* ── MODAL ──────────────────────────────────────────────── */
   var MODAL_HTML = [
-    '<div id="cv-auth-overlay" class="cv-auth-overlay" role="dialog" aria-modal="true" aria-label="CalcVibe account">',
-      '<div class="cv-auth-box">',
-        '<button type="button" class="cv-auth-close" id="cv-auth-close" aria-label="Close">&times;</button>',
+    '<div id="cva-overlay" class="cva-overlay" role="dialog" aria-modal="true" aria-label="CalcVibe account">',
+      '<div class="cva-modal">',
+        '<button type="button" class="cva-close" id="cva-close" aria-label="Close">&times;</button>',
 
-        /* logged-out panel */
-        '<div id="cv-panel-out">',
-          '<h2 class="cv-auth-heading">Sign in to CalcVibe</h2>',
-          '<p class="cv-auth-sub">Save your data and access it from any device.</p>',
-          '<div id="cv-auth-msg" class="cv-auth-msg" hidden></div>',
-          '<form id="cv-auth-form" novalidate>',
-            '<div class="cv-auth-field">',
-              '<label for="cv-email">Email</label>',
-              '<input type="email" id="cv-email" autocomplete="email" placeholder="you@example.com" required>',
-            '</div>',
-            '<div class="cv-auth-field">',
-              '<label for="cv-password">Password</label>',
-              '<input type="password" id="cv-password" autocomplete="current-password" placeholder="Password" required>',
-            '</div>',
-            '<button type="submit" id="cv-auth-submit" class="cv-auth-btn-primary">Sign In</button>',
-          '</form>',
-          '<button type="button" id="cv-auth-toggle" class="cv-auth-link">No account yet? Sign up</button>',
+        '<div class="cva-value-prop">',
+          '<p class="cva-vp-title">Save your results across devices</p>',
+          '<p class="cva-vp-sub">Sign in to save your calculator results and track your portfolio from anywhere.</p>',
+          '<ul class="cva-vp-list">',
+            '<li>Save any calculator result</li>',
+            '<li>Track your portfolio over time</li>',
+            '<li>Access from any device</li>',
+          '</ul>',
         '</div>',
 
-        /* logged-in panel */
-        '<div id="cv-panel-in" hidden>',
-          '<h2 class="cv-auth-heading">Your Account</h2>',
-          '<p id="cv-auth-email-lbl" class="cv-auth-email-lbl"></p>',
-          '<p class="cv-auth-sub">Your data is saved and synced automatically.</p>',
-          '<button type="button" id="cv-auth-logout" class="cv-auth-btn-outline">Sign Out</button>',
+        '<div class="cva-tabs" role="tablist">',
+          '<button type="button" class="cva-tab cva-tab--active" id="cva-tab-signin" role="tab" aria-selected="true">Sign in</button>',
+          '<button type="button" class="cva-tab" id="cva-tab-signup" role="tab" aria-selected="false">Create account</button>',
         '</div>',
+
+        '<div id="cva-msg" class="cva-msg" hidden></div>',
+
+        '<form id="cva-form" novalidate>',
+          '<div class="cva-field">',
+            '<label for="cva-email">Email</label>',
+            '<input type="email" id="cva-email" autocomplete="email" placeholder="you@example.com" required>',
+          '</div>',
+          '<div class="cva-field">',
+            '<label for="cva-password">Password</label>',
+            '<input type="password" id="cva-password" autocomplete="current-password" placeholder="Password" required>',
+          '</div>',
+          '<button type="submit" id="cva-submit" class="cva-submit">Sign in</button>',
+        '</form>',
       '</div>',
     '</div>'
   ].join('');
 
   function injectModal() {
     document.body.insertAdjacentHTML('beforeend', MODAL_HTML);
-    document.getElementById('cv-auth-close').addEventListener('click', closeModal);
-    document.getElementById('cv-auth-overlay').addEventListener('click', function (e) {
+
+    document.getElementById('cva-close').addEventListener('click', closeModal);
+    document.getElementById('cva-overlay').addEventListener('click', function (e) {
       if (e.target === this) closeModal();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === 'Escape') {
+        var o = document.getElementById('cva-overlay');
+        if (o && o.classList.contains('cva-open')) closeModal();
+      }
     });
-    document.getElementById('cv-auth-form').addEventListener('submit', handleSubmit);
-    document.getElementById('cv-auth-toggle').addEventListener('click', toggleMode);
-    document.getElementById('cv-auth-logout').addEventListener('click', handleLogout);
+    document.getElementById('cva-form').addEventListener('submit', handleSubmit);
+    document.getElementById('cva-tab-signin').addEventListener('click', function () { setMode('signin'); });
+    document.getElementById('cva-tab-signup').addEventListener('click', function () { setMode('signup'); });
   }
 
-  function openModal() {
-    document.getElementById('cv-auth-overlay').classList.add('cv-open');
-    (_user
-      ? document.getElementById('cv-auth-logout')
-      : document.getElementById('cv-email')
-    ).focus();
-  }
-
-  function closeModal() {
-    document.getElementById('cv-auth-overlay').classList.remove('cv-open');
+  function setMode(mode) {
+    _mode = mode;
+    var isSignup = mode === 'signup';
+    document.getElementById('cva-tab-signin').classList.toggle('cva-tab--active', !isSignup);
+    document.getElementById('cva-tab-signin').setAttribute('aria-selected', isSignup ? 'false' : 'true');
+    document.getElementById('cva-tab-signup').classList.toggle('cva-tab--active', isSignup);
+    document.getElementById('cva-tab-signup').setAttribute('aria-selected', isSignup ? 'true' : 'false');
+    document.getElementById('cva-submit').textContent = isSignup ? 'Create account' : 'Sign in';
     clearMsg();
   }
 
-  function showPanels(loggedIn) {
-    var pOut = document.getElementById('cv-panel-out');
-    var pIn  = document.getElementById('cv-panel-in');
-    if (!pOut) return;
-    pOut.hidden = loggedIn;
-    pIn.hidden  = !loggedIn;
-    if (loggedIn && _user) {
-      document.getElementById('cv-auth-email-lbl').textContent = _user.email;
-    }
+  function openModal() {
+    document.getElementById('cva-overlay').classList.add('cva-open');
+    document.getElementById('cva-email').focus();
   }
 
-  function toggleMode() {
-    _isSignup = !_isSignup;
-    document.getElementById('cv-auth-submit').textContent =
-      _isSignup ? 'Create Account' : 'Sign In';
-    document.getElementById('cv-auth-toggle').textContent =
-      _isSignup ? 'Already have an account? Sign in' : 'No account yet? Sign up';
+  function closeModal() {
+    document.getElementById('cva-overlay').classList.remove('cva-open');
     clearMsg();
   }
 
   function showMsg(text, isErr) {
-    var el = document.getElementById('cv-auth-msg');
+    var el = document.getElementById('cva-msg');
     el.textContent = text;
-    el.className   = 'cv-auth-msg ' + (isErr ? 'cv-auth-msg-err' : 'cv-auth-msg-ok');
+    el.className   = 'cva-msg ' + (isErr ? 'cva-msg--err' : 'cva-msg--ok');
     el.hidden      = false;
   }
 
   function clearMsg() {
-    var el = document.getElementById('cv-auth-msg');
+    var el = document.getElementById('cva-msg');
     if (el) el.hidden = true;
   }
 
   /* ── AUTH ACTIONS ───────────────────────────────────────── */
   function handleSubmit(e) {
     e.preventDefault();
-    var email = document.getElementById('cv-email').value.trim();
-    var pw    = document.getElementById('cv-password').value;
-    var btn   = document.getElementById('cv-auth-submit');
+    var email = document.getElementById('cva-email').value.trim();
+    var pw    = document.getElementById('cva-password').value;
+    var btn   = document.getElementById('cva-submit');
     btn.disabled    = true;
-    btn.textContent = _isSignup ? 'Creating…' : 'Signing in…';
+    btn.textContent = _mode === 'signup' ? 'Creating…' : 'Signing in…';
     clearMsg();
 
-    var p = _isSignup
+    var p = _mode === 'signup'
       ? supa().auth.signUp({ email: email, password: pw })
       : supa().auth.signInWithPassword({ email: email, password: pw });
 
     p.then(function (res) {
       btn.disabled    = false;
-      btn.textContent = _isSignup ? 'Create Account' : 'Sign In';
+      btn.textContent = _mode === 'signup' ? 'Create account' : 'Sign in';
       if (res.error) { showMsg(res.error.message, true); return; }
-      if (_isSignup) {
+      if (_mode === 'signup') {
         showMsg('Account created! Check your email to confirm before signing in.', false);
       } else {
         _user = res.data.user;
-        updateNavBtn();
-        showPanels(true);
+        updateNav();
         closeModal();
         emit('login', _user);
       }
@@ -155,23 +226,9 @@
   function handleLogout() {
     supa().auth.signOut().then(function () {
       _user = null;
-      updateNavBtn();
-      showPanels(false);
-      closeModal();
+      updateNav();
       emit('logout');
     });
-  }
-
-  function updateNavBtn() {
-    var btn = document.getElementById('cv-auth-btn');
-    if (!btn) return;
-    if (_user) {
-      btn.textContent = _user.email.split('@')[0];
-      btn.classList.add('cv-auth-navbtn--in');
-    } else {
-      btn.textContent = 'Sign In';
-      btn.classList.remove('cv-auth-navbtn--in');
-    }
   }
 
   /* ── EVENT BRIDGE ───────────────────────────────────────── */
@@ -191,23 +248,21 @@
   /* ── BOOT ───────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
     if (!window.supabase) return;
-    injectBtn();
+    injectNav();
     injectModal();
 
     supa().auth.getSession().then(function (res) {
       var session = res.data && res.data.session;
       if (session) {
         _user = session.user;
-        updateNavBtn();
-        showPanels(true);
+        updateNav();
         emit('login', _user);
       }
     });
 
     supa().auth.onAuthStateChange(function (event, session) {
       _user = session ? session.user : null;
-      updateNavBtn();
-      showPanels(!!_user);
+      updateNav();
       if (_user) emit('login', _user);
       else       emit('logout');
     });
