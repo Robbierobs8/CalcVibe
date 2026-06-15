@@ -101,6 +101,55 @@ function buildDOMRefs() {
   D.bTrueWltCels  = Array.from(mr[5].querySelectorAll('td')).slice(1);
 }
 
+/* ─── SUPABASE SYNC ──────────────────────────────────────── */
+function supaClient() {
+  return window.CVAuth && window.CVAuth.client();
+}
+
+function supaUser() {
+  return window.CVAuth && window.CVAuth.getUser();
+}
+
+function pushToSupabase(dataType, yr, data) {
+  var c = supaClient(), u = supaUser();
+  if (!c || !u) return;
+  c.from('portfolio_data').upsert({
+    user_id:    u.id,
+    year:       parseInt(yr, 10),
+    data_type:  dataType,
+    data:       data,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id,year,data_type' });
+}
+
+function pullFromSupabase(dataType, yr) {
+  var c = supaClient(), u = supaUser();
+  if (!c || !u) return Promise.resolve(null);
+  return c.from('portfolio_data')
+    .select('data')
+    .eq('user_id',   u.id)
+    .eq('year',      parseInt(yr, 10))
+    .eq('data_type', dataType)
+    .maybeSingle()
+    .then(function (res) { return (res.data && res.data.data) || null; });
+}
+
+function syncAllFromSupabase() {
+  var savYr = document.getElementById('savings-year').value;
+  var balYr = document.getElementById('balances-year').value;
+  var golYr = document.getElementById('goals-year').value;
+  Promise.all([
+    pullFromSupabase('savings',  savYr),
+    pullFromSupabase('balances', balYr),
+    pullFromSupabase('goals',    golYr)
+  ]).then(function (results) {
+    var savData = results[0], balData = results[1], golData = results[2];
+    if (savData) { localStorage.setItem('cv_savings_'  + savYr, JSON.stringify(savData)); applySavingsSnap(savData); }
+    if (balData) { localStorage.setItem('cv_balances_' + balYr, JSON.stringify(balData)); applyBalancesSnap(balData); }
+    if (golData) { localStorage.setItem(goalsKey(golYr), JSON.stringify(golData)); applyGoals(golData); }
+  });
+}
+
 /* ─── SAVINGS TAB — PERSISTENCE ─────────────────────────── */
 function getSavingsSnap() {
   return {
@@ -126,12 +175,10 @@ function applySavingsSnap(d) {
 }
 
 function saveSavings() {
-  try {
-    localStorage.setItem(
-      'cv_savings_' + document.getElementById('savings-year').value,
-      JSON.stringify(getSavingsSnap())
-    );
-  } catch (e) {}
+  var yr   = document.getElementById('savings-year').value;
+  var snap = getSavingsSnap();
+  try { localStorage.setItem('cv_savings_' + yr, JSON.stringify(snap)); } catch (e) {}
+  pushToSupabase('savings', yr, snap);
 }
 
 function loadSavingsData(yr) {
@@ -223,7 +270,11 @@ function initSavings() {
   applySavingsSnap(loadSavingsData(document.getElementById('savings-year').value));
 
   document.getElementById('savings-year').addEventListener('change', function() {
-    applySavingsSnap(loadSavingsData(this.value));
+    var yr = this.value;
+    applySavingsSnap(loadSavingsData(yr));
+    pullFromSupabase('savings', yr).then(function (d) {
+      if (d) { localStorage.setItem('cv_savings_' + yr, JSON.stringify(d)); applySavingsSnap(d); }
+    });
   });
 
   D.sAccInputs.forEach(function(row) {
@@ -262,12 +313,10 @@ function applyBalancesSnap(d) {
 }
 
 function saveBalances() {
-  try {
-    localStorage.setItem(
-      'cv_balances_' + document.getElementById('balances-year').value,
-      JSON.stringify(getBalancesSnap())
-    );
-  } catch (e) {}
+  var yr   = document.getElementById('balances-year').value;
+  var snap = getBalancesSnap();
+  try { localStorage.setItem('cv_balances_' + yr, JSON.stringify(snap)); } catch (e) {}
+  pushToSupabase('balances', yr, snap);
 }
 
 function loadBalancesData(yr) {
@@ -422,7 +471,11 @@ function initBalances() {
   applyBalancesSnap(loadBalancesData(document.getElementById('balances-year').value));
 
   document.getElementById('balances-year').addEventListener('change', function() {
-    applyBalancesSnap(loadBalancesData(this.value));
+    var yr = this.value;
+    applyBalancesSnap(loadBalancesData(yr));
+    pullFromSupabase('balances', yr).then(function (d) {
+      if (d) { localStorage.setItem('cv_balances_' + yr, JSON.stringify(d)); applyBalancesSnap(d); }
+    });
   });
 
   D.bAssetInputs.forEach(function(row) {
@@ -653,13 +706,13 @@ function saveGoals() {
       status: document.getElementById('status-' + i).dataset.state || 'not-started'
     });
   }
-  try {
-    localStorage.setItem(goalsKey(yr), JSON.stringify({
-      savingsTarget: document.getElementById('goal-savings-target').value,
-      growthTarget:  document.getElementById('goal-growth-target').value,
-      quals:         quals
-    }));
-  } catch (e) {}
+  var data = {
+    savingsTarget: document.getElementById('goal-savings-target').value,
+    growthTarget:  document.getElementById('goal-growth-target').value,
+    quals:         quals
+  };
+  try { localStorage.setItem(goalsKey(yr), JSON.stringify(data)); } catch (e) {}
+  pushToSupabase('goals', yr, data);
 }
 
 function applyGoals(data) {
@@ -675,8 +728,12 @@ function applyGoals(data) {
 }
 
 document.getElementById('goals-year').addEventListener('change', function() {
-  try { applyGoals(JSON.parse(localStorage.getItem(goalsKey(this.value)) || '{}')); }
+  var yr = this.value;
+  try { applyGoals(JSON.parse(localStorage.getItem(goalsKey(yr)) || '{}')); }
   catch (e) { applyGoals({}); }
+  pullFromSupabase('goals', yr).then(function (d) {
+    if (d) { localStorage.setItem(goalsKey(yr), JSON.stringify(d)); applyGoals(d); }
+  });
 });
 
 /* ─── BOOT ───────────────────────────────────────────────── */
@@ -704,5 +761,12 @@ document.getElementById('goals-year').addEventListener('change', function() {
   if (typeof Chart !== 'undefined') {
     initCharts();
     updateCharts(new Array(12).fill(0));
+  }
+
+  /* Supabase sync — wire up after CVAuth is initialised */
+  if (window.CVAuth) {
+    window.CVAuth.onLogin  = syncAllFromSupabase;
+    window.CVAuth.onLogout = function () {}; /* keep local data visible after logout */
+    if (window.CVAuth.getUser()) syncAllFromSupabase();
   }
 })();
